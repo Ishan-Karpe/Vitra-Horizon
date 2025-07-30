@@ -24,8 +24,8 @@ AI-powered body composition prediction prototype for Vitra, an AI powered person
 ```
 
 ## Links:
-- **Figma Mockups:** [Link will be added]
-- **Technical Report:** [Link will be added]
+- **[Figma Mockups](https://www.figma.com/design/m75ytxkGcBzSDBOngFZ0uC/Vitra-Morph?node-id=1-4&t=9V0KiCRKbNrztMy4-1)**
+- **[Techinical Report](https://docs.google.com/document/d/1gc_whwEjgLRRhWGw94-B7K5gxQ05bhFJIEZ8JGbwvCs/edit?usp=sharing)** PRIVATE FOR NOW
 
 ## Tech Stack:
 - **Frontend:** React Native

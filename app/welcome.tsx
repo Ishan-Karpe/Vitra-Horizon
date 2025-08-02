@@ -71,19 +71,6 @@ export default function WelcomeScreen() {
               Manual Setup
             </Text>
           </TouchableOpacity>
-
-          {/* Test button with direct navigation */}
-          <TouchableOpacity
-            className="bg-gray-600 px-8 py-5 rounded-lg"
-            onPress={() => {
-              console.log('TEST button pressed - navigating directly');
-              router.push('/about-yourself');
-            }}
-          >
-            <Text className="text-white text-xl font-semibold text-center">
-              TEST - Direct Navigation
-            </Text>
-          </TouchableOpacity>
         </View>
 
         {/* Privacy Notice */}

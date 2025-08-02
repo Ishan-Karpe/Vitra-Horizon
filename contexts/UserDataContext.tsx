@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, ReactNode, useContext, useState } from 'react';
 
 export interface UserData {
   // About Yourself data
@@ -7,12 +7,12 @@ export interface UserData {
   heightInches: number;
   bodyFatPercentage: number;
   activityLevel: string;
-  
-  // Goals data (for future screens)
-  goalType?: string;
-  targetWeight?: number;
-  timeframe?: string;
-  
+
+  // Goals data
+  goal?: string;
+  timelineWeeks?: number;
+  targetBodyFat?: number;
+
   // Additional profile data
   age?: number;
   gender?: string;
@@ -25,12 +25,18 @@ export interface ValidationErrors {
   heightInches?: string;
   bodyFatPercentage?: string;
   activityLevel?: string;
+  goal?: string;
+  timelineWeeks?: string;
+  targetBodyFat?: string;
+  age?: string;
+  gender?: string;
+  name?: string;
 }
 
 interface UserDataContextType {
   userData: UserData;
   validationErrors: ValidationErrors;
-  updateUserData: (field: keyof UserData, value: number | string) => void;
+  updateUserData: ((field: keyof UserData, value: number | string) => void) & ((updates: Partial<UserData>) => void);
   validateField: (field: keyof UserData, value: number | string) => string | null;
   validateAllFields: () => boolean;
   resetValidationErrors: () => void;
@@ -97,18 +103,43 @@ export const UserDataProvider: React.FC<UserDataProviderProps> = ({ children }) 
     }
   };
 
-  const updateUserData = (field: keyof UserData, value: number | string) => {
-    setUserData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+  const updateUserData = (fieldOrUpdates: keyof UserData | Partial<UserData>, value?: number | string) => {
+    if (typeof fieldOrUpdates === 'string' && value !== undefined) {
+      // Single field update
+      const field = fieldOrUpdates;
+      setUserData(prev => ({
+        ...prev,
+        [field]: value
+      }));
 
-    // Validate the field and update errors
-    const error = validateField(field, value);
-    setValidationErrors(prev => ({
-      ...prev,
-      [field]: error
-    }));
+      // Validate the field and update errors
+      const error = validateField(field, value);
+      setValidationErrors(prev => ({
+        ...prev,
+        [field]: error
+      }));
+    } else if (typeof fieldOrUpdates === 'object') {
+      // Bulk update
+      const updates = fieldOrUpdates;
+      setUserData(prev => ({
+        ...prev,
+        ...updates
+      }));
+
+      // Validate all updated fields
+      const newErrors: Partial<ValidationErrors> = {};
+      Object.entries(updates).forEach(([field, val]) => {
+        if (val !== undefined) {
+          const error = validateField(field as keyof UserData, val as number | string);
+          newErrors[field as keyof ValidationErrors] = error || undefined;
+        }
+      });
+
+      setValidationErrors(prev => ({
+        ...prev,
+        ...newErrors
+      }));
+    }
   };
 
   const validateAllFields = (): boolean => {

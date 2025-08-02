@@ -16,12 +16,6 @@ AI-powered body composition prediction prototype for Vitra, an AI powered person
 ## Project Structure (basic for now):
 
 ```
-├── README.md         # This file
-├── frontend/         # React Native mobile app
-├── backend/          # Node.js API server
-├── docs/             # Technical documentation
-└── assets/           # Mockups and screenshots
-```
 
 ## Links:
 - **[Figma Mockups](https://www.figma.com/design/m75ytxkGcBzSDBOngFZ0uC/Vitra-Morph?node-id=1-4&t=9V0KiCRKbNrztMy4-1)**
@@ -29,6 +23,8 @@ AI-powered body composition prediction prototype for Vitra, an AI powered person
 
 ## Tech Stack:
 - **Frontend:** React Native
+
+the below are outlined in the techincal report
 - **Backend:** Node.js, Express
 - **Database:** PostgresSQL
 - **API:** Apple HealthKit, 

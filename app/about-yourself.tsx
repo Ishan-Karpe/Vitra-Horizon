@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, View } from 'react-native';
 import { ActivityLevelSelector } from '../components/ui/ActivityLevelSelector';
+import { BodyFatCalculatorModal } from '../components/ui/BodyFatCalculatorModal';
 import { BodyFatSlider } from '../components/ui/BodyFatSlider';
 import { Button } from '../components/ui/Button';
 import { HeightInput } from '../components/ui/HeightInput';
@@ -34,6 +35,10 @@ export default function AboutYourselfScreen() {
 
   const handleBack = () => {
     router.back();
+  };
+
+  const handleUseCalculatedBodyFat = (bodyFatPercentage: number) => {
+    updateUserData('bodyFatPercentage', bodyFatPercentage);
   };
 
   return (
@@ -96,6 +101,13 @@ export default function AboutYourselfScreen() {
           className={`w-full ${!isFormValid ? 'opacity-50' : ''}`}
         />
       </View>
+
+      {/* Body Fat Calculator Modal */}
+      <BodyFatCalculatorModal
+        visible={showBodyFatModal}
+        onClose={() => setShowBodyFatModal(false)}
+        onUseValue={handleUseCalculatedBodyFat}
+      />
     </SafeAreaView>
   );
 }

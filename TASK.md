@@ -1,161 +1,149 @@
 # Tasks
 
-## To Do - Scenarios Screen Implementation (2025-08-02)
-- [ ] Create scenarios screen structure with NativeWind (2025-08-02)
-  - [ ] Update `app/(tabs)/scenarios.tsx` from placeholder to full implementation
-  - [ ] Set up scenarios state management with context for saved scenarios
-  - [ ] Create scenarios data structure for storing multiple scenarios
-  - [ ] Implement scenario loading from onboarding and user-created scenarios
-  - [ ] Add floating action button (FAB) for creating new scenarios
-- [ ] Build scenarios header with NativeWind styling (2025-08-02)
-  - [ ] Add "Scenario Testing" title using `text-2xl font-bold text-gray-900 px-6 py-4`
-  - [ ] Create Single/Compare toggle with `bg-gray-100 rounded-full p-1 flex-row`
-  - [ ] Style active toggle state with `bg-blue-500 text-white px-4 py-2 rounded-full`
-  - [ ] Style inactive toggle state with `text-gray-600 px-4 py-2`
-  - [ ] Add toggle animation with smooth transitions
-- [ ] Create scenario card component with NativeWind (2025-08-02)
-  - [ ] Build scenario container with `bg-white rounded-xl shadow-sm mx-6 mb-4 p-6 border border-gray-200`
-  - [ ] Add scenario header with `flex-row justify-between items-center mb-4`
-  - [ ] Style scenario title with `text-lg font-semibold text-gray-900`
-  - [ ] Add creation date with `text-sm text-gray-500`
-  - [ ] Include confidence badge with `bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium`
-- [ ] Implement scenario parameters display (2025-08-02)
-  - [ ] Create parameter row with `flex-row flex-wrap gap-3 mb-4`
-  - [ ] Build exercise frequency tag with `bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm` (⚡ 4 x/week)
-  - [ ] Add calorie deficit tag with `bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm` (🔥 300 cals/day)
-  - [ ] Include protein tag with `bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm` (🥩 High protein)
-  - [ ] Style parameter icons with proper emoji display
-- [ ] Build current vs target comparison (2025-08-02)
-  - [ ] Create comparison container with `flex-row justify-between mb-6`
-  - [ ] Style "Current" section with `flex-1 text-center`
-  - [ ] Add current body fat display with `text-3xl font-bold text-gray-600` (25%)
-  - [ ] Style "After 12 weeks" section with `flex-1 text-center`
-  - [ ] Add target body fat display with `text-3xl font-bold text-blue-600` (21%)
-  - [ ] Include "body fat" labels with `text-sm text-gray-500`
-- [ ] Create scenario progress graph (2025-08-02)
-  - [ ] Build graph container with `bg-gray-50 rounded-lg p-4 mb-4 h-32`
-  - [ ] Implement line graph showing body fat progression over 12 weeks
-  - [ ] Use blue gradient fill under the curve
-  - [ ] Add data points for key milestones
-  - [ ] Include interactive touch gestures for detailed view
-  - [ ] Style graph axes and grid lines appropriately
-- [ ] Add scenario metrics display (2025-08-02)
-  - [ ] Create metrics row with `flex-row justify-between mb-4`
-  - [ ] Build fat loss metric with `flex-row items-center` (📉 Fat loss: 8 lbs)
-  - [ ] Add muscle gain metric with `flex-row items-center` (💪 Muscle gain: 2 lbs)
-  - [ ] Include timeline metric with `text-sm text-gray-600` (⏱️ Timeline: 12 weeks)
-  - [ ] Style metrics with appropriate colors and spacing
-- [ ] Implement scenario action buttons (2025-08-02)
-  - [ ] Create button container with `flex-row gap-3 mt-6`
-  - [ ] Build "Edit Scenario" button with `flex-1 border border-blue-500 rounded-lg py-3`
-  - [ ] Style edit button text with `text-blue-500 text-center font-medium`
-  - [ ] Add "Set as Plan" button with `flex-1 bg-green-500 rounded-lg py-3`
-  - [ ] Style set plan button text with `text-white text-center font-medium`
-  - [ ] Include button press animations and haptic feedback
-- [ ] Create scenario data management (2025-08-02)
-  - [ ] Build scenario storage system for onboarding scenarios
-  - [ ] Implement scenario saving from What If Onboarding screen
-  - [ ] Create user-generated scenario storage
-  - [ ] Add scenario ID system for tracking and management
-  - [ ] Implement scenario metadata (creation date, confidence, parameters)
-  - [ ] Add scenario persistence across app sessions
-- [ ] Build floating action button (FAB) for new scenarios (2025-08-02)
-  - [ ] Create FAB with `absolute bottom-20 right-6 w-14 h-14 bg-blue-500 rounded-full`
-  - [ ] Add plus icon with `text-white text-2xl text-center`
-  - [ ] Include FAB shadow with `shadow-lg elevation-8`
-  - [ ] Implement FAB press animation and haptic feedback
-  - [ ] Add navigation to separate edit scenarios screen
-- [ ] Create separate edit scenarios screen for main app (2025-08-02)
-  - [ ] Add `app/edit-scenario.tsx` screen (different from onboarding)
-  - [ ] Implement navigation from FAB to edit scenario screen
-  - [ ] Build similar interface to onboarding What If screen but as standalone
-  - [ ] Add back navigation to scenarios screen
-  - [ ] Include scenario saving functionality to main scenarios list
-  - [ ] Add scenario naming and tagging features
-- [ ] Implement Single/Compare toggle functionality (2025-08-02)
-  - [ ] Build single scenario view (default state)
-  - [ ] Create compare mode showing multiple scenarios side-by-side
-  - [ ] Add scenario selection for comparison
-  - [ ] Implement comparison visualization with differences highlighted
-  - [ ] Add smooth transitions between single and compare modes
-  - [ ] Include comparison analytics and insights
-- [ ] Build scenario card interactions (2025-08-02)
-  - [ ] Add tap gesture for scenario details expansion
-  - [ ] Implement swipe gestures for scenario management (delete, duplicate)
-  - [ ] Create long press context menu for scenario options
-  - [ ] Add scenario card animation on press
-  - [ ] Include scenario favoriting/bookmarking system
-- [ ] Create "Edit Scenario" functionality (2025-08-02)
-  - [ ] Navigate to edit scenario screen with pre-filled data
-  - [ ] Load existing scenario parameters into edit interface
-  - [ ] Implement scenario update functionality
-  - [ ] Add save confirmation and feedback
-  - [ ] Handle scenario version tracking for changes
-- [ ] Implement "Set as Plan" functionality (2025-08-02)
-  - [ ] Apply selected scenario to user's active dashboard plan
-  - [ ] Update dashboard with new scenario parameters
-  - [ ] Show confirmation dialog with plan change summary
-  - [ ] Add plan activation animation and feedback
-  - [ ] Navigate back to dashboard with new active plan
-  - [ ] Update progress tracking with new baseline
-- [ ] Add scenario filtering and search (2025-08-02)
-  - [ ] Create search bar for scenario filtering
-  - [ ] Add filter options (by date, confidence, goal type)
-  - [ ] Implement sorting options (newest, oldest, highest confidence)
-  - [ ] Add scenario tagging system for organization
-  - [ ] Create scenario categories (onboarding, user-created, favorites)
-- [ ] Build scenario comparison view (2025-08-02)
-  - [ ] Create side-by-side scenario comparison layout
-  - [ ] Add difference highlighting between scenarios
-  - [ ] Implement comparison metrics and analytics
-  - [ ] Show relative performance predictions
-  - [ ] Add comparison export and sharing functionality
-- [ ] Create scenario management features (2025-08-02)
-  - [ ] Add scenario deletion with confirmation
-  - [ ] Implement scenario duplication functionality
-  - [ ] Create scenario sharing capabilities
-  - [ ] Add scenario export to different formats
-  - [ ] Implement scenario backup and restore
-- [ ] Add scenario analytics and insights (2025-08-02)
-  - [ ] Calculate scenario confidence scores based on user data
-  - [ ] Generate scenario recommendations
-  - [ ] Add scenario performance predictions
-  - [ ] Create scenario difficulty assessments
-  - [ ] Implement scenario success probability calculations
-- [ ] Implement responsive design with NativeWind (2025-08-02)
-  - [ ] Ensure scenario cards work on different screen sizes
-  - [ ] Test FAB positioning across devices with `bottom-20 md:bottom-24`
-  - [ ] Add proper safe area handling with `pb-safe`
+## To Do - Profile Screen Implementation (2025-08-03)
+- [ ] Create profile screen structure with NativeWind (2025-08-03)
+  - [ ] Update `app/(tabs)/profile.tsx` from placeholder to full implementation
+  - [ ] Set up profile state management with user data from previous screens
+  - [ ] Implement data retrieval from onboarding (About Yourself, Goals, What If)
+  - [ ] Create profile data persistence and update functionality
+  - [ ] Add logout functionality with navigation to onboarding
+- [ ] Build profile header with NativeWind styling (2025-08-03)
+  - [ ] Add "Profile" title using `text-2xl font-bold text-gray-900 px-6 py-4`
+  - [ ] Style header container with `bg-white border-b border-gray-200`
+  - [ ] Add proper spacing with `mb-6`
+  - [ ] Ensure consistent header styling across all tab screens
+- [ ] Create user profile card with NativeWind (2025-08-03)
+  - [ ] Build profile card container with `bg-white rounded-lg shadow-sm mx-6 mb-6 p-6`
+  - [ ] Create avatar circle with `w-16 h-16 bg-gray-300 rounded-full items-center justify-center`
+  - [ ] Add user initials display with `text-gray-600 text-xl font-bold` (IK for Ishan Karpe)
+  - [ ] Style user name with `text-xl font-semibold text-gray-900` (Ishan Karpe)
+  - [ ] Add email display with `text-gray-500 text-sm` (ishan@example.com)
+  - [ ] Include "Edit Profile" button with `text-blue-600 text-sm font-medium`
+- [ ] Implement user data integration from previous screens (2025-08-03)
+  - [ ] Retrieve joined date from app installation/first completion
+  - [ ] Pull goal data from Goals screen ("Cut body fat to 21%")
+  - [ ] Get activity level from About Yourself screen ("Strength & Cardio 4x/wk")
+  - [ ] Extract diet info from What If scenarios ("200 Cal deficit")
+  - [ ] Create data mapping and display formatting
+  - [ ] Add real-time data updates when user modifies settings
+- [ ] Build profile information section with NativeWind (2025-08-03)
+  - [ ] Create info container with `bg-white rounded-lg shadow-sm mx-6 mb-6`
+  - [ ] Build info rows with `flex-row justify-between items-center py-4 px-6 border-b border-gray-100`
+  - [ ] Style info labels with `flex-row items-center`
+  - [ ] Add emoji icons with proper spacing `mr-3 text-lg`
+  - [ ] Style info values with `text-gray-900 font-medium text-right`
+- [ ] Create profile information rows (2025-08-03)
+  - [ ] Build "Joined" row with 📅 emoji and dynamic date (July 2025)
+  - [ ] Add "Goal" row with 🎯 emoji and goal from Goals screen
+  - [ ] Create "Activity" row with 🏃 emoji and activity level from About Yourself
+  - [ ] Build "Diet" row with 🥗 emoji and calorie deficit from What If scenarios
+  - [ ] Ensure all data is pulled from user's actual selections
+- [ ] Implement settings section with NativeWind (2025-08-03)
+  - [ ] Create settings container with `bg-white rounded-lg shadow-sm mx-6 mb-6`
+  - [ ] Build settings rows with `flex-row justify-between items-center py-4 px-6 border-b border-gray-100`
+  - [ ] Add chevron icons with `text-gray-400 text-lg`
+  - [ ] Style setting labels with `flex-row items-center text-gray-700`
+  - [ ] Include proper touch targets and press states
+- [ ] Create settings menu items (2025-08-03)
+  - [ ] Build "Change Password" row with 🔒 icon and navigation arrow
+  - [ ] Add "Export Progress Data" row with 📊 icon and navigation arrow
+  - [ ] Create "Help & Support" row with ❓ icon and navigation arrow
+  - [ ] Implement press handlers for each setting item
+  - [ ] Add haptic feedback for setting interactions
+- [ ] Build edit profile functionality (2025-08-03)
+  - [ ] Create edit profile modal/screen with proper navigation
+  - [ ] Add form fields for name, email, and basic info editing
+  - [ ] Style form with `bg-white rounded-lg p-6 mx-6`
+  - [ ] Include input fields with `border border-gray-300 rounded-lg px-4 py-3 mb-4`
+  - [ ] Add save/cancel buttons with proper styling
+  - [ ] Implement form validation and error handling
+  - [ ] Ensure data persistence after saving changes
+- [ ] Implement goal card functionality (2025-08-03)
+  - [ ] Make goal row tappable to change target
+  - [ ] Create goal editing modal with goal selection
+  - [ ] Allow users to modify their fitness goals
+  - [ ] Update goal display in real-time after changes
+  - [ ] Sync goal changes with dashboard and scenarios
+  - [ ] Add goal change confirmation dialog
+- [ ] Create logout functionality (2025-08-03)
+  - [ ] Build logout button with `bg-red-500 rounded-lg py-4 mx-6 mb-8`
+  - [ ] Style logout text with `text-white text-center font-semibold text-lg`
+  - [ ] Add logout confirmation dialog with proper styling
+  - [ ] Implement logout logic with user data clearing
+  - [ ] Navigate to onboarding welcome screen after logout
+  - [ ] Clear all stored user data and preferences
+- [ ] Add data persistence and updates (2025-08-03)
+  - [ ] Create profile data storage system
+  - [ ] Implement real-time data synchronization
+  - [ ] Add profile data backup and restore
+  - [ ] Handle data migration for profile updates
+  - [ ] Sync profile changes across all app sections
+- [ ] Implement Change Password functionality (2025-08-03)
+  - [ ] Create change password screen/modal
+  - [ ] Add current password verification
+  - [ ] Include new password input with confirmation
+  - [ ] Implement password validation rules
+  - [ ] Add password change success feedback
+  - [ ] Handle password change errors gracefully
+- [ ] Build Export Progress Data feature (2025-08-03)
+  - [ ] Create data export interface
+  - [ ] Add export format options (CSV, PDF, JSON)
+  - [ ] Implement progress data compilation
+  - [ ] Add sharing functionality for exported data
+  - [ ] Include data privacy and consent handling
+  - [ ] Add export progress indicators
+- [ ] Create Help & Support section (2025-08-03)
+  - [ ] Build help screen with FAQ sections
+  - [ ] Add support contact options
+  - [ ] Include app version and device information
+  - [ ] Add feedback submission functionality
+  - [ ] Create troubleshooting guides
+  - [ ] Implement support ticket system
+- [ ] Add profile customization features (2025-08-03)
+  - [ ] Implement avatar photo upload functionality
+  - [ ] Add profile theme customization
+  - [ ] Create notification preferences settings
+  - [ ] Add privacy settings controls
+  - [ ] Implement data sharing preferences
+- [ ] Build profile analytics display (2025-08-03)
+  - [ ] Show profile completion percentage
+  - [ ] Add app usage statistics
+  - [ ] Display achievement badges and milestones
+  - [ ] Create profile insights and recommendations
+  - [ ] Add streaks and consistency tracking
+- [ ] Implement responsive design with NativeWind (2025-08-03)
+  - [ ] Ensure profile cards work on different screen sizes
+  - [ ] Test avatar and info layout on various devices
+  - [ ] Add proper safe area handling with `pb-safe pt-safe`
   - [ ] Implement landscape orientation support
-  - [ ] Test scrolling performance with many scenarios
-- [ ] Create reusable components with NativeWind (2025-08-02)
-  - [ ] Scenario card component with all interactions
-  - [ ] Scenario parameter tag component
-  - [ ] Progress graph component for scenarios
-  - [ ] Scenario comparison component
-  - [ ] FAB component with navigation
-  - [ ] Single/Compare toggle component
-- [ ] Add accessibility features with NativeWind (2025-08-02)
-  - [ ] Add screen reader descriptions for scenario cards
-  - [ ] Implement proper button accessibility for all interactions
-  - [ ] Add keyboard navigation support for scenario management
+  - [ ] Test scrolling with long user information
+- [ ] Create reusable components with NativeWind (2025-08-03)
+  - [ ] Profile card component with avatar and info
+  - [ ] Settings row component with icons and navigation
+  - [ ] Profile info row component with dynamic data
+  - [ ] Logout button component with confirmation
+  - [ ] Edit profile modal component
+- [ ] Add accessibility features with NativeWind (2025-08-03)
+  - [ ] Add screen reader descriptions for all profile elements
+  - [ ] Implement proper button accessibility for settings
+  - [ ] Add keyboard navigation support
   - [ ] Test with VoiceOver and TalkBack
-  - [ ] Include proper focus management for modals and navigation
-- [ ] Implement performance optimizations (2025-08-02)
-  - [ ] Add virtualization for large scenario lists
-  - [ ] Optimize scenario loading and rendering
-  - [ ] Implement efficient scenario data caching
-  - [ ] Add lazy loading for scenario graphs
-  - [ ] Test performance with many saved scenarios
-- [ ] Add advanced scenario features (2025-08-02)
-  - [ ] Implement scenario version history
-  - [ ] Add scenario collaboration and sharing
-  - [ ] Create scenario templates and presets
-  - [ ] Add scenario goal tracking and outcomes
-  - [ ] Implement machine learning for scenario recommendations
+  - [ ] Include proper focus management for modals
+- [ ] Implement performance optimizations (2025-08-03)
+  - [ ] Optimize profile data loading and display
+  - [ ] Add efficient data caching for profile information
+  - [ ] Implement lazy loading for heavy profile features
+  - [ ] Optimize image handling for avatar uploads
+  - [ ] Test performance with frequent profile updates
+- [ ] Add advanced profile features (2025-08-03)
+  - [ ] Implement profile sharing capabilities
+  - [ ] Add social media integration
+  - [ ] Create profile backup to cloud services
+  - [ ] Add profile synchronization across devices
+  - [ ] Implement profile version history
 
 ## In Progress
-- [ ] Scenarios screen implementation (2025-08-02)
+- [ ] Profile screen implementation (2025-08-03)
 
 ## Completed
 - [x] Welcome screen implementation (2025-08-01)
@@ -164,8 +152,37 @@
 - [x] What If Scenarios screen implementation (2025-08-02)
 - [x] Dashboard screen implementation (2025-08-02)
 - [x] Progress screen implementation (2025-08-02)
+- [x] Scenarios screen implementation (2025-08-02)
 
 ## Discovered During Work
+
+### Profile Screen Details (2025-08-03)
+- User profile display with data from previous onboarding screens
+- Edit profile functionality with data persistence
+- Settings menu with Change Password, Export Data, Help & Support
+- Logout functionality with confirmation and navigation to onboarding
+- Dynamic data display pulled from user's actual selections
+- Goal modification capability with real-time updates
+
+### Screen Interactions Breakdown:
+1. **Edit Profile**: Tap to update info with modal form and data saving
+2. **Goal Card**: Tap to change target with goal selection interface
+3. **Log Out**: Tap to confirm + exit with navigation to onboarding welcome
+4. **Settings Items**: Navigate to respective screens (password, export, help)
+5. **User Data**: Real-time display of information from onboarding screens
+
+### Data Integration Sources:
+- **Joined**: App installation/first onboarding completion date
+- **Goal**: From Goals screen selection ("Cut body fat to 21%")
+- **Activity**: From About Yourself activity level ("Strength & Cardio 4x/wk")
+- **Diet**: From What If scenarios calorie deficit ("200 Cal deficit")
+
+### NativeWind Profile Styling:
+- Profile card: `bg-white rounded-lg shadow-sm mx-6 mb-6 p-6`
+- Avatar: `w-16 h-16 bg-gray-300 rounded-full items-center justify-center`
+- Info rows: `flex-row justify-between items-center py-4 px-6 border-b border-gray-100`
+- Logout button: `bg-red-500 rounded-lg py-4 mx-6 mb-8`
+- Settings rows: `flex-row justify-between items-center py-4 px-6`
 
 ### Scenarios Screen Details (2025-08-02)
 - Main app scenarios management with saved scenarios from onboarding
@@ -173,51 +190,18 @@
 - Detailed scenario cards with parameters, graphs, and action buttons
 - FAB for creating new scenarios via separate edit screen
 - Scenario management with edit, set as plan, and comparison features
-- Consistent card format for all scenarios (onboarding + user-created)
-
-### Screen Interactions Breakdown:
-1. **Edit Scenario**: Tap to navigate to dedicated edit screen and modify parameters
-2. **Graph**: Tap to show detailed weekly forecast and progression
-3. **Set as Plan**: Tap to apply scenario to dashboard and activate as current plan
-4. **Single/Compare Toggle**: Switch between individual and comparison views
-5. **FAB**: Navigate to new edit scenarios screen for creating additional scenarios
-
-### Scenario Card Format:
-- **Header**: Scenario name, creation date, confidence badge
-- **Parameters**: Exercise frequency, calorie deficit, protein intake tags
-- **Comparison**: Current vs target body fat percentage
-- **Graph**: 12-week progression visualization with gradient fill
-- **Metrics**: Fat loss, muscle gain, timeline with icons
-- **Actions**: Edit Scenario (outline) and Set as Plan (filled) buttons
-
-### Navigation Structure:
-- **Onboarding**: What If Scenarios → Dashboard (saves scenario to main app)
-- **Main App**: Scenarios tab → FAB → Edit Scenario screen → Back to Scenarios
-- **Scenario Actions**: Edit → Edit Scenario screen, Set as Plan → Dashboard activation
 
 ### Progress Screen Details (2025-08-02)
 - Comprehensive progress tracking with interactive graphs
 - Time period filtering (Week/Month/3M/6M) with smooth transitions
 - Weight and body fat percentage trend visualization
 - Detailed measurements tracking with change indicators
-- Goal progress visualization with completion percentages
-- Expandable graph views for detailed analysis
 
 ### Dashboard Screen Details (2025-08-02)
 - Central hub showing daily plan progress and actions
 - Interactive progress circle with detailed weekly view
 - Checkboxes for action completion with real-time updates
-- Bottom tab navigation for main app sections
 - Dynamic status tracking and prediction updates
-- NativeWind styling throughout for consistent design
-
-### What If Scenarios Screen Details (2025-08-02)
-- Real-time prediction updates with every parameter change
-- Side-by-side comparison of current vs new plan
-- Interactive sliders and selectors for plan adjustment
-- Instant visual feedback on prediction changes
-- Scenario saving and management functionality
-- Parameter validation with realistic constraints
 
 ### App Flow Analysis (2025-08-01)
 
@@ -231,18 +215,19 @@ Based on the mockups in `assets/mockups/`, the Vitra-Morph app appears to be a b
 5. **Dashboard.png** - Main dashboard/home screen with daily progress and actions
 6. **Progress.png** - Comprehensive progress tracking with graphs and measurements
 7. **Scenarios.png** - Main app scenario management and viewing (MAIN APP)
-8. **Profile.png** - User profile management for viewing/editing personal information
+8. **Profile.png** - User profile management with data integration and settings
 9. **Prediction.png** - Detailed prediction results and analysis
 
 #### User Journey Flow:
 1. **Onboarding Flow**: Welcome → About Yourself → Goals → Edit Scenarios → Dashboard
 2. **Main App**: Dashboard (home) ← → Progress ← → Scenarios ← → Profile
-3. **Scenario Management**: Scenarios → FAB → Edit Scenario screen → Back to Scenarios
-4. **Core Features**: 
+3. **Profile Management**: Profile → Edit Profile/Settings → Back to Profile
+4. **Logout Flow**: Profile → Logout → Welcome (onboarding restart)
+5. **Core Features**: 
    - Dashboard (daily tracking and progress)
    - Progress (achievement tracking and analytics with graphs)
    - Scenarios (saved scenario management, comparison, and editing)
-   - Profile (account and preferences management)
+   - Profile (account management, settings, and data integration)
 
 #### App Purpose:
-Comprehensive fitness app using predictive modeling to show users potential body changes based on different workout scenarios and personal data inputs, with detailed progress tracking, scenario management, and actionable insights.
+Comprehensive fitness app using predictive modeling to show users potential body changes based on different workout scenarios and personal data inputs, with detailed progress tracking, scenario management, profile customization, and actionable insights.

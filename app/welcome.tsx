@@ -22,17 +22,17 @@ export default function WelcomeScreen() {
 
   return (
     <SafeAreaView className="flex-1 bg-blue-50">
-      <View className="flex-1 px-8 py-12 justify-between">
+      <View className="flex-1 px-4 sm:px-6 md:px-8 lg:px-12 py-6 sm:py-8 md:py-12 justify-between">
         {/* Hero Section */}
-        <View className="items-center mt-16">
+        <View className="items-center">
           <Hero
             title="Welcome to Vitra Morph"
             subtitle="Transform your fitness journey with AI-powered predictions and personalized recommendations"
           />
         </View>
 
-        {/* Features Section */}
-        <View className="flex-1 justify-center space-y-6 mt-12 mb-12">
+        {/* Features Section - Evenly distributed */}
+        <View className="flex-1 justify-evenly py-8 sm:py-12 md:py-16">
           <FeatureCard
             emoji="🔮"
             title="Predict your body changes before they happen"
@@ -53,29 +53,29 @@ export default function WelcomeScreen() {
         </View>
 
         {/* Action Buttons */}
-        <View className="space-y-4 mb-8">
+        <View className="space-y-3 sm:space-y-4">
           <TouchableOpacity
-            className="bg-blue-600 px-8 py-5 rounded-lg"
+            className="bg-blue-600 px-6 sm:px-8 py-4 sm:py-5 rounded-lg shadow-sm"
             onPress={handleConnectHealthApps}
           >
-            <Text className="text-white text-xl font-semibold text-center">
+            <Text className="text-white text-lg sm:text-xl font-semibold text-center">
               Connect Health Apps
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-transparent border-2 border-blue-600 px-8 py-5 rounded-lg"
+            className="bg-transparent border-2 border-blue-600 px-6 sm:px-8 py-4 sm:py-5 rounded-lg"
             onPress={handleManualSetup}
           >
-            <Text className="text-blue-600 text-xl font-semibold text-center">
+            <Text className="text-blue-600 text-lg sm:text-xl font-semibold text-center">
               Manual Setup
             </Text>
           </TouchableOpacity>
         </View>
 
-        {/* Privacy Notice */}
-        <View className="items-center">
-          <Text className="text-sm text-gray-600 text-center">
+        {/* Privacy Notice - At bottom */}
+        <View className="items-center pt-4 sm:pt-6">
+          <Text className="text-xs sm:text-sm text-gray-600 text-center px-4">
             🔒 Privacy: Your data stays secure
           </Text>
         </View>

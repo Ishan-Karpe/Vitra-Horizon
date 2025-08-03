@@ -1,5 +1,5 @@
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
 import {
@@ -9,24 +9,60 @@ import {
   ProteinIntakeSelector
 } from '../components/scenarios';
 import { ProgressIndicator } from '../components/ui/ProgressIndicator';
-import { useScenariosContext } from '../contexts/ScenariosContext';
+import { ScenarioParameters, ScenarioPrediction, useScenarios } from '../contexts/ScenariosContext';
 
 export default function ScenariosScreen() {
-  const {
-    currentParameters,
-    setCurrentParameters,
-    currentPlanPrediction,
-    newPlanPrediction,
-    isCalculating,
-    showComparison,
-    setShowComparison,
-    saveScenario,
-  } = useScenariosContext();
+  const { addScenario, calculatePrediction, scenarios, generateScenarioName } = useScenarios();
+
+  // Local state for current parameters being edited
+  const [currentParameters, setCurrentParameters] = useState<ScenarioParameters>({
+    exerciseFrequency: 4,
+    calorieDeficit: 300,
+    proteinIntake: 'High',
+  });
+
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [showComparison, setShowComparison] = useState(true);
+
+  // Get the onboarding scenario as the current plan
+  const currentPlanScenario = scenarios.find(s => s.isFromOnboarding);
+  const currentPlanPrediction = currentPlanScenario?.prediction;
+
+  // Calculate new prediction based on current parameters
+  const [newPlanPrediction, setNewPlanPrediction] = useState<ScenarioPrediction | null>(null);
+
+  useEffect(() => {
+    setIsCalculating(true);
+    // Simulate calculation delay
+    const timer = setTimeout(() => {
+      const prediction = calculatePrediction(currentParameters);
+      setNewPlanPrediction(prediction);
+      setIsCalculating(false);
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [currentParameters, calculatePrediction]);
+
+  const handleParameterChange = (updates: Partial<ScenarioParameters>) => {
+    setCurrentParameters(prev => ({ ...prev, ...updates }));
+  };
+
+  const saveScenario = () => {
+    if (newPlanPrediction) {
+      addScenario({
+        name: generateScenarioName(),
+        parameters: currentParameters,
+        prediction: newPlanPrediction,
+        isFromOnboarding: false,
+        isFavorite: false,
+      });
+    }
+  };
 
   const handleSaveScenario = () => {
     saveScenario();
-    console.log('Scenario saved, navigating to main app dashboard');
-    router.push('/(tabs)');
+    console.log('Scenario saved, navigating to scenarios tab');
+    router.push('/(tabs)/scenarios');
   };
 
   const handleTryAnother = () => {
@@ -59,33 +95,47 @@ export default function ScenariosScreen() {
           {/* Exercise Frequency Slider */}
           <ExerciseFrequencySlider
             value={currentParameters.exerciseFrequency}
-            onValueChange={(value) => setCurrentParameters({ exerciseFrequency: value })}
+            onValueChange={(value) => handleParameterChange({ exerciseFrequency: value })}
             isCalculating={isCalculating}
           />
 
           {/* Daily Calorie Deficit Slider */}
           <CalorieDeficitSlider
             value={currentParameters.calorieDeficit}
-            onValueChange={(value: number) => setCurrentParameters({ calorieDeficit: value })}
+            onValueChange={(value: number) => handleParameterChange({ calorieDeficit: value })}
             isCalculating={isCalculating}
           />
 
           {/* Protein Intake Selector */}
           <ProteinIntakeSelector
             value={currentParameters.proteinIntake}
-            onValueChange={(value: 'Low' | 'Medium' | 'High') => setCurrentParameters({ proteinIntake: value })}
+            onValueChange={(value: 'Low' | 'Medium' | 'High') => handleParameterChange({ proteinIntake: value })}
             isCalculating={isCalculating}
           />
         </View>
 
         {/* Comparison Cards */}
-        <ComparisonCards
-          currentPlan={currentPlanPrediction}
-          newPlan={newPlanPrediction}
-          isCalculating={isCalculating}
-          showComparison={showComparison}
-          onToggleComparison={() => setShowComparison(!showComparison)}
-        />
+        {currentPlanPrediction && newPlanPrediction && (
+          <ComparisonCards
+            currentPlan={{
+              bodyFatPercentage: currentPlanPrediction.targetBodyFat,
+              fatLoss: currentPlanPrediction.fatLoss,
+              muscleGain: currentPlanPrediction.muscleGain,
+              timeline: currentPlanPrediction.timeline,
+              confidenceScore: currentPlanPrediction.confidence,
+            }}
+            newPlan={{
+              bodyFatPercentage: newPlanPrediction.targetBodyFat,
+              fatLoss: newPlanPrediction.fatLoss,
+              muscleGain: newPlanPrediction.muscleGain,
+              timeline: newPlanPrediction.timeline,
+              confidenceScore: newPlanPrediction.confidence,
+            }}
+            isCalculating={isCalculating}
+            showComparison={showComparison}
+            onToggleComparison={() => setShowComparison(!showComparison)}
+          />
+        )}
 
         {/* Action Buttons */}
         <View className="space-y-4 mt-8">

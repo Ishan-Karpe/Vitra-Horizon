@@ -1,6 +1,8 @@
+import { useRouter } from 'expo-router';
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useDashboardContext } from '../../contexts/DashboardContext';
+import { useScenarios } from '../../contexts/ScenariosContext';
 
 interface PredictionCardProps {
   className?: string;
@@ -8,6 +10,10 @@ interface PredictionCardProps {
 
 export const PredictionCard: React.FC<PredictionCardProps> = ({ className = '' }) => {
   const { predictionMessage, status } = useDashboardContext();
+  const { activePlanId, getScenarioById } = useScenarios();
+  const router = useRouter();
+
+  const activeScenario = activePlanId ? getScenarioById(activePlanId) : null;
 
   const getPredictionConfig = (status: string) => {
     switch (status) {
@@ -40,19 +46,41 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ className = '' }
 
   const config = getPredictionConfig(status);
 
-  return (
-    <View className={`${config.bgColor} ${config.borderColor} border-l-4 p-4 rounded-r-lg ${className}`}>
-      <View className="flex-row items-center">
-        {/* Prediction Icon */}
-        <Text className={`${config.iconColor} text-2xl mr-3`}>
-          {config.icon}
-        </Text>
+  const handlePress = () => {
+    router.push('/(tabs)/scenarios');
+  };
 
-        {/* Prediction Text */}
-        <Text className={`${config.textColor} text-sm flex-1 leading-5`}>
-          {predictionMessage}
+  return (
+    <TouchableOpacity
+      className={`${config.bgColor} ${config.borderColor} border-l-4 p-4 rounded-r-lg ${className}`}
+      onPress={handlePress}
+      activeOpacity={0.7}
+    >
+      <View className="flex-row items-center justify-between">
+        <View className="flex-row items-center flex-1">
+          {/* Prediction Icon */}
+          <Text className={`${config.iconColor} text-2xl mr-3`}>
+            {config.icon}
+          </Text>
+
+          {/* Prediction Text */}
+          <View className="flex-1">
+            <Text className={`${config.textColor} text-sm leading-5`}>
+              {predictionMessage}
+            </Text>
+            {activeScenario && (
+              <Text className={`${config.textColor} text-xs mt-1 opacity-75`}>
+                Active Plan: {activeScenario.name}
+              </Text>
+            )}
+          </View>
+        </View>
+
+        {/* Arrow indicator */}
+        <Text className={`${config.textColor} text-lg ml-2`}>
+          →
         </Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };

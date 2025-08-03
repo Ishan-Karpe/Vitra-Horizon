@@ -1,15 +1,24 @@
 import React from 'react';
-import { SafeAreaView, Text, View } from 'react-native';
+import { SafeAreaView, ScrollView, View } from 'react-native';
+
+import { FloatingActionButton } from '../../components/scenarios/FloatingActionButton';
+import { ScenariosHeader } from '../../components/scenarios/ScenariosHeader';
+import { ScenariosList } from '../../components/scenarios/ScenariosList';
+import { ViewModeToggle } from '../../components/scenarios/ViewModeToggle';
 
 export default function ScenariosTabScreen() {
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
-      <View className="flex-1 items-center justify-center px-6">
-        <Text className="text-2xl font-bold text-gray-900 mb-4">Scenario Management</Text>
-        <Text className="text-gray-600 text-center">
-          Coming Soon - Manage and compare your saved fitness scenarios and plans.
-        </Text>
-      </View>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <ScenariosHeader />
+        <ViewModeToggle />
+        <ScenariosList />
+
+        {/* Bottom spacing for tab bar */}
+        <View className="h-20" />
+      </ScrollView>
+
+      <FloatingActionButton />
     </SafeAreaView>
   );
 }

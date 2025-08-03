@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import { useGoals } from './GoalsContext';
+import { useScenarios } from './ScenariosContext';
 import { useUserData } from './UserDataContext';
 
 interface DailyAction {
@@ -61,6 +62,7 @@ export const useDashboardContext = () => {
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userData } = useUserData();
   const { goalsData } = useGoals();
+  const { scenarios, activePlanId, getScenarioById } = useScenarios();
 
   // Calculate current week and total weeks
   const currentWeek = 3; // Mock data - would be calculated from start date
@@ -124,10 +126,27 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     { week: 3, completedActions: 15, totalActions: 21, completionRate: 71 },
   ];
 
-  // Prediction message
-  const targetBodyFat = goalsData.targetBodyFat || 21;
-  const predictionDate = 'August 7th';
-  const predictionMessage = `Still on track for ${targetBodyFat}% body fat by ${predictionDate}`;
+  // Get active scenario for prediction
+  const activeScenario = activePlanId ? getScenarioById(activePlanId) : null;
+
+  // Prediction message based on active scenario
+  const targetBodyFat = activeScenario?.prediction.targetBodyFat || goalsData.targetBodyFat || 21;
+  const timelineWeeks = activeScenario?.prediction.timeline || goalsData.timelineWeeks || 12;
+  const confidence = activeScenario?.prediction.confidence || 78;
+  const fatLoss = activeScenario?.prediction.fatLoss || 8;
+  const muscleGain = activeScenario?.prediction.muscleGain || 2;
+
+  // Calculate prediction date
+  const startDate = new Date();
+  const predictionDate = new Date(startDate.getTime() + (timelineWeeks * 7 * 24 * 60 * 60 * 1000));
+  const formattedPredictionDate = predictionDate.toLocaleDateString('en-US', {
+    month: 'long',
+    day: 'numeric'
+  });
+
+  const predictionMessage = activeScenario
+    ? `Following "${activeScenario.name}" - ${confidence}% confident to reach ${targetBodyFat}% body fat by ${formattedPredictionDate} (${fatLoss} lbs fat loss, ${muscleGain} lbs muscle gain)`
+    : `Still on track for ${targetBodyFat}% body fat by ${formattedPredictionDate}`;
 
   // Toggle action completion
   const toggleAction = useCallback((actionId: string) => {

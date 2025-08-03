@@ -80,8 +80,8 @@ export default function GoalsScreen() {
     setTimeout(() => {
       setGenerating(false);
       setLoadingProgress(0);
-      // Navigate to prediction screen
-      router.push('/prediction');
+      // Navigate to scenarios screen
+      router.push('/scenarios');
     }, 500);
   };
 

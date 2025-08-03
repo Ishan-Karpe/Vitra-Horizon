@@ -1,11 +1,17 @@
-import { router } from 'expo-router';
-import React from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { router } from "expo-router";
+import React from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { BodyFatChart } from '../components/ui/BodyFatChart';
-import { ProgressIndicator } from '../components/ui/ProgressIndicator';
-import { useGoals } from '../contexts/GoalsContext';
-import { useUserData } from '../contexts/UserDataContext';
+import { BodyFatChart } from "../components/ui/BodyFatChart";
+import { ProgressIndicator } from "../components/ui/ProgressIndicator";
+import { useGoals } from "../contexts/GoalsContext";
+import { useUserData } from "../contexts/UserDataContext";
 
 export default function PredictionScreen() {
   const { userData } = useUserData();
@@ -15,27 +21,26 @@ export default function PredictionScreen() {
   const currentBodyFat = userData.bodyFatPercentage || 25;
   const targetBodyFat = goalsData.targetBodyFat || 21;
   const timelineWeeks = goalsData.timelineWeeks || 12;
-  const confidenceScore = Math.min(95, Math.max(65, 100 - Math.abs(currentBodyFat - targetBodyFat) * 3));
+  const confidenceScore = Math.min(
+    95,
+    Math.max(65, 100 - Math.abs(currentBodyFat - targetBodyFat) * 3)
+  );
 
   // Calculate fat loss and muscle gain estimates
   const bodyFatReduction = currentBodyFat - targetBodyFat;
   const estimatedFatLoss = Math.round(bodyFatReduction * 2.5); // Rough estimate
-  const estimatedMuscleGain = goalsData.selectedGoal === 'build-muscle' ? 3 : 2;
+  const estimatedMuscleGain = goalsData.selectedGoal === "build-muscle" ? 3 : 2;
 
   const handleAcceptPlan = () => {
-    console.log('Accept This Plan pressed');
+    console.log("Accept This Plan pressed");
     // Navigate to dashboard or next screen
-    router.push('/dashboard');
+    router.push("/dashboard");
   };
 
   const handleTestDifferent = () => {
-    console.log('Test Different Approach pressed');
+    console.log("Test Different Approach pressed");
     // Navigate back to goals to modify
-    router.push('/goals');
-  };
-
-  const handleBack = () => {
-    router.back();
+    router.push("/goals");
   };
 
   return (
@@ -43,18 +48,16 @@ export default function PredictionScreen() {
       <ScrollView className="flex-1 px-6 py-4">
         {/* Header */}
         <View className="mb-8">
-          <ProgressIndicator 
-            currentStep={4} 
-            totalSteps={6} 
-            className="mb-6"
-          />
-          
+          <ProgressIndicator currentStep={4} totalSteps={6} className="mb-6" />
+
           <View className="flex-row items-center justify-between mb-4">
             <Text className="text-3xl font-bold text-gray-900">
               Your Prediction
             </Text>
             <View className="bg-blue-500 px-3 py-1 rounded-full">
-              <Text className="text-white text-sm font-medium">{confidenceScore}% confident</Text>
+              <Text className="text-white text-sm font-medium">
+                {confidenceScore}% confident
+              </Text>
             </View>
           </View>
         </View>
@@ -65,14 +68,20 @@ export default function PredictionScreen() {
             {/* Current */}
             <View className="items-center flex-1">
               <Text className="text-gray-500 text-sm mb-2">Current</Text>
-              <Text className="text-4xl font-bold text-gray-900 mb-1">{currentBodyFat}%</Text>
+              <Text className="text-4xl font-bold text-gray-900 mb-1">
+                {currentBodyFat}%
+              </Text>
               <Text className="text-gray-500 text-sm">body fat</Text>
             </View>
 
             {/* Future */}
             <View className="items-center flex-1">
-              <Text className="text-blue-500 text-sm mb-2">{timelineWeeks} weeks from now</Text>
-              <Text className="text-4xl font-bold text-blue-500 mb-1">{targetBodyFat}%</Text>
+              <Text className="text-blue-500 text-sm mb-2">
+                {timelineWeeks} weeks from now
+              </Text>
+              <Text className="text-4xl font-bold text-blue-500 mb-1">
+                {targetBodyFat}%
+              </Text>
               <Text className="text-blue-500 text-sm">body fat</Text>
             </View>
           </View>
@@ -93,7 +102,9 @@ export default function PredictionScreen() {
             <View className="w-8 h-8 bg-blue-100 rounded-full items-center justify-center mr-3">
               <Text className="text-blue-600 text-sm">📉</Text>
             </View>
-            <Text className="text-gray-700 flex-1">Fat loss: {estimatedFatLoss} lbs</Text>
+            <Text className="text-gray-700 flex-1">
+              Fat loss: {estimatedFatLoss} lbs
+            </Text>
           </View>
 
           {/* Muscle Gain */}
@@ -101,7 +112,9 @@ export default function PredictionScreen() {
             <View className="w-8 h-8 bg-orange-100 rounded-full items-center justify-center mr-3">
               <Text className="text-orange-600 text-sm">💪</Text>
             </View>
-            <Text className="text-gray-700 flex-1">Muscle gain: {estimatedMuscleGain} lbs</Text>
+            <Text className="text-gray-700 flex-1">
+              Muscle gain: {estimatedMuscleGain} lbs
+            </Text>
           </View>
 
           {/* Timeline */}
@@ -109,13 +122,15 @@ export default function PredictionScreen() {
             <View className="w-8 h-8 bg-gray-100 rounded-full items-center justify-center mr-3">
               <Text className="text-gray-600 text-sm">⏱️</Text>
             </View>
-            <Text className="text-gray-700 flex-1">Timeline: {timelineWeeks} weeks</Text>
+            <Text className="text-gray-700 flex-1">
+              Timeline: {timelineWeeks} weeks
+            </Text>
           </View>
         </View>
 
         {/* Action Buttons */}
         <View className="space-y-4">
-          <TouchableOpacity 
+          <TouchableOpacity
             className="bg-green-500 py-4 px-8 rounded-xl"
             onPress={handleAcceptPlan}
           >
@@ -123,8 +138,8 @@ export default function PredictionScreen() {
               Accept This Plan
             </Text>
           </TouchableOpacity>
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             className="bg-transparent border-2 border-blue-500 py-4 px-8 rounded-xl"
             onPress={handleTestDifferent}
           >

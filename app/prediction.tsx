@@ -33,8 +33,8 @@ export default function PredictionScreen() {
 
   const handleAcceptPlan = () => {
     console.log("Accept This Plan pressed");
-    // Navigate to dashboard or next screen
-    router.push("/dashboard");
+    // Navigate to main app dashboard
+    router.push("/(tabs)");
   };
 
   const handleTestDifferent = () => {

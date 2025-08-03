@@ -25,8 +25,8 @@ export default function ScenariosScreen() {
 
   const handleSaveScenario = () => {
     saveScenario();
-    console.log('Scenario saved, navigating to dashboard');
-    router.push('/dashboard');
+    console.log('Scenario saved, navigating to main app dashboard');
+    router.push('/(tabs)');
   };
 
   const handleTryAnother = () => {

@@ -19,7 +19,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ className = '' }
     switch (status) {
       case 'on-track':
         return {
-          icon: '🎯',
+          icon: '●',
           borderColor: 'border-blue-500',
           bgColor: 'bg-blue-50',
           textColor: 'text-blue-700',
@@ -27,7 +27,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ className = '' }
         };
       case 'behind':
         return {
-          icon: '⚠️',
+          icon: '▲',
           borderColor: 'border-orange-500',
           bgColor: 'bg-orange-50',
           textColor: 'text-orange-700',
@@ -35,7 +35,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ className = '' }
         };
       default:
         return {
-          icon: '🚀',
+          icon: '↗',
           borderColor: 'border-green-500',
           bgColor: 'bg-green-50',
           textColor: 'text-green-700',
@@ -68,9 +68,13 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ className = '' }
             <Text className={`${config.textColor} text-sm leading-5`}>
               {predictionMessage}
             </Text>
-            {activeScenario && (
+            {activeScenario ? (
               <Text className={`${config.textColor} text-xs mt-1 opacity-75`}>
                 Active Plan: {activeScenario.name}
+              </Text>
+            ) : (
+              <Text className={`${config.textColor} text-xs mt-1 opacity-75`}>
+                Tap to explore alternative scenarios and optimize your plan
               </Text>
             )}
           </View>

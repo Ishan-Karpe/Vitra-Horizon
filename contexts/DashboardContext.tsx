@@ -64,9 +64,12 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { goalsData } = useGoals();
   const { scenarios, activePlanId, getScenarioById } = useScenarios();
 
-  // Calculate current week and total weeks
+  // Get active scenario for timeline calculation
+  const activeScenario = activePlanId ? getScenarioById(activePlanId) : null;
+
+  // Calculate current week and total weeks from active plan or default goals
   const currentWeek = 3; // Mock data - would be calculated from start date
-  const totalWeeks = goalsData.timelineWeeks || 12;
+  const totalWeeks = activeScenario?.prediction.timeline || goalsData.timelineWeeks || 12;
   
   // Today's date formatting
   const today = new Date();
@@ -126,8 +129,7 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     { week: 3, completedActions: 15, totalActions: 21, completionRate: 71 },
   ];
 
-  // Get active scenario for prediction
-  const activeScenario = activePlanId ? getScenarioById(activePlanId) : null;
+
 
   // Prediction message based on active scenario
   const targetBodyFat = activeScenario?.prediction.targetBodyFat || goalsData.targetBodyFat || 21;
@@ -145,8 +147,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   });
 
   const predictionMessage = activeScenario
-    ? `Following "${activeScenario.name}" - ${confidence}% confident to reach ${targetBodyFat}% body fat by ${formattedPredictionDate} (${fatLoss} lbs fat loss, ${muscleGain} lbs muscle gain)`
-    : `Still on track for ${targetBodyFat}% body fat by ${formattedPredictionDate}`;
+    ? `Following "${activeScenario.name}" - ${Number(confidence).toFixed(1)}% confident to reach ${Number(targetBodyFat).toFixed(1)}% body fat by ${formattedPredictionDate} (${fatLoss} lbs fat loss, ${muscleGain} lbs muscle gain)`
+    : `Still on track for ${Number(targetBodyFat).toFixed(1)}% body fat by ${formattedPredictionDate}`;
 
   // Toggle action completion
   const toggleAction = useCallback((actionId: string) => {

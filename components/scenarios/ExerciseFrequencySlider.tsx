@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 interface ExerciseFrequencySliderProps {
   value: number;
@@ -24,6 +24,13 @@ export const ExerciseFrequencySlider: React.FC<ExerciseFrequencySliderProps> = (
       <Text className="text-lg font-medium text-gray-700">
         Exercise frequency
       </Text>
+
+      {/* Current Value Display - Bold Blue Text */}
+      <View className="items-center mb-2">
+        <Text className="text-3xl font-bold text-blue-600">
+          {Number(value).toFixed(0)} {value === 1 ? 'time' : 'times'}/week
+        </Text>
+      </View>
 
       {/* Slider Container */}
       <View className="relative">
@@ -53,25 +60,10 @@ export const ExerciseFrequencySlider: React.FC<ExerciseFrequencySliderProps> = (
           <Text className="text-sm text-blue-500">7 times/week</Text>
         </View>
 
-        {/* Current Value Display */}
-        <View className="absolute -top-8 left-0 right-0 items-center">
-          <View 
-            className="bg-gray-800 px-3 py-1 rounded-lg"
-            style={{
-              left: `${((value - 1) / 6) * 100}%`,
-              transform: [{ translateX: -20 }],
-            }}
-          >
-            <Text className="text-white text-sm font-medium">
-              {value} {value === 1 ? 'time' : 'times'}/week
-            </Text>
-          </View>
-        </View>
-
         {/* Calculating Indicator */}
         {isCalculating && (
-          <View className="absolute -bottom-6 left-0 right-0 items-center">
-            <Text className="text-xs text-blue-500 animate-pulse">
+          <View className="absolute -bottom-8 left-0 right-0 items-center">
+            <Text className="text-lg font-bold text-blue-600 animate-pulse">
               Updating prediction...
             </Text>
           </View>

@@ -1,7 +1,92 @@
+import { router } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+
+import { useGoals } from '../../contexts/GoalsContext';
+import { useScenarios } from '../../contexts/ScenariosContext';
+import { useUserData } from '../../contexts/UserDataContext';
 
 export default function ProfileScreen() {
+  const { userData, resetUserData } = useUserData();
+  const { goalsData, resetGoals } = useGoals();
+  const { clearAllScenarios } = useScenarios();
+
+  const handleEditProfile = () => {
+    router.push('/edit-profile' as any);
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      'Log Out',
+      'Are you sure you want to log out? This will clear all your data and return you to the welcome screen.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              // Clear all app data
+              await resetUserData();
+              await resetGoals();
+              await clearAllScenarios();
+
+              // Navigate to welcome screen immediately
+              router.replace('/welcome');
+            } catch (error) {
+              console.error('Error during logout:', error);
+              Alert.alert(
+                'Error',
+                'There was an error logging out. Please try again.'
+              );
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  // Helper functions for display
+  const getDisplayName = () => {
+    return userData.name || 'User';
+  };
+
+  const getInitials = () => {
+    const name = getDisplayName();
+    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+  };
+
+  const getHeightDisplay = () => {
+    return `${userData.heightFeet}'${userData.heightInches}"`;
+  };
+
+  const getGoalDisplay = () => {
+    if (!goalsData.selectedGoal) return 'No goal set';
+
+    const goalMap: { [key: string]: string } = {
+      'lose-fat': 'Lose Fat',
+      'build-muscle': 'Build Muscle',
+      'body-recomposition': 'Body Recomposition'
+    };
+
+    const goalName = goalMap[goalsData.selectedGoal] || goalsData.selectedGoal;
+    return `${goalName} to ${Number(goalsData.targetBodyFat).toFixed(1)}%`;
+  };
+
+  const getActivityDisplay = () => {
+    const activityMap: { [key: string]: string } = {
+      'sedentary': 'Sedentary',
+      'lightly-active': 'Lightly Active',
+      'moderately-active': 'Moderately Active',
+      'very-active': 'Very Active',
+      'extremely-active': 'Extremely Active'
+    };
+
+    return activityMap[userData.activityLevel] || 'Not specified';
+  };
   return (
     <SafeAreaView className="flex-1 bg-gray-50">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -19,17 +104,20 @@ export default function ProfileScreen() {
             <View className="flex-row items-center">
               {/* Avatar Circle */}
               <View className="w-16 h-16 bg-gray-300 rounded-full items-center justify-center mr-4">
-                <Text className="text-gray-600 text-xl font-bold">IK</Text>
+                <Text className="text-gray-600 text-xl font-bold">{getInitials()}</Text>
               </View>
 
               {/* User Info */}
               <View className="flex-1">
-                <Text className="text-xl font-semibold text-gray-900">Ishan Karpe</Text>
-                <Text className="text-gray-500 text-sm">ishan@example.com</Text>
+                <Text className="text-xl font-semibold text-gray-900">{getDisplayName()}</Text>
+                <Text className="text-gray-500 text-sm">
+                  {userData.age ? `${userData.age} years old` : 'Age not specified'}
+                  {userData.gender ? ` • ${userData.gender}` : ''}
+                </Text>
               </View>
 
               {/* Edit Profile Button */}
-              <TouchableOpacity activeOpacity={0.7}>
+              <TouchableOpacity activeOpacity={0.7} onPress={handleEditProfile}>
                 <Text className="text-blue-600 text-sm font-medium">Edit Profile ›</Text>
               </TouchableOpacity>
             </View>
@@ -37,13 +125,15 @@ export default function ProfileScreen() {
 
           {/* Profile Information Section */}
           <View className="bg-white rounded-lg shadow-sm mx-6 mb-6">
-            {/* Joined Row */}
+            {/* Physical Stats Row */}
             <View className="flex-row justify-between items-center py-4 px-6 border-b border-gray-100">
               <View className="flex-row items-center">
-                <Text className="mr-3 text-lg">📅</Text>
-                <Text className="text-gray-700">Joined</Text>
+                <Text className="mr-3 text-lg">📏</Text>
+                <Text className="text-gray-700">Physical Stats</Text>
               </View>
-              <Text className="text-gray-900 font-medium text-right">July 2025</Text>
+              <Text className="text-gray-900 font-medium text-right">
+                {userData.weight} lbs • {getHeightDisplay()} • {Number(userData.bodyFatPercentage).toFixed(1)}% BF
+              </Text>
             </View>
 
             {/* Goal Row */}
@@ -52,25 +142,27 @@ export default function ProfileScreen() {
                 <Text className="mr-3 text-lg">🎯</Text>
                 <Text className="text-gray-700">Goal</Text>
               </View>
-              <Text className="text-gray-900 font-medium text-right">Cut body fat to 21%</Text>
+              <Text className="text-gray-900 font-medium text-right">{getGoalDisplay()}</Text>
             </View>
 
             {/* Activity Row */}
             <View className="flex-row justify-between items-center py-4 px-6 border-b border-gray-100">
               <View className="flex-row items-center">
                 <Text className="mr-3 text-lg">🏃</Text>
-                <Text className="text-gray-700">Activity</Text>
+                <Text className="text-gray-700">Activity Level</Text>
               </View>
-              <Text className="text-gray-900 font-medium text-right">Strength & Cardio 4x/wk</Text>
+              <Text className="text-gray-900 font-medium text-right">{getActivityDisplay()}</Text>
             </View>
 
-            {/* Diet Row */}
+            {/* Timeline Row */}
             <View className="flex-row justify-between items-center py-4 px-6">
               <View className="flex-row items-center">
-                <Text className="mr-3 text-lg">🥗</Text>
-                <Text className="text-gray-700">Diet</Text>
+                <Text className="mr-3 text-lg">⏱️</Text>
+                <Text className="text-gray-700">Timeline</Text>
               </View>
-              <Text className="text-gray-900 font-medium text-right">200 Cal deficit</Text>
+              <Text className="text-gray-900 font-medium text-right">
+                {goalsData.timelineWeeks} weeks
+              </Text>
             </View>
           </View>
 
@@ -102,7 +194,7 @@ export default function ProfileScreen() {
 
             {/* Help & Support Row */}
             <TouchableOpacity
-              className="flex-row justify-between items-center py-4 px-6"
+              className="flex-row justify-between items-center py-4 px-6 border-b border-gray-100"
               activeOpacity={0.7}
             >
               <View className="flex-row items-center">
@@ -111,15 +203,20 @@ export default function ProfileScreen() {
               </View>
               <Text className="text-gray-400 text-lg">›</Text>
             </TouchableOpacity>
-          </View>
 
-          {/* Logout Button */}
-          <TouchableOpacity
-            className="bg-red-500 rounded-lg py-4 mx-6 mb-8"
-            activeOpacity={0.8}
-          >
-            <Text className="text-white text-center font-semibold text-lg">Log Out</Text>
-          </TouchableOpacity>
+            {/* Log Out Row */}
+            <TouchableOpacity
+              className="flex-row justify-between items-center py-4 px-6"
+              activeOpacity={0.7}
+              onPress={handleLogout}
+            >
+              <View className="flex-row items-center">
+                <Text className="mr-3 text-lg">🚪</Text>
+                <Text className="text-red-600 font-medium">Log Out</Text>
+              </View>
+              <Text className="text-red-400 text-lg">›</Text>
+            </TouchableOpacity>
+          </View>
 
           {/* Bottom spacing for tab bar */}
           <View className="h-20" />

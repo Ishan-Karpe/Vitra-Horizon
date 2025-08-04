@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 interface CalorieDeficitSliderProps {
   value: number;
@@ -41,6 +41,13 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
         Daily calorie deficit
       </Text>
 
+      {/* Current Value Display - Bold Blue Text */}
+      <View className="items-center mb-2">
+        <Text className="text-3xl font-bold text-blue-600">
+          {Number(value).toFixed(0)} calories
+        </Text>
+      </View>
+
       {/* Slider Container */}
       <View className="relative">
         <Slider
@@ -69,25 +76,10 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
           <Text className="text-sm text-blue-500">300 calories</Text>
         </View>
 
-        {/* Current Value Display */}
-        <View className="absolute -top-8 left-0 right-0 items-center">
-          <View 
-            className="bg-gray-800 px-3 py-1 rounded-lg"
-            style={{
-              left: `${(value / 300) * 100}%`,
-              transform: [{ translateX: -30 }],
-            }}
-          >
-            <Text className="text-white text-sm font-medium">
-              {value} calories
-            </Text>
-          </View>
-        </View>
-
         {/* Calculating Indicator */}
         {isCalculating && (
-          <View className="absolute -bottom-6 left-0 right-0 items-center">
-            <Text className="text-xs text-blue-500 animate-pulse">
+          <View className="absolute -bottom-8 left-0 right-0 items-center">
+            <Text className="text-lg font-bold text-blue-600 animate-pulse">
               Updating prediction...
             </Text>
           </View>
@@ -99,7 +91,7 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
         <Text className={`text-sm font-medium ${getDeficitColor(value)}`}>
           {getDeficitLevel(value)}
         </Text>
-        
+
         {value > 250 && (
           <Text className="text-xs text-red-500">
             ⚠️ High deficit - ensure adequate nutrition

@@ -1,14 +1,14 @@
-import React from 'react';
-import { TouchableOpacity, Text } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
+import React from 'react';
+import { Text, TouchableOpacity } from 'react-native';
 
 export const FloatingActionButton: React.FC = () => {
   const router = useRouter();
 
   const handlePress = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    router.push('/edit-scenario');
+    router.push('/create-scenario');
   };
 
   return (

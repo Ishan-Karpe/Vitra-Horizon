@@ -1,4 +1,5 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 
 export interface GoalsData {
   selectedGoal: string;
@@ -46,6 +47,28 @@ interface GoalsProviderProps {
   children: ReactNode;
 }
 
+// Storage key for goals data
+const GOALS_DATA_STORAGE_KEY = '@goalsData';
+
+// Storage helper functions
+const saveGoalsDataToStorage = async (data: GoalsData) => {
+  try {
+    await AsyncStorage.setItem(GOALS_DATA_STORAGE_KEY, JSON.stringify(data));
+  } catch (error) {
+    console.error('Error saving goals data to storage:', error);
+  }
+};
+
+const loadGoalsDataFromStorage = async (): Promise<GoalsData | null> => {
+  try {
+    const stored = await AsyncStorage.getItem(GOALS_DATA_STORAGE_KEY);
+    return stored ? JSON.parse(stored) : null;
+  } catch (error) {
+    console.error('Error loading goals data from storage:', error);
+    return null;
+  }
+};
+
 export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
   const [goalsData, setGoalsData] = useState<GoalsData>({
     selectedGoal: '',
@@ -59,6 +82,33 @@ export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
     timeline?: string;
     targetBodyFat?: string;
   }>({});
+
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load goals data from storage on mount
+  useEffect(() => {
+    const loadStoredData = async () => {
+      try {
+        const storedData = await loadGoalsDataFromStorage();
+        if (storedData) {
+          setGoalsData(storedData);
+        }
+        setIsLoaded(true);
+      } catch (error) {
+        console.error('Error loading stored goals data:', error);
+        setIsLoaded(true);
+      }
+    };
+
+    loadStoredData();
+  }, []);
+
+  // Save goals data to storage whenever it changes
+  useEffect(() => {
+    if (isLoaded) {
+      saveGoalsDataToStorage(goalsData);
+    }
+  }, [goalsData, isLoaded]);
 
   const getRecommendedTimeline = (goal: string) => {
     switch (goal) {
@@ -179,11 +229,13 @@ export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
   };
 
   const updateTargetBodyFat = (percentage: number, currentBodyFat: number = 20, goalOverride?: string) => {
-    setGoalsData(prev => ({ ...prev, targetBodyFat: percentage }));
+    // Round to 1 decimal place
+    const roundedPercentage = Math.round(percentage * 10) / 10;
+    setGoalsData(prev => ({ ...prev, targetBodyFat: roundedPercentage }));
 
     // Use goalOverride if provided, otherwise use current selected goal
     const goalToValidate = goalOverride || goalsData.selectedGoal;
-    const bodyFatError = validateTargetBodyFat(percentage, goalToValidate, currentBodyFat);
+    const bodyFatError = validateTargetBodyFat(roundedPercentage, goalToValidate, currentBodyFat);
     setValidationMessages(prev => ({ ...prev, targetBodyFat: bodyFatError }));
   };
 
@@ -205,14 +257,22 @@ export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
     return !goalError && !timelineError && !bodyFatError;
   };
 
-  const resetGoals = () => {
-    setGoalsData({
+  const resetGoals = async () => {
+    const defaultData: GoalsData = {
       selectedGoal: '',
       timelineWeeks: 8,
       targetBodyFat: 15,
       isGenerating: false,
-    });
+    };
+
+    setGoalsData(defaultData);
     setValidationMessages({});
+
+    try {
+      await AsyncStorage.removeItem(GOALS_DATA_STORAGE_KEY);
+    } catch (error) {
+      console.error('Error clearing goals data from storage:', error);
+    }
   };
 
   const validation: GoalsValidation = {

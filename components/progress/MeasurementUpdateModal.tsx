@@ -1,15 +1,15 @@
+import * as Haptics from 'expo-haptics';
 import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  Modal,
-  TouchableOpacity,
-  TextInput,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
+    Alert,
+    KeyboardAvoidingView,
+    Modal,
+    Platform,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
-import * as Haptics from 'expo-haptics';
 import { useProgress } from '../../contexts/ProgressContext';
 
 interface MeasurementUpdateModalProps {
@@ -22,7 +22,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
   onClose,
 }) => {
   const { measurements, updateMeasurements } = useProgress();
-  
+
+  const [weight, setWeight] = useState((measurements.weight || 0).toString());
+  const [bodyFat, setBodyFat] = useState((measurements.bodyFatPercentage || 0).toString());
   const [chest, setChest] = useState(measurements.chest.toString());
   const [waist, setWaist] = useState(measurements.waist.toString());
   const [hips, setHips] = useState(measurements.hips.toString());
@@ -30,37 +32,56 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
 
   const handleSave = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     // Validate inputs
+    const weightNum = parseFloat(weight);
+    const bodyFatNum = parseFloat(bodyFat);
     const chestNum = parseFloat(chest);
     const waistNum = parseFloat(waist);
     const hipsNum = parseFloat(hips);
     const armsNum = parseFloat(arms);
 
-    if (isNaN(chestNum) || isNaN(waistNum) || isNaN(hipsNum) || isNaN(armsNum)) {
+    if (isNaN(weightNum) || isNaN(bodyFatNum) || isNaN(chestNum) || isNaN(waistNum) || isNaN(hipsNum) || isNaN(armsNum)) {
       Alert.alert('Invalid Input', 'Please enter valid numbers for all measurements.');
       return;
     }
 
+    // Additional validation for reasonable ranges
+    if (weightNum < 50 || weightNum > 500) {
+      Alert.alert('Invalid Weight', 'Please enter a weight between 50 and 500 lbs.');
+      return;
+    }
+
+    if (bodyFatNum < 5 || bodyFatNum > 50) {
+      Alert.alert('Invalid Body Fat', 'Please enter a body fat percentage between 5% and 50%.');
+      return;
+    }
+
     // Calculate changes
+    const weightChange = weightNum - (measurements.weight || 0);
+    const bodyFatChange = bodyFatNum - (measurements.bodyFatPercentage || 0);
     const chestChange = chestNum - measurements.chest;
     const waistChange = waistNum - measurements.waist;
     const hipsChange = hipsNum - measurements.hips;
     const armsChange = armsNum - measurements.arms;
 
-    // Update measurements
+    // Update measurements (this will propagate to UserDataContext)
     updateMeasurements({
+      weight: weightNum,
+      bodyFatPercentage: bodyFatNum,
       chest: chestNum,
       waist: waistNum,
       hips: hipsNum,
       arms: armsNum,
+      weightChange,
+      bodyFatChange,
       chestChange,
       waistChange,
       hipsChange,
       armsChange,
     });
 
-    Alert.alert('Success', 'Measurements updated successfully!');
+    Alert.alert('Success', 'All measurements updated successfully! Your goals and progress have been automatically updated.');
     onClose();
   };
 
@@ -87,6 +108,28 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
             </Text>
 
             <View className="space-y-4">
+              <View>
+                <Text className="text-gray-700 font-medium mb-2">Weight (lbs)</Text>
+                <TextInput
+                  className="border border-gray-300 rounded-lg px-4 py-3"
+                  value={weight}
+                  onChangeText={setWeight}
+                  keyboardType="numeric"
+                  placeholder="Enter current weight"
+                />
+              </View>
+
+              <View>
+                <Text className="text-gray-700 font-medium mb-2">Body Fat (%)</Text>
+                <TextInput
+                  className="border border-gray-300 rounded-lg px-4 py-3"
+                  value={bodyFat}
+                  onChangeText={setBodyFat}
+                  keyboardType="numeric"
+                  placeholder="Enter body fat percentage"
+                />
+              </View>
+
               <View>
                 <Text className="text-gray-700 font-medium mb-2">Chest (inches)</Text>
                 <TextInput

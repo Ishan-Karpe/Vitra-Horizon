@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
 import Slider from '@react-native-community/slider';
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface BodyFatSliderProps {
   value: number;
@@ -19,6 +19,12 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
   max,
   className = ''
 }) => {
+  const handleValueChange = (newValue: number) => {
+    // Round to 1 decimal place before passing to parent
+    const roundedValue = Math.round(newValue * 10) / 10;
+    onValueChange(roundedValue);
+  };
+
   return (
     <View className={`w-full ${className}`}>
       {/* Label and Not Sure Link */}
@@ -34,7 +40,7 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
       {/* Current Value Display */}
       <View className="items-center mb-6">
         <Text className="text-3xl font-bold text-blue-600">
-          {Math.round(value)}%
+          {Number(value).toFixed(1)}%
         </Text>
       </View>
       
@@ -45,7 +51,7 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
           minimumValue={min}
           maximumValue={max}
           value={value}
-          onValueChange={onValueChange}
+          onValueChange={handleValueChange}
           minimumTrackTintColor="#2563eb"
           maximumTrackTintColor="#e5e7eb"
           thumbStyle={{

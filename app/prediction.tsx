@@ -56,8 +56,8 @@ export default function PredictionScreen() {
 
   const handleExploreScenarios = () => {
     console.log("Explore Scenarios pressed");
-    // Navigate to scenarios screen
-    router.push("/scenarios");
+    // Navigate to onboarding scenario screen
+    router.push("/scenario");
   };
 
   return (
@@ -65,7 +65,7 @@ export default function PredictionScreen() {
       <ScrollView className="flex-1 px-6 py-4">
         {/* Header */}
         <View className="mb-8">
-          <ProgressIndicator currentStep={4} totalSteps={6} className="mb-6" />
+          <ProgressIndicator currentStep={3} totalSteps={4} className="mb-6" />
 
           <View className="flex-row items-center justify-between mb-4">
             <Text className="text-3xl font-bold text-gray-900">
@@ -73,7 +73,7 @@ export default function PredictionScreen() {
             </Text>
             <View className="bg-blue-500 px-3 py-1 rounded-full">
               <Text className="text-white text-sm font-medium">
-                {confidenceScore}% confident
+                {Number(confidenceScore).toFixed(1)}% confident
               </Text>
             </View>
           </View>
@@ -86,7 +86,7 @@ export default function PredictionScreen() {
             <View className="items-center flex-1">
               <Text className="text-gray-500 text-sm mb-2">Current</Text>
               <Text className="text-4xl font-bold text-gray-900 mb-1">
-                {currentBodyFat}%
+                {Number(currentBodyFat).toFixed(1)}%
               </Text>
               <Text className="text-gray-500 text-sm">body fat</Text>
             </View>
@@ -97,7 +97,7 @@ export default function PredictionScreen() {
                 {timelineWeeks} weeks from now
               </Text>
               <Text className="text-4xl font-bold text-blue-500 mb-1">
-                {targetBodyFat}%
+                {Number(targetBodyFat).toFixed(1)}%
               </Text>
               <Text className="text-blue-500 text-sm">body fat</Text>
             </View>

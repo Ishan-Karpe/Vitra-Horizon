@@ -1,7 +1,7 @@
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
 import React from 'react';
-import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { Alert, Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { Scenario, useScenarios } from '../../contexts/ScenariosContext';
 
@@ -12,7 +12,7 @@ interface ScenarioCardProps {
 const screenWidth = Dimensions.get('window').width;
 
 export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
-  const { setActivePlan, activePlanId } = useScenarios();
+  const { setActivePlan, activePlanId, deleteScenario, scenarios } = useScenarios();
   const router = useRouter();
 
   const handleEditScenario = async () => {
@@ -26,6 +26,30 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
   const handleSetAsPlan = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setActivePlan(scenario.id);
+  };
+
+  const handleDeleteScenario = async () => {
+    await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
+    Alert.alert(
+      'Delete Scenario',
+      `Are you sure you want to delete "${scenario.name}"? This action cannot be undone.${
+        scenarios.length <= 1 ? '\n\nNote: A new default scenario will be created automatically.' : ''
+      }`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            deleteScenario(scenario.id);
+          },
+        },
+      ]
+    );
   };
 
   // Generate chart data for 12-week progression
@@ -84,7 +108,7 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
           <Text className="text-sm text-gray-500 mr-3">Created {scenario.createdDate}</Text>
           <View className="bg-blue-100 px-3 py-1 rounded-full">
             <Text className="text-blue-700 text-sm font-medium">
-              {scenario.prediction.confidence}% confident
+              {Number(scenario.prediction.confidence).toFixed(1)}% confident
             </Text>
           </View>
         </View>
@@ -114,14 +138,14 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
         <View className="flex-1 text-center">
           <Text className="text-sm text-gray-500 mb-1">Current</Text>
           <Text className="text-3xl font-bold text-gray-600">
-            {scenario.prediction.currentBodyFat} %
+            {Number(scenario.prediction.currentBodyFat).toFixed(1)}%
           </Text>
           <Text className="text-sm text-gray-500">body fat</Text>
         </View>
         <View className="flex-1 text-center">
           <Text className="text-sm text-gray-500 mb-1">After {scenario.prediction.timeline} weeks</Text>
           <Text className="text-3xl font-bold text-blue-600">
-            {scenario.prediction.targetBodyFat} %
+            {Number(scenario.prediction.targetBodyFat).toFixed(1)}%
           </Text>
           <Text className="text-sm text-gray-500">body fat</Text>
         </View>
@@ -152,12 +176,12 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
       <View className="flex-row justify-between mb-4">
         <View className="flex-row items-center">
           <Text className="text-gray-600 text-sm">
-            📉 Fat loss: {Math.round(scenario.prediction.fatLoss * 10) / 10} lbs
+            📉 Fat loss: {Number(scenario.prediction.fatLoss).toFixed(2)} lbs
           </Text>
         </View>
         <View className="flex-row items-center">
           <Text className="text-gray-600 text-sm">
-            💪 Muscle gain: {Math.round(scenario.prediction.muscleGain * 10) / 10} lbs
+            💪 Muscle gain: {Number(scenario.prediction.muscleGain).toFixed(2)} lbs
           </Text>
         </View>
       </View>
@@ -169,15 +193,15 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
       </View>
 
       {/* Action Buttons */}
-      <View className="flex-row gap-3">
+      <View className="flex-row gap-2">
         <TouchableOpacity
           className="flex-1 border border-blue-500 rounded-lg py-3"
           onPress={handleEditScenario}
           activeOpacity={0.7}
         >
-          <Text className="text-blue-500 text-center font-medium">Edit Scenario</Text>
+          <Text className="text-blue-500 text-center font-medium">Edit</Text>
         </TouchableOpacity>
-        
+
         <TouchableOpacity
           className={`flex-1 rounded-lg py-3 ${
             activePlanId === scenario.id ? 'bg-gray-400' : 'bg-green-500'
@@ -187,8 +211,16 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
           disabled={activePlanId === scenario.id}
         >
           <Text className="text-white text-center font-medium">
-            {activePlanId === scenario.id ? 'Active Plan' : 'Set as Plan'}
+            {activePlanId === scenario.id ? 'Active' : 'Set as Plan'}
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          className="border border-red-500 rounded-lg py-3 px-4"
+          onPress={handleDeleteScenario}
+          activeOpacity={0.7}
+        >
+          <Text className="text-red-500 text-center font-medium">🗑️</Text>
         </TouchableOpacity>
       </View>
     </View>

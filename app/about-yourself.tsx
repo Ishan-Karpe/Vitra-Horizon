@@ -46,7 +46,7 @@ export default function AboutYourselfScreen() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         {/* Header Section */}
         <View className="px-6 pt-6 pb-4">
-          <ProgressIndicator currentStep={2} totalSteps={6} />
+          <ProgressIndicator currentStep={1} totalSteps={4} />
           <Text className="text-2xl font-bold text-gray-900 mt-6 mb-2">
             Tell us about yourself
           </Text>

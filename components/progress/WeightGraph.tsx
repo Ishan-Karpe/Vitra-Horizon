@@ -1,12 +1,39 @@
-import React from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, Text, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useProgress } from '../../contexts/ProgressContext';
 
-const screenWidth = Dimensions.get('window').width;
-
 export const WeightGraph: React.FC = () => {
   const { getFilteredWeightData, getCurrentWeight, getWeightTrend } = useProgress();
+
+  // Responsive dimensions
+  const [screenData, setScreenData] = useState(Dimensions.get('window'));
+
+  useEffect(() => {
+    const onChange = (result: any) => {
+      setScreenData(result.window);
+    };
+
+    const subscription = Dimensions.addEventListener('change', onChange);
+    return () => subscription?.remove();
+  }, []);
+
+  // Calculate responsive chart dimensions
+  const getChartWidth = () => {
+    const padding = 48; // Total horizontal padding (24px on each side)
+    const minWidth = 280; // Minimum chart width for readability
+    const maxWidth = 400; // Maximum chart width to prevent oversizing
+    const availableWidth = screenData.width - padding;
+
+    return Math.min(maxWidth, Math.max(minWidth, availableWidth));
+  };
+
+  const getChartHeight = () => {
+    // Responsive height based on screen size
+    if (screenData.width < 375) return 180; // Small phones
+    if (screenData.width < 414) return 200; // Medium phones
+    return 220; // Large phones and tablets
+  };
   
   const weightData = getFilteredWeightData();
   const currentWeight = getCurrentWeight();
@@ -87,25 +114,27 @@ export const WeightGraph: React.FC = () => {
       </View>
 
       {weightData.length > 0 ? (
-        <LineChart
-          data={chartData}
-          width={screenWidth - 80} // Account for padding
-          height={200}
-          chartConfig={chartConfig}
-          bezier
-          style={{
-            marginVertical: 8,
-            borderRadius: 16,
-          }}
-          withInnerLines={true}
-          withOuterLines={false}
-          withVerticalLines={false}
-          withHorizontalLines={true}
-          withDots={true}
-          withShadow={false}
-        />
+        <View className="items-center">
+          <LineChart
+            data={chartData}
+            width={getChartWidth()}
+            height={getChartHeight()}
+            chartConfig={chartConfig}
+            bezier
+            style={{
+              marginVertical: 8,
+              borderRadius: 16,
+            }}
+            withInnerLines={true}
+            withOuterLines={false}
+            withVerticalLines={false}
+            withHorizontalLines={true}
+            withDots={true}
+            withShadow={false}
+          />
+        </View>
       ) : (
-        <View className="h-48 items-center justify-center">
+        <View className="items-center justify-center" style={{ height: getChartHeight() }}>
           <Text className="text-gray-500">No weight data available</Text>
         </View>
       )}

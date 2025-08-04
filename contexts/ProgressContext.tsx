@@ -10,10 +10,14 @@ export interface DataPoint {
 }
 
 export interface MeasurementData {
+  weight?: number;
+  bodyFatPercentage?: number;
   chest: number;
   waist: number;
   hips: number;
   arms: number;
+  weightChange?: number;
+  bodyFatChange?: number;
   chestChange: number;
   waistChange: number;
   hipsChange: number;
@@ -79,8 +83,8 @@ export const useProgress = () => {
 };
 
 export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { userData } = useUserData();
-  const { goalsData } = useGoals();
+  const { userData, updateUserData } = useUserData();
+  const { goalsData, updateTargetBodyFat } = useGoals();
   
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('Week');
   
@@ -149,15 +153,19 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return data;
   }, [userData.bodyFatPercentage, goalsData.targetBodyFat, goalsData.timelineWeeks]);
 
-  const [weightData] = useState<DataPoint[]>(generateWeightData);
-  const [bodyFatData] = useState<DataPoint[]>(generateBodyFatData);
+  const [weightData, setWeightData] = useState<DataPoint[]>(generateWeightData);
+  const [bodyFatData, setBodyFatData] = useState<DataPoint[]>(generateBodyFatData);
   
   // Measurements with realistic changes
   const [measurements, setMeasurements] = useState<MeasurementData>({
+    weight: userData.weight,
+    bodyFatPercentage: userData.bodyFatPercentage,
     chest: 42,
     waist: 34,
     hips: 38,
     arms: 14,
+    weightChange: 0,
+    bodyFatChange: 0,
     chestChange: 1,
     waistChange: -2,
     hipsChange: -1,
@@ -261,7 +269,31 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const updateMeasurements = useCallback((newMeasurements: Partial<MeasurementData>) => {
     setMeasurements(prev => ({ ...prev, ...newMeasurements }));
-  }, []);
+
+    // If weight is being updated, propagate to UserDataContext and update weight data
+    if ('weight' in newMeasurements && typeof newMeasurements.weight === 'number') {
+      updateUserData('weight', newMeasurements.weight);
+
+      // Add new weight data point to update graphs
+      const newWeightEntry = {
+        date: new Date().toISOString().split('T')[0],
+        value: newMeasurements.weight,
+      };
+      setWeightData(prev => [...prev, newWeightEntry]);
+    }
+
+    // If body fat percentage is being updated, propagate to UserDataContext and update body fat data
+    if ('bodyFatPercentage' in newMeasurements && typeof newMeasurements.bodyFatPercentage === 'number') {
+      updateUserData('bodyFatPercentage', newMeasurements.bodyFatPercentage);
+
+      // Add new body fat data point to update graphs
+      const newBodyFatEntry = {
+        date: new Date().toISOString().split('T')[0],
+        value: newMeasurements.bodyFatPercentage,
+      };
+      setBodyFatData(prev => [...prev, newBodyFatEntry]);
+    }
+  }, [updateUserData]);
 
   const value: ProgressContextType = {
     selectedPeriod,

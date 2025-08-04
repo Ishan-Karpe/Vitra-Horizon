@@ -12,7 +12,7 @@ import { ProgressIndicator } from '../components/ui/ProgressIndicator';
 import { ScenarioParameters, ScenarioPrediction, useScenarios } from '../contexts/ScenariosContext';
 
 export default function ScenariosScreen() {
-  const { addScenario, calculatePrediction, scenarios, generateScenarioName } = useScenarios();
+  const { calculatePrediction, scenarios, addScenario, setActivePlan } = useScenarios();
 
   // Local state for current parameters being edited
   const [currentParameters, setCurrentParameters] = useState<ScenarioParameters>({
@@ -49,20 +49,28 @@ export default function ScenariosScreen() {
 
   const saveScenario = () => {
     if (newPlanPrediction) {
-      addScenario({
-        name: generateScenarioName(),
+      // Create a new scenario with the current parameters and prediction
+      const scenarioData = {
+        name: 'Scenario #1',
         parameters: currentParameters,
         prediction: newPlanPrediction,
-        isFromOnboarding: false,
+        isFromOnboarding: true,
         isFavorite: false,
-      });
+      };
+
+      const newScenario = addScenario(scenarioData);
+      setActivePlan(newScenario.id);
+      return newScenario;
     }
+    return null;
   };
 
   const handleSaveScenario = () => {
-    saveScenario();
-    console.log('Scenario saved, navigating to scenarios tab');
-    router.push('/(tabs)/scenarios');
+    const savedScenario = saveScenario();
+    if (savedScenario) {
+      console.log('Scenario saved and set as active plan, navigating to scenarios tab');
+      router.push('/(tabs)/scenarios');
+    }
   };
 
   const handleTryAnother = () => {
@@ -75,9 +83,9 @@ export default function ScenariosScreen() {
       <ScrollView className="flex-1 px-6 py-4">
         {/* Header */}
         <View className="mb-8">
-          <ProgressIndicator 
-            currentStep={4} 
-            totalSteps={6} 
+          <ProgressIndicator
+            currentStep={4}
+            totalSteps={4}
             className="mb-6"
           />
           

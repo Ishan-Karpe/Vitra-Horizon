@@ -120,8 +120,8 @@ export default function GoalsScreen() {
         <View className="mb-8">
           {/* Progress Indicator */}
           <ProgressIndicator
-            currentStep={3}
-            totalSteps={6}
+            currentStep={2}
+            totalSteps={4}
             className="mb-6"
           />
 

@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
+import React from 'react';
+import { Text, View } from 'react-native';
 
 interface RangeSliderProps {
   label: string;
@@ -25,6 +25,14 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
   validationMessage,
   className = '',
 }) => {
+  const handleValueChange = (newValue: number) => {
+    // Round to 1 decimal place for body fat percentages, otherwise use step
+    const roundedValue = unit === '%'
+      ? Math.round(newValue * 10) / 10
+      : Math.round(newValue / step) * step;
+    onValueChange(roundedValue);
+  };
+
   return (
     <View className={`mb-8 ${className}`}>
       <Text className="text-lg font-semibold text-gray-900 mb-4">{label}</Text>
@@ -32,10 +40,10 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
         {/* Range Labels */}
         <View className="flex-row justify-between items-center mb-4">
           <Text className="text-blue-600 font-medium">
-            {minimumValue}{unit}
+            {unit === '%' ? Number(minimumValue).toFixed(1) : minimumValue}{unit}
           </Text>
           <Text className="text-blue-600 font-medium">
-            {maximumValue}{unit}
+            {unit === '%' ? Number(maximumValue).toFixed(1) : maximumValue}{unit}
           </Text>
         </View>
         
@@ -47,7 +55,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
             maximumValue={maximumValue}
             value={value}
             step={step}
-            onValueChange={onValueChange}
+            onValueChange={handleValueChange}
             minimumTrackTintColor="#2563eb"
             maximumTrackTintColor="#e5e7eb"
             thumbStyle={{
@@ -64,7 +72,7 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
         
         {/* Current Value Display */}
         <Text className="text-center text-gray-700 font-semibold mt-2">
-          {value}{unit}
+          {unit === '%' ? Number(value).toFixed(1) : value}{unit}
         </Text>
         
         {/* Validation Message */}

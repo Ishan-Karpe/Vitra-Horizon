@@ -46,7 +46,7 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({
       {/* Body Fat Percentage */}
       <View className="mb-4">
         <Text className={`text-3xl font-bold ${isNew ? 'text-blue-600' : 'text-gray-900'}`}>
-          {prediction.bodyFatPercentage}%
+          {Number(prediction.bodyFatPercentage).toFixed(1)}%
         </Text>
         <Text className={`text-sm ${isNew ? 'text-blue-500' : 'text-gray-500'}`}>
           body fat
@@ -63,7 +63,7 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({
             <Text className="text-xs">📉</Text>
           </View>
           <Text className="text-sm text-gray-700 flex-1">
-            Fat loss: {Math.round(prediction.fatLoss * 10) / 10} lbs
+            Fat loss: {Number(prediction.fatLoss).toFixed(2)} lbs
           </Text>
           {isNew && showComparison && (
             <View className="flex-row items-center">
@@ -82,7 +82,7 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({
             <Text className="text-xs">💪</Text>
           </View>
           <Text className="text-sm text-gray-700 flex-1">
-            Muscle: {Math.round(prediction.muscleGain * 10) / 10} lbs
+            Muscle: {Number(prediction.muscleGain).toFixed(2)} lbs
           </Text>
           {isNew && showComparison && (
             <View className="flex-row items-center">
@@ -155,7 +155,7 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({
                 newPlan.muscleGain > currentPlan.muscleGain ? 'text-green-600' : 'text-red-600'
               }`}>
                 {newPlan.muscleGain > currentPlan.muscleGain ? '+' : ''}
-                {Math.round((newPlan.muscleGain - currentPlan.muscleGain) * 10) / 10} lbs
+                {Number(newPlan.muscleGain - currentPlan.muscleGain).toFixed(2)} lbs
               </Text>
             </View>
           </View>

@@ -40,10 +40,12 @@ const STORAGE_KEYS = {
 interface ScenariosContextType {
   // Scenarios data
   scenarios: Scenario[];
-  addScenario: (scenario: Omit<Scenario, 'id' | 'createdDate'>) => void;
+  addScenario: (scenario: Omit<Scenario, 'id' | 'createdDate'>) => Scenario;
   updateScenario: (id: string, updates: Partial<Scenario>) => void;
   deleteScenario: (id: string) => void;
   duplicateScenario: (id: string) => void;
+  createOnboardingScenario: () => Scenario;
+  clearAllScenarios: () => void;
 
   // View mode
   viewMode: ViewMode;
@@ -98,30 +100,64 @@ export const ScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { userData } = useUserData();
   const { goalsData } = useGoals();
 
-  // Default onboarding scenario
-  const defaultScenario: Scenario = {
-    id: 'onboarding-scenario',
-    name: 'Scenario #1',
-    createdDate: 'July 25',
-    parameters: {
+  // Create default onboarding scenario with calculated values
+  const createDefaultScenario = useCallback((): Scenario => {
+    const defaultParameters: ScenarioParameters = {
       exerciseFrequency: 4,
       calorieDeficit: 300,
       proteinIntake: 'High',
-    },
-    prediction: {
-      currentBodyFat: 25,
-      targetBodyFat: 21,
-      fatLoss: 8,
-      muscleGain: 2,
-      timeline: 12,
-      confidence: 78,
-    },
-    isFromOnboarding: true,
-    isFavorite: false,
-  };
+    };
+
+    // Calculate prediction based on actual user data
+    const currentBodyFat = userData.bodyFatPercentage || 25;
+    const targetBodyFat = goalsData.targetBodyFat || 21;
+    const timelineWeeks = goalsData.timelineWeeks || 12;
+
+    // Calculate based on parameters
+    const exerciseMultiplier = defaultParameters.exerciseFrequency / 4;
+    const calorieMultiplier = defaultParameters.calorieDeficit / 300;
+    const proteinMultiplier = defaultParameters.proteinIntake === 'High' ? 1.2 :
+                             defaultParameters.proteinIntake === 'Medium' ? 1.0 : 0.8;
+
+    const effectivenessScore = (exerciseMultiplier + calorieMultiplier + proteinMultiplier) / 3;
+
+    // Calculate predictions
+    const bodyFatReduction = (currentBodyFat - targetBodyFat) * effectivenessScore;
+    const finalBodyFat = Math.max(10, currentBodyFat - bodyFatReduction);
+
+    const fatLoss = bodyFatReduction * 2.5;
+
+    // Calculate muscle gain
+    const estimatedWeight = userData.weight || 165;
+    const baseMonthlyRate = 0.008;
+    const baseWeeklyRate = baseMonthlyRate / 4.33;
+    const trainingEffectiveness = Math.min(exerciseMultiplier, 1.5);
+    const nutritionEffectiveness = proteinMultiplier;
+    const weeklyMuscleGain = estimatedWeight * baseWeeklyRate * trainingEffectiveness * nutritionEffectiveness;
+    const muscleGain = weeklyMuscleGain * timelineWeeks;
+
+    const confidence = Math.min(95, Math.max(50, 70 + (effectivenessScore * 20)));
+
+    return {
+      id: 'onboarding-scenario',
+      name: 'Scenario #1',
+      createdDate: new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' }),
+      parameters: defaultParameters,
+      prediction: {
+        currentBodyFat: Math.round(currentBodyFat * 10) / 10,
+        targetBodyFat: Math.round(finalBodyFat * 10) / 10,
+        fatLoss: Math.round(fatLoss * 100) / 100,
+        muscleGain: Math.round(muscleGain * 100) / 100,
+        timeline: timelineWeeks,
+        confidence: Math.round(confidence * 10) / 10,
+      },
+      isFromOnboarding: true,
+      isFavorite: false,
+    };
+  }, [userData.bodyFatPercentage, userData.weight, goalsData.targetBodyFat, goalsData.timelineWeeks]);
 
   // State with default values
-  const [scenarios, setScenarios] = useState<Scenario[]>([defaultScenario]);
+  const [scenarios, setScenarios] = useState<Scenario[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>('single');
   const [selectedScenariosForComparison, setSelectedScenariosForComparison] = useState<string[]>([]);
   const [activePlanId, setActivePlanId] = useState<string | null>('onboarding-scenario');
@@ -131,24 +167,33 @@ export const ScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   useEffect(() => {
     const loadStoredData = async () => {
       try {
+        const defaultScenario = createDefaultScenario();
+
         const [storedScenarios, storedActivePlanId, storedViewMode] = await Promise.all([
           loadFromStorage(STORAGE_KEYS.SCENARIOS, [defaultScenario]),
           loadFromStorage(STORAGE_KEYS.ACTIVE_PLAN_ID, 'onboarding-scenario'),
           loadFromStorage(STORAGE_KEYS.VIEW_MODE, 'single'),
         ]);
 
-        setScenarios(storedScenarios);
+        // Always update the default scenario with current user data
+        const updatedScenarios = storedScenarios.map((scenario: Scenario) =>
+          scenario.id === 'onboarding-scenario' ? defaultScenario : scenario
+        );
+
+        setScenarios(updatedScenarios);
         setActivePlanId(storedActivePlanId);
         setViewMode(storedViewMode);
         setIsLoaded(true);
       } catch (error) {
         console.error('Error loading scenarios data:', error);
+        const defaultScenario = createDefaultScenario();
+        setScenarios([defaultScenario]);
         setIsLoaded(true);
       }
     };
 
     loadStoredData();
-  }, []);
+  }, [createDefaultScenario]);
 
   // Save scenarios to storage whenever they change
   useEffect(() => {
@@ -213,14 +258,42 @@ export const ScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const confidence = Math.min(95, Math.max(50, 70 + (effectivenessScore * 20)));
 
     return {
-      currentBodyFat,
+      currentBodyFat: Math.round(currentBodyFat * 10) / 10,
       targetBodyFat: Math.round(finalBodyFat * 10) / 10,
-      fatLoss: Math.round(fatLoss * 10) / 10,
-      muscleGain: Math.round(muscleGain * 10) / 10,
+      fatLoss: Math.round(fatLoss * 100) / 100,
+      muscleGain: Math.round(muscleGain * 100) / 100,
       timeline: timelineWeeks,
-      confidence: Math.round(confidence),
+      confidence: Math.round(confidence * 10) / 10,
     };
-  }, [userData.bodyFatPercentage, goalsData.targetBodyFat, goalsData.timelineWeeks]);
+  }, [userData.bodyFatPercentage, userData.weight, goalsData.targetBodyFat, goalsData.timelineWeeks]);
+
+  // Update scenarios when user data changes significantly
+  useEffect(() => {
+    if (isLoaded && scenarios.length > 0) {
+      const updatedScenarios = scenarios.map((scenario: Scenario) => {
+        if (scenario.id === 'onboarding-scenario') {
+          // Always update the onboarding scenario with current user data
+          return createDefaultScenario();
+        } else {
+          // Recalculate predictions for other scenarios with new user data
+          const updatedPrediction = calculatePrediction(scenario.parameters);
+          return {
+            ...scenario,
+            prediction: updatedPrediction
+          };
+        }
+      });
+
+      // Only update if there are actual changes
+      const hasChanges = updatedScenarios.some((scenario, index) =>
+        JSON.stringify(scenario.prediction) !== JSON.stringify(scenarios[index].prediction)
+      );
+
+      if (hasChanges) {
+        setScenarios(updatedScenarios);
+      }
+    }
+  }, [userData.bodyFatPercentage, userData.weight, goalsData.targetBodyFat, goalsData.timelineWeeks, isLoaded, createDefaultScenario, calculatePrediction, scenarios]);
 
   const generateScenarioName = useCallback((): string => {
     const scenarioNumbers = scenarios
@@ -242,7 +315,7 @@ export const ScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return `${frequency}x/week, ${deficit} cal deficit, ${protein} protein`;
   }, []);
 
-  const addScenario = useCallback((scenarioData: Omit<Scenario, 'id' | 'createdDate'>) => {
+  const addScenario = useCallback((scenarioData: Omit<Scenario, 'id' | 'createdDate'>): Scenario => {
     const newScenario: Scenario = {
       ...scenarioData,
       id: `scenario-${Date.now()}`,
@@ -253,6 +326,8 @@ export const ScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const updated = [...prev, newScenario];
       return updated;
     });
+
+    return newScenario;
   }, []);
 
   const updateScenario = useCallback((id: string, updates: Partial<Scenario>) => {
@@ -265,16 +340,35 @@ export const ScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, []);
 
   const deleteScenario = useCallback((id: string) => {
-    setScenarios(prev => prev.filter(scenario => scenario.id !== id));
+    console.log('Deleting scenario with ID:', id);
+    
+    setScenarios(prev => {
+      console.log('Previous scenarios:', prev.map(s => ({ id: s.id, name: s.name })));
+      const filtered = prev.filter(scenario => scenario.id !== id);
+      console.log('Filtered scenarios:', filtered.map(s => ({ id: s.id, name: s.name })));
+
+      // If this would result in no scenarios, create a default one
+      if (filtered.length === 0) {
+        console.log('No scenarios left, creating default scenario');
+        const defaultScenario = createDefaultScenario();
+        // Set the default scenario as active plan
+        setActivePlanId(defaultScenario.id);
+        return [defaultScenario];
+      }
+
+      // If the deleted scenario was the active plan, set the first remaining as active
+      if (activePlanId === id && filtered.length > 0) {
+        console.log('Deleted scenario was active, setting new active plan:', filtered[0].id);
+        setActivePlanId(filtered[0].id);
+      }
+
+      return filtered;
+    });
 
     // Clear from comparison if selected
     setSelectedScenariosForComparison(prev => prev.filter(scenarioId => scenarioId !== id));
-
-    // Clear active plan if deleted
-    if (activePlanId === id) {
-      setActivePlanId(null);
-    }
-  }, [activePlanId]);
+    console.log('Scenario deletion completed');
+  }, [activePlanId, createDefaultScenario]);
 
   const duplicateScenario = useCallback((id: string) => {
     const scenario = scenarios.find(s => s.id === id);
@@ -314,12 +408,59 @@ export const ScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return scenarios.find(scenario => scenario.id === id);
   }, [scenarios]);
 
+  // Function to create onboarding scenario and replace all existing scenarios
+  const createOnboardingScenario = useCallback(() => {
+    const onboardingScenario = createDefaultScenario();
+    // Clear all existing scenarios and create only the onboarding scenario as "Scenario #1"
+    setScenarios([onboardingScenario]);
+    setActivePlanId(onboardingScenario.id);
+    // Clear any comparison selections
+    setSelectedScenariosForComparison([]);
+    return onboardingScenario;
+  }, [createDefaultScenario]);
+
+  // Function to clear all scenarios and storage (for debugging/reset)
+  const clearAllScenarios = useCallback(async () => {
+    try {
+      console.log('Starting clearAllScenarios...');
+      console.log('Current scenarios count:', scenarios.length);
+
+      // Clear storage
+      console.log('Clearing AsyncStorage...');
+      await AsyncStorage.removeItem(STORAGE_KEYS.SCENARIOS);
+      await AsyncStorage.removeItem(STORAGE_KEYS.ACTIVE_PLAN_ID);
+      await AsyncStorage.removeItem(STORAGE_KEYS.VIEW_MODE);
+      console.log('AsyncStorage cleared');
+
+      // Reset to default scenario
+      const defaultScenario = createDefaultScenario();
+      console.log('Created default scenario:', defaultScenario.name);
+
+      // Force state reset
+      setScenarios([defaultScenario]);
+      setActivePlanId(defaultScenario.id);
+      setViewMode('single');
+      setSelectedScenariosForComparison([]);
+
+      // Force save the new state to storage immediately
+      await saveToStorage(STORAGE_KEYS.SCENARIOS, [defaultScenario]);
+      await saveToStorage(STORAGE_KEYS.ACTIVE_PLAN_ID, defaultScenario.id);
+      await saveToStorage(STORAGE_KEYS.VIEW_MODE, 'single');
+
+      console.log('All scenarios cleared and reset to default');
+    } catch (error) {
+      console.error('Error clearing scenarios:', error);
+    }
+  }, [createDefaultScenario, scenarios.length]);
+
   const value: ScenariosContextType = {
     scenarios,
     addScenario,
     updateScenario,
     deleteScenario,
     duplicateScenario,
+    createOnboardingScenario,
+    clearAllScenarios,
     viewMode,
     setViewMode,
     selectedScenariosForComparison,

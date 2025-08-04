@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Modal } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import React, { useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { useProgress } from '../../contexts/ProgressContext';
 import { MeasurementUpdateModal } from './MeasurementUpdateModal';
 
 interface MeasurementRowProps {
   label: string;
-  value: number;
+  value: number | string;
   change: number;
   unit: string;
 }
@@ -60,6 +60,22 @@ export const MeasurementsSection: React.FC = () => {
         <Text className="text-lg font-semibold text-gray-900 mb-4">Measurements</Text>
         
         <View>
+          {measurements.weight && (
+            <MeasurementRow
+              label="Weight"
+              value={measurements.weight}
+              change={measurements.weightChange || 0}
+              unit="lbs"
+            />
+          )}
+          {measurements.bodyFatPercentage && (
+            <MeasurementRow
+              label="Body Fat"
+              value={Number(measurements.bodyFatPercentage).toFixed(1)}
+              change={measurements.bodyFatChange || 0}
+              unit="%"
+            />
+          )}
           <MeasurementRow
             label="Chest"
             value={measurements.chest}

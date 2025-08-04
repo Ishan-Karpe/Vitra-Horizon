@@ -1,9 +1,9 @@
 import { router } from 'expo-router';
 import React from 'react';
-import { SafeAreaView, ScrollView, Text, View, TouchableOpacity } from 'react-native';
+import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
-import { useUserData } from '../contexts/UserDataContext';
 import { useGoals } from '../contexts/GoalsContext';
+import { useUserData } from '../contexts/UserDataContext';
 
 export default function DashboardScreen() {
   const { userData } = useUserData();
@@ -32,7 +32,7 @@ export default function DashboardScreen() {
           <View className="space-y-2">
             <Text className="text-gray-700">Height: {userData.heightFeet}'{userData.heightInches}"</Text>
             <Text className="text-gray-700">Weight: {userData.weight} lbs</Text>
-            <Text className="text-gray-700">Body Fat: {userData.bodyFatPercentage}%</Text>
+            <Text className="text-gray-700">Body Fat: {Number(userData.bodyFatPercentage).toFixed(1)}%</Text>
             <Text className="text-gray-700">Activity Level: {userData.activityLevel}</Text>
           </View>
         </View>

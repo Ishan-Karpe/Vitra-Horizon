@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Dimensions, Text, View } from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
 
 interface BodyFatChartProps {
   currentBodyFat: number;
@@ -14,132 +15,109 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
   timelineWeeks,
   className = '',
 }) => {
-  // Generate data points for the chart
-  const generateDataPoints = () => {
-    const points = [];
+  const screenWidth = Dimensions.get('window').width;
+
+  // Generate data points for react-native-chart-kit
+  const generateChartData = () => {
+    const dataPoints = [];
+    const labels = [];
     const totalReduction = currentBodyFat - targetBodyFat;
-    const weeksInterval = Math.max(1, Math.floor(timelineWeeks / 4));
-    
-    for (let week = 0; week <= timelineWeeks; week += weeksInterval) {
+    const numberOfPoints = Math.min(timelineWeeks, 8); // Limit to 8 points for readability
+    const weeksInterval = timelineWeeks / numberOfPoints;
+
+    for (let i = 0; i <= numberOfPoints; i++) {
+      const week = i * weeksInterval;
       const progress = week / timelineWeeks;
       // Non-linear progress (faster at start, slower at end)
       const adjustedProgress = 1 - Math.pow(1 - progress, 1.5);
       const bodyFat = currentBodyFat - (totalReduction * adjustedProgress);
-      points.push({
-        week,
-        bodyFat: Math.max(targetBodyFat, bodyFat),
-        x: (week / timelineWeeks) * 100,
-        y: ((currentBodyFat - bodyFat) / (currentBodyFat - targetBodyFat)) * 100,
-      });
+
+      dataPoints.push(Math.max(targetBodyFat, Math.round(bodyFat * 10) / 10));
+
+      if (i === 0) {
+        labels.push('Start');
+      } else if (i === numberOfPoints) {
+        labels.push(`${timelineWeeks}w`);
+      } else {
+        labels.push(`${Math.round(week)}w`);
+      }
     }
-    
-    // Ensure we have the final point
-    if (points[points.length - 1].week !== timelineWeeks) {
-      points.push({
-        week: timelineWeeks,
-        bodyFat: targetBodyFat,
-        x: 100,
-        y: 100,
-      });
-    }
-    
-    return points;
+
+    return {
+      labels,
+      datasets: [
+        {
+          data: dataPoints,
+          color: (opacity = 1) => `rgba(37, 99, 235, ${opacity})`, // Blue color
+          strokeWidth: 3,
+        },
+      ],
+    };
   };
 
-  const dataPoints = generateDataPoints();
-  const chartHeight = 120;
-  const maxBodyFat = Math.max(currentBodyFat, 30);
-  const minBodyFat = Math.min(targetBodyFat, 10);
+  const chartData = generateChartData();
+
+  const chartConfig = {
+    backgroundColor: '#ffffff',
+    backgroundGradientFrom: '#ffffff',
+    backgroundGradientTo: '#ffffff',
+    decimalPlaces: 1,
+    color: (opacity = 1) => `rgba(37, 99, 235, ${opacity})`,
+    labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: '4',
+      strokeWidth: '2',
+      stroke: '#2563eb',
+    },
+    propsForBackgroundLines: {
+      strokeDasharray: '',
+      stroke: '#e5e7eb',
+      strokeWidth: 1,
+    },
+  };
 
   return (
     <View className={`bg-gray-50 p-6 rounded-xl ${className}`}>
       <Text className="text-center text-gray-600 text-sm mb-4">Body Fat Percentage over Time</Text>
-      
-      {/* Chart Container */}
-      <View className="bg-white rounded-lg p-4 mb-4" style={{ height: chartHeight + 40 }}>
-        {/* Y-axis labels */}
-        <View className="absolute left-0 top-4 bottom-4 justify-between">
-          <Text className="text-xs text-gray-400">{maxBodyFat}%</Text>
-          <Text className="text-xs text-gray-400">{Math.round((maxBodyFat + minBodyFat) / 2)}%</Text>
-          <Text className="text-xs text-gray-400">{minBodyFat}%</Text>
+
+      {/* Enhanced Chart Container */}
+      <View className="bg-white rounded-lg p-4 mb-4">
+        <LineChart
+          data={chartData}
+          width={screenWidth - 80}
+          height={200}
+          chartConfig={chartConfig}
+          bezier
+          style={{
+            marginVertical: 8,
+            borderRadius: 16,
+          }}
+          withInnerLines={true}
+          withOuterLines={false}
+          withVerticalLines={false}
+          withHorizontalLines={true}
+          withDots={true}
+          withShadow={false}
+          fromZero={false}
+        />
+      </View>
+
+      {/* Chart Legend */}
+      <View className="flex-row justify-center items-center space-x-4">
+        <View className="flex-row items-center">
+          <View className="w-3 h-3 bg-blue-600 rounded-full mr-2" />
+          <Text className="text-xs text-gray-600">Body Fat %</Text>
         </View>
-        
-        {/* Chart area */}
-        <View className="ml-8 mr-4 relative" style={{ height: chartHeight }}>
-          {/* Grid lines */}
-          <View className="absolute inset-0">
-            {[0, 25, 50, 75, 100].map((percent) => (
-              <View
-                key={percent}
-                className="absolute w-full h-px bg-gray-100"
-                style={{ top: `${percent}%` }}
-              />
-            ))}
-          </View>
-          
-          {/* Gradient fill area */}
-          <View className="absolute inset-0">
-            <View 
-              className="absolute bottom-0 left-0 right-0 bg-blue-100 opacity-30"
-              style={{ 
-                height: `${100 - ((targetBodyFat - minBodyFat) / (maxBodyFat - minBodyFat)) * 100}%`
-              }}
-            />
-          </View>
-          
-          {/* Data line and points */}
-          <View className="absolute inset-0">
-            {dataPoints.map((point, index) => {
-              const yPosition = ((maxBodyFat - point.bodyFat) / (maxBodyFat - minBodyFat)) * 100;
-              
-              return (
-                <View key={index}>
-                  {/* Data point */}
-                  <View
-                    className="absolute w-2 h-2 bg-blue-600 rounded-full"
-                    style={{
-                      left: `${point.x}%`,
-                      top: `${yPosition}%`,
-                      transform: [{ translateX: -4 }, { translateY: -4 }],
-                    }}
-                  />
-                  
-                  {/* Line to next point */}
-                  {index < dataPoints.length - 1 && (
-                    <View
-                      className="absolute h-px bg-blue-600"
-                      style={{
-                        left: `${point.x}%`,
-                        top: `${yPosition}%`,
-                        width: `${dataPoints[index + 1].x - point.x}%`,
-                        transform: [
-                          { 
-                            rotate: `${Math.atan2(
-                              ((maxBodyFat - dataPoints[index + 1].bodyFat) / (maxBodyFat - minBodyFat)) * 100 - yPosition,
-                              dataPoints[index + 1].x - point.x
-                            ) * 180 / Math.PI}deg`
-                          }
-                        ],
-                      }}
-                    />
-                  )}
-                </View>
-              );
-            })}
-          </View>
-        </View>
-        
-        {/* X-axis labels */}
-        <View className="flex-row justify-between mt-2 px-8">
-          <Text className="text-xs text-gray-400">0</Text>
-          <Text className="text-xs text-gray-400">{Math.round(timelineWeeks / 4)}</Text>
-          <Text className="text-xs text-gray-400">{Math.round(timelineWeeks / 2)}</Text>
-          <Text className="text-xs text-gray-400">{Math.round(3 * timelineWeeks / 4)}</Text>
-          <Text className="text-xs text-gray-400">{timelineWeeks}</Text>
+        <View className="flex-row items-center">
+          <View className="w-3 h-1 bg-blue-300 mr-2" />
+          <Text className="text-xs text-gray-600">Projection Area</Text>
         </View>
       </View>
-      
-      <Text className="text-center text-gray-400 text-xs">Weeks</Text>
+
+      <Text className="text-center text-gray-400 text-xs mt-2">Timeline (weeks)</Text>
     </View>
   );
 };

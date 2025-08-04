@@ -47,7 +47,7 @@ export const PredictionCard: React.FC<PredictionCardProps> = ({ className = '' }
   const config = getPredictionConfig(status);
 
   const handlePress = () => {
-    router.push('/(tabs)/scenarios');
+    router.push('/prediction');
   };
 
   return (

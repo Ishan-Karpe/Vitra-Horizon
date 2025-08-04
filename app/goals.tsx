@@ -33,7 +33,13 @@ export default function GoalsScreen() {
     const recommendations = getRecommendedBodyFat(goal, currentBodyFat);
     const timelineRec = getRecommendedTimeline(goal);
 
-    updateTargetBodyFat(recommendations.recommended, currentBodyFat);
+    // Ensure target body fat is within the valid range for the selected goal
+    const newTargetBodyFat = Math.max(
+      Math.min(recommendations.recommended, recommendations.max),
+      recommendations.min
+    );
+    // Pass the goal explicitly to avoid stale state issues
+    updateTargetBodyFat(newTargetBodyFat, currentBodyFat, goal);
     updateTimeline(timelineRec.recommended);
   };
 
@@ -44,6 +50,24 @@ export default function GoalsScreen() {
   const handleTargetBodyFatChange = (percentage: number) => {
     const currentBodyFat = userData.bodyFatPercentage || 20;
     updateTargetBodyFat(percentage, currentBodyFat);
+  };
+
+  // Calculate dynamic maximum value for body fat slider based on selected goal
+  const getBodyFatSliderMaximum = () => {
+    if (!goalsData.selectedGoal) return 30; // Default maximum
+
+    const currentBodyFat = userData.bodyFatPercentage || 20;
+    const recommendations = getRecommendedBodyFat(goalsData.selectedGoal, currentBodyFat);
+    return recommendations.max;
+  };
+
+  // Calculate dynamic minimum value for body fat slider based on selected goal
+  const getBodyFatSliderMinimum = () => {
+    if (!goalsData.selectedGoal) return 5; // Default minimum
+
+    const currentBodyFat = userData.bodyFatPercentage || 20;
+    const recommendations = getRecommendedBodyFat(goalsData.selectedGoal, currentBodyFat);
+    return recommendations.min;
   };
 
   const handleGeneratePrediction = async () => {
@@ -80,8 +104,8 @@ export default function GoalsScreen() {
     setTimeout(() => {
       setGenerating(false);
       setLoadingProgress(0);
-      // Navigate to scenarios screen
-      router.push('/scenarios');
+      // Navigate to prediction screen
+      router.push('/prediction');
     }, 500);
   };
 
@@ -145,7 +169,7 @@ export default function GoalsScreen() {
             label="Achieve this in:"
             value={goalsData.timelineWeeks}
             minimumValue={4}
-            maximumValue={12}
+            maximumValue={16}
             step={1}
             unit=" weeks"
             onValueChange={handleTimelineChange}
@@ -158,8 +182,8 @@ export default function GoalsScreen() {
           <RangeSlider
             label="Target body fat:"
             value={goalsData.targetBodyFat}
-            minimumValue={5}
-            maximumValue={30}
+            minimumValue={getBodyFatSliderMinimum()}
+            maximumValue={getBodyFatSliderMaximum()}
             step={1}
             unit="%"
             onValueChange={handleTargetBodyFatChange}

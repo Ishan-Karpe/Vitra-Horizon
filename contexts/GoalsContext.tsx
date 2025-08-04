@@ -24,7 +24,7 @@ interface GoalsContextType {
   validation: GoalsValidation;
   updateGoal: (goal: string, currentBodyFat?: number) => void;
   updateTimeline: (weeks: number) => void;
-  updateTargetBodyFat: (percentage: number, currentBodyFat?: number) => void;
+  updateTargetBodyFat: (percentage: number, currentBodyFat?: number, goalOverride?: string) => void;
   setGenerating: (generating: boolean) => void;
   validateGoals: (currentBodyFat?: number) => boolean;
   getRecommendedTimeline: (goal: string) => { min: number; max: number; recommended: number };
@@ -78,20 +78,29 @@ export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
       case 'lose-fat':
         return {
           min: 5,
-          max: Math.max(currentBodyFat - 2, 8),
+          max: Math.min(Math.max(currentBodyFat - 2, 8), 30), // Cap at 30% for lose fat goals
           recommended: Math.max(currentBodyFat - 5, 10),
         };
       case 'build-muscle':
+        // For muscle building, allow maintaining current body fat or modest increases
+        // Don't cap at 25% for people with higher starting body fat
+        const minMuscle = Math.max(currentBodyFat - 2, 8); // Allow slight reduction, but not below 8%
+        const maxMuscle = Math.max(currentBodyFat + 5, 30); // Allow up to 5% increase, minimum 30%
+
         return {
-          min: Math.max(currentBodyFat - 2, 8),
-          max: Math.min(currentBodyFat + 5, 25),
-          recommended: Math.min(currentBodyFat + 2, 18),
+          min: minMuscle,
+          max: maxMuscle,
+          recommended: Math.min(currentBodyFat + 2, Math.max(currentBodyFat * 0.9, 18)), // Slight increase or 10% reduction, whichever is higher
         };
       case 'body-recomposition':
+        // For body recomposition, allow maintaining current body fat or modest changes
+        const minRecomp = Math.max(currentBodyFat - 8, 8); // Allow up to 8% reduction, but not below 8%
+        const maxRecomp = Math.max(currentBodyFat + 3, 30); // Allow up to 3% increase, minimum 30%
+
         return {
-          min: Math.max(currentBodyFat - 5, 8),
-          max: Math.min(currentBodyFat + 2, 20),
-          recommended: currentBodyFat,
+          min: minRecomp,
+          max: maxRecomp,
+          recommended: Math.max(Math.min(currentBodyFat - 2, 25), 10), // 2% reduction, more realistic cap
         };
       default:
         return { min: 5, max: 30, recommended: 15 };
@@ -115,26 +124,33 @@ export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
 
   const validateTargetBodyFat = (percentage: number, goal: string, currentBodyFat: number): string | undefined => {
     if (percentage < 5) return 'Target body fat cannot be below 5%';
-    if (percentage > 30) return 'Target body fat cannot exceed 30%';
 
-    if (!goal) return undefined; // No validation if no goal selected
+    if (!goal) {
+      // General validation when no goal is selected
+      if (percentage > 30) return 'Target body fat cannot exceed 30%';
+      return undefined;
+    }
 
     const recommendations = getRecommendedBodyFat(goal, currentBodyFat);
 
+    // Goal-specific validations
     if (goal === 'lose-fat' && percentage >= currentBodyFat) {
       return `Target should be lower than your current ${currentBodyFat}% for fat loss`;
     }
 
     if (goal === 'build-muscle' && percentage < currentBodyFat - 2) {
-      return 'Target body fat too low for muscle building goals';
+      return `For muscle building, target should be close to current body fat (${currentBodyFat}%)`;
     }
 
+    // Use goal-specific ranges for all goals
     if (percentage < recommendations.min) {
-      return `Target too low for ${goal.replace('-', ' ')} goals (min: ${recommendations.min}%)`;
+      const goalName = goal === 'body-recomposition' ? 'body recomposition' : goal.replace('-', ' ');
+      return `Target too low for ${goalName} goals (min: ${recommendations.min}%)`;
     }
 
     if (percentage > recommendations.max) {
-      return `Target too high for ${goal.replace('-', ' ')} goals (max: ${recommendations.max}%)`;
+      const goalName = goal === 'body-recomposition' ? 'body recomposition' : goal.replace('-', ' ');
+      return `Target too high for ${goalName} goals (max: ${recommendations.max}%)`;
     }
 
     return undefined;
@@ -162,10 +178,12 @@ export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
     setValidationMessages(prev => ({ ...prev, timeline: timelineError }));
   };
 
-  const updateTargetBodyFat = (percentage: number, currentBodyFat: number = 20) => {
+  const updateTargetBodyFat = (percentage: number, currentBodyFat: number = 20, goalOverride?: string) => {
     setGoalsData(prev => ({ ...prev, targetBodyFat: percentage }));
 
-    const bodyFatError = validateTargetBodyFat(percentage, goalsData.selectedGoal, currentBodyFat);
+    // Use goalOverride if provided, otherwise use current selected goal
+    const goalToValidate = goalOverride || goalsData.selectedGoal;
+    const bodyFatError = validateTargetBodyFat(percentage, goalToValidate, currentBodyFat);
     setValidationMessages(prev => ({ ...prev, targetBodyFat: bodyFatError }));
   };
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 
 interface PredictionResult {
   bodyFatPercentage: number;
@@ -63,7 +63,7 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({
             <Text className="text-xs">📉</Text>
           </View>
           <Text className="text-sm text-gray-700 flex-1">
-            Fat loss: {prediction.fatLoss} lbs
+            Fat loss: {Math.round(prediction.fatLoss * 10) / 10} lbs
           </Text>
           {isNew && showComparison && (
             <View className="flex-row items-center">
@@ -82,7 +82,7 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({
             <Text className="text-xs">💪</Text>
           </View>
           <Text className="text-sm text-gray-700 flex-1">
-            Muscle: {prediction.muscleGain} lbs
+            Muscle: {Math.round(prediction.muscleGain * 10) / 10} lbs
           </Text>
           {isNew && showComparison && (
             <View className="flex-row items-center">
@@ -145,7 +145,7 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({
                 newPlan.fatLoss > currentPlan.fatLoss ? 'text-green-600' : 'text-red-600'
               }`}>
                 {newPlan.fatLoss > currentPlan.fatLoss ? '+' : ''}
-                {newPlan.fatLoss - currentPlan.fatLoss} lbs
+                {Math.round((newPlan.fatLoss - currentPlan.fatLoss) * 10) / 10} lbs
               </Text>
             </View>
             
@@ -155,7 +155,7 @@ export const ComparisonCards: React.FC<ComparisonCardsProps> = ({
                 newPlan.muscleGain > currentPlan.muscleGain ? 'text-green-600' : 'text-red-600'
               }`}>
                 {newPlan.muscleGain > currentPlan.muscleGain ? '+' : ''}
-                {newPlan.muscleGain - currentPlan.muscleGain} lbs
+                {Math.round((newPlan.muscleGain - currentPlan.muscleGain) * 10) / 10} lbs
               </Text>
             </View>
           </View>

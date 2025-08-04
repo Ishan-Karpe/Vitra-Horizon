@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, Dimensions } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
 import * as Haptics from 'expo-haptics';
 import { useRouter } from 'expo-router';
-import { useScenarios, Scenario } from '../../contexts/ScenariosContext';
+import React from 'react';
+import { Dimensions, Text, TouchableOpacity, View } from 'react-native';
+import { LineChart } from 'react-native-chart-kit';
+import { Scenario, useScenarios } from '../../contexts/ScenariosContext';
 
 interface ScenarioCardProps {
   scenario: Scenario;
@@ -152,12 +152,12 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
       <View className="flex-row justify-between mb-4">
         <View className="flex-row items-center">
           <Text className="text-gray-600 text-sm">
-            📉 Fat loss: {scenario.prediction.fatLoss} lbs
+            📉 Fat loss: {Math.round(scenario.prediction.fatLoss * 10) / 10} lbs
           </Text>
         </View>
         <View className="flex-row items-center">
           <Text className="text-gray-600 text-sm">
-            💪 Muscle gain: {scenario.prediction.muscleGain} lbs
+            💪 Muscle gain: {Math.round(scenario.prediction.muscleGain * 10) / 10} lbs
           </Text>
         </View>
       </View>

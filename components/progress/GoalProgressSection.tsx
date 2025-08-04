@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { Text, View } from 'react-native';
 import { useProgress } from '../../contexts/ProgressContext';
 
 interface ProgressBarProps {
@@ -26,7 +26,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       <View className="flex-row justify-between items-center mb-2">
         <Text className="text-gray-700 font-medium">{label}</Text>
         <Text className="text-sm text-gray-600">
-          {current} / {target} {unit}
+          {unit === 'lbs' ? (Math.round(current * 10) / 10) : current} / {target} {unit}
         </Text>
       </View>
       

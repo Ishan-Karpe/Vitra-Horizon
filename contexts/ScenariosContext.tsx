@@ -189,7 +189,26 @@ export const ScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const finalBodyFat = Math.max(10, currentBodyFat - bodyFatReduction);
 
     const fatLoss = bodyFatReduction * 2.5; // Rough conversion
-    const muscleGain = parameters.exerciseFrequency * 0.5 * proteinMultiplier;
+
+    // Fixed muscle gain calculation - realistic rates based on research
+    // Assume user weight of 150-180 lbs for calculation (can be improved with actual user weight)
+    const estimatedWeight = userData.weight || 165;
+
+    // Base monthly muscle gain rate (percentage of body weight)
+    // Beginner: 1-1.5% for men, 0.5-0.75% for women (assuming beginner level)
+    // Using conservative estimate of 0.8% per month as baseline
+    const baseMonthlyRate = 0.008; // 0.8% of body weight per month
+
+    // Calculate weekly rate
+    const baseWeeklyRate = baseMonthlyRate / 4.33; // 4.33 weeks per month average
+
+    // Apply multipliers based on training and nutrition
+    const trainingEffectiveness = Math.min(exerciseMultiplier, 1.5); // Cap at 1.5x for very high frequency
+    const nutritionEffectiveness = proteinMultiplier;
+
+    // Calculate muscle gain for the timeline
+    const weeklyMuscleGain = estimatedWeight * baseWeeklyRate * trainingEffectiveness * nutritionEffectiveness;
+    const muscleGain = weeklyMuscleGain * timelineWeeks;
 
     const confidence = Math.min(95, Math.max(50, 70 + (effectivenessScore * 20)));
 

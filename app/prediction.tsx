@@ -29,7 +29,18 @@ export default function PredictionScreen() {
   // Calculate fat loss and muscle gain estimates
   const bodyFatReduction = currentBodyFat - targetBodyFat;
   const estimatedFatLoss = Math.round(bodyFatReduction * 2.5); // Rough estimate
-  const estimatedMuscleGain = goalsData.selectedGoal === "build-muscle" ? 3 : 2;
+
+  // Fixed muscle gain calculation - realistic rates based on research
+  const estimatedWeight = userData.weight || 165;
+  const baseMonthlyRate = 0.008; // 0.8% of body weight per month (conservative beginner rate)
+  const baseWeeklyRate = baseMonthlyRate / 4.33; // 4.33 weeks per month average
+
+  // Apply goal-based multipliers
+  const goalMultiplier = goalsData.selectedGoal === "build-muscle" ? 1.2 :
+                        goalsData.selectedGoal === "body-recomposition" ? 0.8 : 0.6;
+
+  const weeklyMuscleGain = estimatedWeight * baseWeeklyRate * goalMultiplier;
+  const estimatedMuscleGain = Math.round((weeklyMuscleGain * timelineWeeks) * 10) / 10;
 
   const handleAcceptPlan = () => {
     console.log("Accept This Plan pressed");
@@ -41,6 +52,12 @@ export default function PredictionScreen() {
     console.log("Test Different Approach pressed");
     // Navigate back to goals to modify
     router.push("/goals");
+  };
+
+  const handleExploreScenarios = () => {
+    console.log("Explore Scenarios pressed");
+    // Navigate to scenarios screen
+    router.push("/scenarios");
   };
 
   return (
@@ -140,11 +157,20 @@ export default function PredictionScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            className="bg-transparent border-2 border-blue-500 py-4 px-8 rounded-xl"
+            className="bg-blue-500 py-4 px-8 rounded-xl"
+            onPress={handleExploreScenarios}
+          >
+            <Text className="text-white text-lg font-semibold text-center">
+              Explore Different Scenarios
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="bg-transparent border-2 border-gray-400 py-4 px-8 rounded-xl"
             onPress={handleTestDifferent}
           >
-            <Text className="text-blue-500 text-lg font-semibold text-center">
-              Test Different Approach
+            <Text className="text-gray-600 text-lg font-semibold text-center">
+              Modify Goals
             </Text>
           </TouchableOpacity>
         </View>

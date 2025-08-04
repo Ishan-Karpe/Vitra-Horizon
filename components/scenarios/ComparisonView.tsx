@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import React from 'react';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useScenarios } from '../../contexts/ScenariosContext';
 
 export const ComparisonView: React.FC = () => {
@@ -100,12 +100,12 @@ export const ComparisonView: React.FC = () => {
                     
                     <View className="flex-row justify-between">
                       <Text className="text-sm text-gray-600">Fat Loss:</Text>
-                      <Text className="text-sm font-medium">{scenario.prediction.fatLoss} lbs</Text>
+                      <Text className="text-sm font-medium">{Math.round(scenario.prediction.fatLoss * 10) / 10} lbs</Text>
                     </View>
-                    
+
                     <View className="flex-row justify-between">
                       <Text className="text-sm text-gray-600">Muscle Gain:</Text>
-                      <Text className="text-sm font-medium">{scenario.prediction.muscleGain} lbs</Text>
+                      <Text className="text-sm font-medium">{Math.round(scenario.prediction.muscleGain * 10) / 10} lbs</Text>
                     </View>
                     
                     <View className="flex-row justify-between">

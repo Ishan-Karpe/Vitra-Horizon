@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { useUserData } from './UserDataContext';
+import React, { createContext, useCallback, useContext, useState } from 'react';
 import { useGoals } from './GoalsContext';
+import { useUserData } from './UserDataContext';
 
 export type TimePeriod = 'Week' | 'Month' | '3M' | '6M';
 
@@ -180,12 +180,12 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       progress: Math.round(((userData.bodyFatPercentage || 25) - getCurrentBodyFat()) / ((userData.bodyFatPercentage || 25) - (goalsData.targetBodyFat || 21)) * 100)
     },
     fatLoss: {
-      current: 4.7,
+      current: Math.round(4.7 * 10) / 10, // Round to 1 decimal place
       target: 8,
-      progress: 58.75
+      progress: Math.round(58.75)
     },
     muscleGain: {
-      current: 1.2,
+      current: Math.round(1.2 * 10) / 10, // Round to 1 decimal place
       target: 2,
       progress: 60
     }

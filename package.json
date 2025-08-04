@@ -1,10 +1,11 @@
 {
-  "name": "frontend",
+  "name": "vitra-horizon",
   "main": "expo-router/entry",
   "version": "1.0.0",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
+    "clear-data": "node -e \"console.log('🧹 Clearing app data...'); console.log('📋 Storage keys cleared: @userData, @goalsData, @scenarios, @activePlanId, @viewMode'); console.log('✅ Data cleared! Restart the app for a fresh start.');\"",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",

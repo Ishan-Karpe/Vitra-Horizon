@@ -28,21 +28,21 @@ export default function RootLayout() {
       <GoalsProvider>
         <ScenariosProvider>
           <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="index" options={{ headerShown: false }} />
-            <Stack.Screen name="welcome" options={{ headerShown: false }} />
-            <Stack.Screen name="about-yourself" options={{ headerShown: false }} />
-            <Stack.Screen name="goals" options={{ headerShown: false }} />
-            <Stack.Screen name="scenario" options={{ headerShown: false }} />
-            <Stack.Screen name="prediction" options={{ headerShown: false }} />
-            <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-            <Stack.Screen name="create-scenario" options={{ headerShown: false }} />
-            <Stack.Screen name="edit-scenario" options={{ headerShown: false }} />
-            <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" />
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen name="welcome" options={{ headerShown: false }} />
+              <Stack.Screen name="about-yourself" options={{ headerShown: false }} />
+              <Stack.Screen name="goals" options={{ headerShown: false }} />
+              <Stack.Screen name="scenario" options={{ headerShown: false }} />
+              <Stack.Screen name="prediction" options={{ headerShown: false }} />
+              <Stack.Screen name="dashboard" options={{ headerShown: false }} />
+              <Stack.Screen name="create-scenario" options={{ headerShown: false }} />
+              <Stack.Screen name="edit-scenario" options={{ headerShown: false }} />
+              <Stack.Screen name="edit-profile" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" />
           </ThemeProvider>
         </ScenariosProvider>
       </GoalsProvider>

@@ -2,6 +2,7 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
+import { DataResetButton } from '../../components/dev/DataResetButton';
 import { useGoals } from '../../contexts/GoalsContext';
 import { useScenarios } from '../../contexts/ScenariosContext';
 import { useUserData } from '../../contexts/UserDataContext';
@@ -227,6 +228,12 @@ const handleLogout = () => {
               </View>
               <Text className="text-red-400 text-lg">›</Text>
             </TouchableOpacity>
+          </View>
+
+          {/* Development Reset Button */}
+          <View className="mt-8">
+            <Text className="text-center text-gray-500 text-sm mb-2">Development Tools</Text>
+            <DataResetButton />
           </View>
 
           {/* Bottom spacing for tab bar */}

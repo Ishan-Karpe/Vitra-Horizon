@@ -205,7 +205,7 @@
 
 ### App Flow Analysis (2025-08-01)
 
-Based on the mockups in `assets/mockups/`, the Vitra-Morph app appears to be a body transformation prediction application with the following screens and user journey:
+Based on the mockups in `assets/mockups/`, the Vitra-Horizon app appears to be a body transformation prediction application with the following screens and user journey:
 
 #### Screen Breakdown:
 1. **Welcome.png** - Welcome/onboarding screen for first-time users

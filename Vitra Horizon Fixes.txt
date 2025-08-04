@@ -1,0 +1,23 @@
+Vitra Horizon Fixes: IN ANY DEVICE FOR ALL SIZES (android+ios+web)
+R.E.A.D
+
+done 1. in /welcome, fix incosistent spacing beetween the graph icon thing and buttons, moving privacy to the bottom.
+
+done 2. in /about-yourself, add a body fat calculator using correct math calculations and a neatly formatted output, do it as a popup from 'Not sure?'
+
+done 3. in /goals, lose fat. if target fat cannot exceed 30% then the slider should be capped at 30%, NOT 45%.
+for build muscle, indicate the correct amount of percentages to allow for prediction generation when it says 'Target body fat too low for muscle building goals' to prevent broken components, if the value to allow is above 30% adjust the slider accoringly. Do the same for body recomp too, but focus on maintaining weight. 'Target body fat cannot exceed 30%' then adjust slider accoringly and cap it to allow for prediction generation.
+
+done 4. in /scenarios, exercise frequency remove the black box and put a bolded and large blue updating indicator as the slider progresses. do the same for calorie deficit. Round every number to a max of 2 decimal places. Remeber to save the CHOSEN scenario in the scenarios homepage in the main app. Don't put mock data here. 
+
+done 5. GENERAL ONBOARDING: The progress bar should say Step x of 5, where x is current step # and there should be five equal parts divided evenly (so instead of 1 bar there are 5 bars)
+
+done 6. in the main dashboard in the app, divide the cicrular ring into x equal parts (x is the number of weeks in the goal) and indicate the current week with a fading and appearing animation. All completed weeks have a solid color to it. 'Week 3' should be to 'Week 1' and smaller to fit inside the circle. Simplify the message at the bottom to select another sceanrio of their choice and put it in an more intresting way WITHOUT emojis.
+
+done 7. In /progress, make the graphs fit mobile devices as well. When measurements are updated everything else related to mesaurements must be updated.the goals section too
+
+8. In /scenarios add options to delete scenarios. The scenario created from onboarding will ALWAYS replace Scenario #1, NO MOCK DATA. In the compare tab, format the table neatly and recomend which is best to pick and simple reasoning on why. Output confidence score too. When plus icon is clicked it should redirect to a scenario screen that is DIFFERENT from onboarding.
+
+9. in /profile edit profile when clicked, basic info about yourself and health related info must be there. UPDATE EVERYTHING ACCORIDNGLY WHEN UPDATED AND SAVED IN EDIT PROFILE.
+
+10. Finally, Log Out button should return back to the onboarding screen and give a silent notification that 'logged out'.

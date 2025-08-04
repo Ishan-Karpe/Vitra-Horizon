@@ -26,7 +26,7 @@ export default function WelcomeScreen() {
         {/* Hero Section */}
         <View className="items-center">
           <Hero
-            title="Welcome to Vitra Morph"
+            title="Welcome to Vitra Horizon"
             subtitle="Transform your fitness journey with AI-powered predictions and personalized recommendations"
           />
         </View>

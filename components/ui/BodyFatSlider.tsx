@@ -54,15 +54,7 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
           onValueChange={handleValueChange}
           minimumTrackTintColor="#2563eb"
           maximumTrackTintColor="#e5e7eb"
-          thumbStyle={{
-            backgroundColor: '#2563eb',
-            width: 24,
-            height: 24,
-          }}
-          trackStyle={{
-            height: 6,
-            borderRadius: 3,
-          }}
+          thumbTintColor="#2563eb"
         />
         
         {/* Min/Max Labels */}

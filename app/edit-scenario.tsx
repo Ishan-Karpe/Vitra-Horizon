@@ -140,7 +140,7 @@ export default function EditScenarioScreen() {
                 onValueChange={(value) => handleParameterChange('exerciseFrequency', value)}
                 minimumTrackTintColor="#3B82F6"
                 maximumTrackTintColor="#E5E7EB"
-                thumbStyle={{ backgroundColor: '#3B82F6', width: 20, height: 20 }}
+                thumbTintColor="#3b82f6"
               />
               <View className="flex-row justify-between mt-2">
                 <Text className="text-blue-500 text-sm">1 times/week</Text>
@@ -163,7 +163,7 @@ export default function EditScenarioScreen() {
                 onValueChange={(value) => handleParameterChange('calorieDeficit', value)}
                 minimumTrackTintColor="#3B82F6"
                 maximumTrackTintColor="#E5E7EB"
-                thumbStyle={{ backgroundColor: '#3B82F6', width: 20, height: 20 }}
+                thumbTintColor="#3b82f6"
               />
               <View className="flex-row justify-between mt-2">
                 <Text className="text-blue-500 text-sm">0 calories</Text>

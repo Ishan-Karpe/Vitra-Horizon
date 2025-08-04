@@ -33,10 +33,6 @@ export default function AboutYourselfScreen() {
     }
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   const handleUseCalculatedBodyFat = (bodyFatPercentage: number) => {
     updateUserData('bodyFatPercentage', bodyFatPercentage);
   };

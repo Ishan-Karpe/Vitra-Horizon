@@ -1,8 +1,8 @@
 import React from 'react';
 import { View } from 'react-native';
 import { useScenarios } from '../../contexts/ScenariosContext';
-import { ScenarioCard } from './ScenarioCard';
 import { ComparisonView } from './ComparisonView';
+import { ScenarioCard } from './ScenarioCard';
 
 export const ScenariosList: React.FC = () => {
   const { scenarios, viewMode } = useScenarios();

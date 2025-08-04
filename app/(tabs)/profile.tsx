@@ -15,32 +15,42 @@ export default function ProfileScreen() {
     router.push('/edit-profile' as any);
   };
 
-  const handleLogout = () => {
-    Alert.alert(
-      'Log Out',
-      'Are you sure you want to log out? This will clear all your data and return you to the welcome screen.',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Log Out',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              // Clear all app data
-              await resetUserData();
-              await resetGoals();
-              await clearAllScenarios();
+const handleLogout = () => {
+  Alert.alert(
+    'Log Out',
+    'Are you sure you want to log out? This will clear all your data and return you to the welcome screen.',
+    [
+      {
+        text: 'Cancel',
+        style: 'cancel'
+      },
+      {
+        text: 'Log Out',
+        style: 'destructive',
+        onPress: async () => {
+          try {
+            console.log('Starting logout process...');
+            
+            // Clear all app data with individual error handling
+            console.log('Resetting user data...');
+            await resetUserData();
+            
+            console.log('Resetting goals...');
+            await resetGoals();
+            
+            console.log('Clearing scenarios...');
+            await clearAllScenarios();
 
-              // Navigate to welcome screen immediately
-              router.replace('/welcome');
-            } catch (error) {
-              console.error('Error during logout:', error);
-              Alert.alert(
-                'Error',
-                'There was an error logging out. Please try again.'
+            console.log('Navigating to welcome screen...');
+            // Navigate to welcome screen immediately
+            router.replace('/welcome');
+            
+            console.log('Logout completed successfully');
+          } catch (error) {
+            console.error('Error during logout:', error);
+            Alert.alert(
+              'Error',
+              `There was an error logging out: ${error}. Please try again.`
               );
             }
           }
@@ -48,6 +58,7 @@ export default function ProfileScreen() {
       ]
     );
   };
+
 
   // Helper functions for display
   const getDisplayName = () => {
@@ -132,7 +143,7 @@ export default function ProfileScreen() {
                 <Text className="text-gray-700">Physical Stats</Text>
               </View>
               <Text className="text-gray-900 font-medium text-right">
-                {userData.weight} lbs • {getHeightDisplay()} • {Number(userData.bodyFatPercentage).toFixed(1)}% BF
+                {Math.round(userData.weight)} lbs • {getHeightDisplay()} • {Number(userData.bodyFatPercentage).toFixed(1)}% BF
               </Text>
             </View>
 

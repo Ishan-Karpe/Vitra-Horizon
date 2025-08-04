@@ -43,15 +43,7 @@ export const ExerciseFrequencySlider: React.FC<ExerciseFrequencySliderProps> = (
           step={1}
           minimumTrackTintColor="#3B82F6"
           maximumTrackTintColor="#E5E7EB"
-          thumbStyle={{
-            backgroundColor: '#3B82F6',
-            width: 24,
-            height: 24,
-          }}
-          trackStyle={{
-            height: 4,
-            borderRadius: 2,
-          }}
+          thumbTintColor="#2563eb"
         />
 
         {/* Value Labels */}

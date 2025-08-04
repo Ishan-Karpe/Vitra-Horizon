@@ -99,7 +99,6 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
                 value={age}
                 onChangeText={setAge}
                 keyboardType="numeric"
-                placeholder="25"
               />
             </View>
 
@@ -110,7 +109,6 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
                 value={height}
                 onChangeText={setHeight}
                 keyboardType="numeric"
-                placeholder="70"
               />
             </View>
 
@@ -121,7 +119,6 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
                 value={weight}
                 onChangeText={setWeight}
                 keyboardType="numeric"
-                placeholder="180"
               />
             </View>
 
@@ -133,19 +130,17 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
                 value={waist}
                 onChangeText={setWaist}
                 keyboardType="numeric"
-                placeholder="32"
               />
             </View>
 
             <View style={styles.section}>
               <Text style={styles.label}>Neck (inches)</Text>
-              <Text style={styles.hint}>Below Adam's apple</Text>
+              <Text style={styles.hint}>Below Adam&apos;s apple</Text>
               <TextInput
                 style={styles.input}
                 value={neck}
                 onChangeText={setNeck}
                 keyboardType="numeric"
-                placeholder="15"
               />
             </View>
 
@@ -158,7 +153,6 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
                   value={hips}
                   onChangeText={setHips}
                   keyboardType="numeric"
-                  placeholder="38"
                 />
               </View>
             )}

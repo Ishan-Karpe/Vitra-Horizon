@@ -178,8 +178,8 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }, [weeklyProgress]);
 
   // Calculate analytics
-  const streakCount = 5; // Mock streak count
-  const totalCompletedActions = weeklyProgress.reduce((sum, week) => sum + week.completedActions, 0);
+  const streakCount = 0; // Placeholder
+  const totalCompletedActions = 0; // Placeholder
 
   const value: DashboardContextType = {
     currentWeek,
@@ -194,7 +194,11 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     weeklyProgress,
     getWeekProgress,
     predictionMessage,
-    predictionDate,
+    predictionDate: predictionDate.toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    }),
     streakCount,
     totalCompletedActions,
   };

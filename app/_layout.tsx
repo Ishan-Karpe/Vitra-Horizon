@@ -11,6 +11,7 @@ import { GoalsProvider } from '../contexts/GoalsContext';
 import { ScenariosProvider } from '../contexts/ScenariosContext';
 import { UserDataProvider } from '../contexts/UserDataContext';
 
+
 export default function RootLayout() {
   const colorScheme = useColorScheme();
   const [loaded] = useFonts({

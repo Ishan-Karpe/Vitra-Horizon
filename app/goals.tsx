@@ -127,7 +127,7 @@ export default function GoalsScreen() {
 
           {/* Title */}
           <Text className="text-3xl font-bold text-gray-900 mb-2">
-            What's your goal?
+            What&apos;s your goal?
           </Text>
         </View>
 

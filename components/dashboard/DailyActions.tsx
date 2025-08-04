@@ -76,7 +76,7 @@ export const DailyActions: React.FC<DailyActionsProps> = ({ className = '' }) =>
     <View className={className}>
       {/* Section Title */}
       <Text className="text-lg font-semibold text-gray-900 px-6 mb-4">
-        Today's Actions
+        Today&apos;s Actions
       </Text>
 
       {/* Actions Container */}

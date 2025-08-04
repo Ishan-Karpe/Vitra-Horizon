@@ -33,7 +33,7 @@ const MeasurementRow: React.FC<MeasurementRowProps> = ({ label, value, change, u
         </Text>
         {change !== 0 && (
           <Text className={`text-sm ${getChangeColor(change)}`}>
-            {getChangePrefix(change)}{Math.abs(change)}
+            {getChangePrefix(change)}{Math.abs(change).toFixed(1)}
           </Text>
         )}
       </View>
@@ -63,7 +63,7 @@ export const MeasurementsSection: React.FC = () => {
           {measurements.weight && (
             <MeasurementRow
               label="Weight"
-              value={measurements.weight}
+              value={Math.round(measurements.weight)}
               change={measurements.weightChange || 0}
               unit="lbs"
             />

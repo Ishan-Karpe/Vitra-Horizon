@@ -28,7 +28,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
       <View className="flex-row justify-between items-center mb-2">
         <Text className="text-gray-700 font-medium">{label}</Text>
         <Text className="text-sm text-gray-600">
-          {unit === 'lbs' ? (Math.round(current * 10) / 10) : Number(current).toFixed(1)} / {Number(target).toFixed(1)} {unit}
+          {unit === 'lbs' ? Math.round(current) : Number(current).toFixed(1)} / {Number(target).toFixed(1)} {unit}
         </Text>
       </View>
       

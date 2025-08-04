@@ -57,7 +57,7 @@ export const StatusCard: React.FC<StatusCardProps> = ({
 
       {/* Progress Message */}
       <Text className="text-gray-600 text-sm leading-5 mb-2">
-        You're meeting {completionPercentage}% of your targets
+        You&apos;re meeting {completionPercentage}% of your targets
       </Text>
 
       {/* Motivational Message */}

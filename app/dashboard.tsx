@@ -31,7 +31,7 @@ export default function DashboardScreen() {
           <Text className="text-lg font-semibold text-gray-900 mb-4">Profile Summary</Text>
           <View className="space-y-2">
             <Text className="text-gray-700">Height: {userData.heightFeet}'{userData.heightInches}"</Text>
-            <Text className="text-gray-700">Weight: {userData.weight} lbs</Text>
+            <Text className="text-gray-700">Weight: {Math.round(userData.weight)} lbs</Text>
             <Text className="text-gray-700">Body Fat: {Number(userData.bodyFatPercentage).toFixed(1)}%</Text>
             <Text className="text-gray-700">Activity Level: {userData.activityLevel}</Text>
           </View>

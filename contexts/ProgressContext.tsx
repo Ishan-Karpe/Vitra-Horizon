@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
+import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import { useGoals } from './GoalsContext';
 import { useUserData } from './UserDataContext';
 
@@ -84,6 +84,7 @@ export const useProgress = () => {
 
 export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userData, updateUserData } = useUserData();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { goalsData, updateTargetBodyFat } = useGoals();
   
   const [selectedPeriod, setSelectedPeriod] = useState<TimePeriod>('Week');
@@ -181,23 +182,34 @@ export const ProgressProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [bodyFatData, userData.bodyFatPercentage]);
 
   // Calculate goal progress
-  const goalProgress: GoalProgress = {
-    bodyFat: {
-      current: getCurrentBodyFat(),
-      target: goalsData.targetBodyFat || 21,
-      progress: Math.round(((userData.bodyFatPercentage || 25) - getCurrentBodyFat()) / ((userData.bodyFatPercentage || 25) - (goalsData.targetBodyFat || 21)) * 100)
-    },
-    fatLoss: {
-      current: Math.round(4.7 * 10) / 10, // Round to 1 decimal place
-      target: 8,
-      progress: Math.round(58.75)
-    },
-    muscleGain: {
-      current: Math.round(1.2 * 10) / 10, // Round to 1 decimal place
-      target: 2,
-      progress: 60
-    }
-  };
+  const goalProgress: GoalProgress = useMemo(() => {
+    const initialBodyFat = userData.bodyFatPercentage || 25;
+    const currentBodyFat = getCurrentBodyFat();
+    const targetBodyFat = goalsData.targetBodyFat || 21;
+
+    // Avoid division by zero if initial and target are the same
+    const totalChange = initialBodyFat - targetBodyFat;
+    const achievedChange = initialBodyFat - currentBodyFat;
+    const progress = totalChange !== 0 ? Math.round((achievedChange / totalChange) * 100) : 0;
+
+    return {
+      bodyFat: {
+        current: currentBodyFat,
+        target: targetBodyFat,
+        progress: progress,
+      },
+      fatLoss: {
+        current: Math.round(4.7 * 10) / 10, // Round to 1 decimal place
+        target: 8,
+        progress: Math.round(58.75)
+      },
+      muscleGain: {
+        current: Math.round(1.2 * 10) / 10, // Round to 1 decimal place
+        target: 2,
+        progress: 60
+      }
+    };
+  }, [getCurrentBodyFat, goalsData.targetBodyFat, userData.bodyFatPercentage]);
 
   const getFilteredData = useCallback((data: DataPoint[], period: TimePeriod): DataPoint[] => {
     const today = new Date();

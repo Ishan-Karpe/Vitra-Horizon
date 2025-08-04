@@ -74,7 +74,7 @@ export const HeightInput: React.FC<HeightInputProps> = ({
       {/* Height Display */}
       <View className="items-center mt-4">
         <Text className="text-sm text-gray-600">
-          {feet}'{inches}" ({Math.round((feet * 12 + inches) * 2.54)} cm)
+          {feet}&apos;{inches}&quot; ({Math.round((feet * 12 + inches) * 2.54)} cm)
         </Text>
       </View>
     </View>

@@ -21,18 +21,38 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
   const generateChartData = () => {
     const dataPoints = [];
     const labels = [];
-    const totalReduction = currentBodyFat - targetBodyFat;
+    const totalChange = targetBodyFat - currentBodyFat; // Can be positive (gain) or negative (loss)
     const numberOfPoints = Math.min(timelineWeeks, 8); // Limit to 8 points for readability
     const weeksInterval = timelineWeeks / numberOfPoints;
 
     for (let i = 0; i <= numberOfPoints; i++) {
       const week = i * weeksInterval;
       const progress = week / timelineWeeks;
-      // Non-linear progress (faster at start, slower at end)
-      const adjustedProgress = 1 - Math.pow(1 - progress, 1.5);
-      const bodyFat = currentBodyFat - (totalReduction * adjustedProgress);
+      
+      // For muscle building (positive change), use slower start, gradual progression
+      // For fat loss (negative change), keep original faster-start approach
+      let adjustedProgress;
+      if (totalChange >= 0) {
+        // Gradual upward progression for muscle building
+        adjustedProgress = Math.pow(progress, 0.7); // Slower than linear but steady
+      } else {
+        // Non-linear progress for fat loss (faster at start, slower at end)
+        adjustedProgress = 1 - Math.pow(1 - progress, 1.5);
+      }
+      
+      const bodyFat = currentBodyFat + (totalChange * adjustedProgress);
 
-      dataPoints.push(Math.max(targetBodyFat, Math.round(bodyFat * 10) / 10));
+      // Ensure we don't go below reasonable minimums or exceed the target
+      let finalBodyFat;
+      if (totalChange >= 0) {
+        // For upward trend, don't exceed target
+        finalBodyFat = Math.min(targetBodyFat, Math.round(bodyFat * 10) / 10);
+      } else {
+        // For downward trend, don't go below target
+        finalBodyFat = Math.max(targetBodyFat, Math.round(bodyFat * 10) / 10);
+      }
+      
+      dataPoints.push(finalBodyFat);
 
       if (i === 0) {
         labels.push('Start');

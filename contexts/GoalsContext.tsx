@@ -132,15 +132,15 @@ export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
           recommended: Math.max(currentBodyFat - 5, 10),
         };
       case 'build-muscle':
-        // For muscle building, allow maintaining current body fat or modest increases
-        // Don't cap at 25% for people with higher starting body fat
-        const minMuscle = Math.max(currentBodyFat - 2, 8); // Allow slight reduction, but not below 8%
-        const maxMuscle = Math.max(currentBodyFat + 5, 30); // Allow up to 5% increase, minimum 30%
+        // For muscle building (bulking), expect some fat gain along with muscle growth
+        // This is normal and expected when eating in a caloric surplus for muscle building
+        const minMuscle = Math.max(currentBodyFat - 1, 8); // Allow slight reduction for very lean gains, but not below 8%
+        const maxMuscle = Math.max(currentBodyFat + 5, 30); // Allow up to 5% increase for aggressive bulking, cap at 30%
 
         return {
           min: minMuscle,
           max: maxMuscle,
-          recommended: Math.min(currentBodyFat + 2, Math.max(currentBodyFat * 0.9, 18)), // Slight increase or 10% reduction, whichever is higher
+          recommended: Math.min(currentBodyFat + 3, 25), // 3% increase for effective bulking, cap at 25%
         };
       case 'body-recomposition':
         // For body recomposition, allow maintaining current body fat or modest changes
@@ -188,8 +188,8 @@ export const GoalsProvider: React.FC<GoalsProviderProps> = ({ children }) => {
       return `Target should be lower than your current ${currentBodyFat}% for fat loss`;
     }
 
-    if (goal === 'build-muscle' && percentage < currentBodyFat - 2) {
-      return `For muscle building, target should be close to current body fat (${currentBodyFat}%)`;
+    if (goal === 'build-muscle' && percentage < currentBodyFat - 1) {
+      return `For muscle building (bulking), target should be at or above current body fat (${currentBodyFat}%) to support muscle growth`;
     }
 
     // Use goal-specific ranges for all goals

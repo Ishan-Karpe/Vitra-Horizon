@@ -4,15 +4,17 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useEffect, useState } from 'react';
 import {
     Alert,
+    Platform,
     SafeAreaView,
     ScrollView,
     Text,
     TextInput,
     TouchableOpacity,
-    View,
+    View
 } from 'react-native';
 
-import { ScenarioParameters, useScenarios } from '../contexts/ScenariosContext';
+import { useAIEnhancedScenarios } from '../contexts/AIEnhancedScenariosContext';
+import { ScenarioParameters } from '../contexts/ScenariosContext';
 
 export default function EditScenarioScreen() {
   const router = useRouter();
@@ -24,7 +26,7 @@ export default function EditScenarioScreen() {
     calculatePrediction,
     generateScenarioName,
     generateDescriptiveName
-  } = useScenarios();
+  } = useAIEnhancedScenarios();
 
   const existingScenario = scenarioId ? scenarios.find(s => s.id === scenarioId) : null;
   const isEditing = !!existingScenario;
@@ -41,13 +43,28 @@ export default function EditScenarioScreen() {
   );
 
   const [prediction, setPrediction] = useState(
-    existingScenario?.prediction || calculatePrediction(parameters)
+    existingScenario?.prediction || {
+      currentBodyFat: 25,
+      targetBodyFat: 21,
+      fatLoss: 8,
+      muscleGain: 3.2,
+      timeline: 12,
+      confidence: 75
+    }
   );
 
   // Update prediction when parameters change
   useEffect(() => {
-    const newPrediction = calculatePrediction(parameters);
-    setPrediction(newPrediction);
+    const updatePrediction = async () => {
+      try {
+        const newPrediction = await calculatePrediction(parameters);
+        setPrediction(newPrediction);
+      } catch (error) {
+        console.warn('Failed to calculate prediction:', error);
+      }
+    };
+
+    updatePrediction();
   }, [parameters, calculatePrediction]);
 
   const handleParameterChange = async (key: keyof ScenarioParameters, value: any) => {
@@ -141,6 +158,15 @@ export default function EditScenarioScreen() {
                 minimumTrackTintColor="#3B82F6"
                 maximumTrackTintColor="#E5E7EB"
                 thumbTintColor="#3b82f6"
+                // Web-specific props to prevent DOM errors
+                {...(Platform.OS === 'web' && {
+                  onStartShouldSetResponder: undefined,
+                  onResponderTerminationRequest: undefined,
+                  onResponderGrant: undefined,
+                  onResponderMove: undefined,
+                  onResponderRelease: undefined,
+                  onResponderTerminate: undefined,
+                })}
               />
               <View className="flex-row justify-between mt-2">
                 <Text className="text-blue-500 text-sm">1 times/week</Text>
@@ -164,6 +190,15 @@ export default function EditScenarioScreen() {
                 minimumTrackTintColor="#3B82F6"
                 maximumTrackTintColor="#E5E7EB"
                 thumbTintColor="#3b82f6"
+                // Web-specific props to prevent DOM errors
+                {...(Platform.OS === 'web' && {
+                  onStartShouldSetResponder: undefined,
+                  onResponderTerminationRequest: undefined,
+                  onResponderGrant: undefined,
+                  onResponderMove: undefined,
+                  onResponderRelease: undefined,
+                  onResponderTerminate: undefined,
+                })}
               />
               <View className="flex-row justify-between mt-2">
                 <Text className="text-blue-500 text-sm">0 calories</Text>

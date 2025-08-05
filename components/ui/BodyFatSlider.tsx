@@ -1,6 +1,6 @@
 import Slider from '@react-native-community/slider';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Platform, Text, TouchableOpacity, View } from 'react-native';
 
 interface BodyFatSliderProps {
   value: number;
@@ -55,6 +55,15 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
           minimumTrackTintColor="#2563eb"
           maximumTrackTintColor="#e5e7eb"
           thumbTintColor="#2563eb"
+          // Web-specific props to prevent DOM errors
+          {...(Platform.OS === 'web' && {
+            onStartShouldSetResponder: undefined,
+            onResponderTerminationRequest: undefined,
+            onResponderGrant: undefined,
+            onResponderMove: undefined,
+            onResponderRelease: undefined,
+            onResponderTerminate: undefined,
+          })}
         />
         
         {/* Min/Max Labels */}

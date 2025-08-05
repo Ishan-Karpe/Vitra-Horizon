@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useState } from 'react';
+import { useAIEnhancedScenarios } from './AIEnhancedScenariosContext';
 import { useGoals } from './GoalsContext';
-import { useScenarios } from './ScenariosContext';
 import { useUserData } from './UserDataContext';
 
 interface DailyAction {
@@ -62,7 +62,7 @@ export const useDashboardContext = () => {
 export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { userData } = useUserData();
   const { goalsData } = useGoals();
-  const { scenarios, activePlanId, getScenarioById } = useScenarios();
+  const { scenarios, activePlanId, getScenarioById } = useAIEnhancedScenarios();
 
   // Get active scenario for timeline calculation
   const activeScenario = activePlanId ? getScenarioById(activePlanId) : null;

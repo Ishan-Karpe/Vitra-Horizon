@@ -1,14 +1,20 @@
-import { router } from 'expo-router';
-import React, { useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as Haptics from 'expo-haptics';
+import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import { Alert, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 import { CalorieDeficitSlider, ExerciseFrequencySlider, ProteinIntakeSelector } from '../components/scenarios';
-import { ScenarioParameters, useScenarios } from '../contexts/ScenariosContext';
+import { useAIEnhancedScenarios } from '../contexts/AIEnhancedScenariosContext';
+
+interface ScenarioParameters {
+  exerciseFrequency: number;
+  calorieDeficit: number;
+  proteinIntake: 'Low' | 'Medium' | 'High';
+}
 
 export default function CreateScenarioScreen() {
-  const { addScenario, calculatePrediction, generateDescriptiveName } = useScenarios();
-  
+  const { addScenario, calculatePrediction, generateDescriptiveName } = useAIEnhancedScenarios();
+
   const [scenarioName, setScenarioName] = useState('');
   const [parameters, setParameters] = useState<ScenarioParameters>({
     exerciseFrequency: 3,
@@ -17,8 +23,33 @@ export default function CreateScenarioScreen() {
   });
 
   const [isCreating, setIsCreating] = useState(false);
+  const [prediction, setPrediction] = useState({
+    currentBodyFat: 25,
+    targetBodyFat: 21,
+    fatLoss: 10,
+    muscleGain: 3.2,
+    timeline: 12,
+    confidence: 75
+  });
+  const [isCalculating, setIsCalculating] = useState(false);
 
-  const prediction = calculatePrediction(parameters);
+  // Live prediction updates
+  useEffect(() => {
+    const updatePrediction = async () => {
+      setIsCalculating(true);
+      try {
+        const newPrediction = await calculatePrediction(parameters);
+        setPrediction(newPrediction);
+      } catch (error) {
+        console.warn('Live prediction failed:', error);
+        // Keep current prediction as fallback
+      } finally {
+        setIsCalculating(false);
+      }
+    };
+
+    updatePrediction();
+  }, [parameters, calculatePrediction]);
 
   const handleCreateScenario = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
@@ -131,8 +162,13 @@ export default function CreateScenarioScreen() {
 
         {/* Prediction Preview */}
         <View className="bg-blue-50 rounded-lg p-6 mb-8">
-          <Text className="text-lg font-semibold text-blue-900 mb-4">Predicted Results</Text>
-          
+          <View className="flex-row items-center justify-between mb-4">
+            <Text className="text-lg font-semibold text-blue-900">Predicted Results</Text>
+            {isCalculating && (
+              <Text className="text-blue-600 text-sm">🔄 Updating...</Text>
+            )}
+          </View>
+
           <View className="space-y-3">
             <View className="flex-row justify-between">
               <Text className="text-blue-700">Target Body Fat:</Text>

@@ -2,62 +2,46 @@ import { router } from 'expo-router';
 import React from 'react';
 import { Alert, SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 
+import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
 import { useGoals } from '../../contexts/GoalsContext';
-import { useScenarios } from '../../contexts/ScenariosContext';
 import { useUserData } from '../../contexts/UserDataContext';
 
 export default function ProfileScreen() {
   const { userData, resetUserData } = useUserData();
   const { goalsData, resetGoals } = useGoals();
-  const { clearAllScenarios } = useScenarios();
+  const { clearAllScenarios } = useAIEnhancedScenarios();
 
   const handleEditProfile = () => {
     router.push('/edit-profile' as any);
   };
 
-const handleLogout = () => {
-  Alert.alert(
-    'Log Out',
-    'Are you sure you want to log out? This will clear all your data and return you to the welcome screen.',
-    [
-      {
-        text: 'Cancel',
-        style: 'cancel'
-      },
-      {
-        text: 'Log Out',
-        style: 'destructive',
-        onPress: async () => {
-          try {
-            console.log('Starting logout process...');
-            
-            // Clear all app data with individual error handling
-            console.log('Resetting user data...');
-            await resetUserData();
-            
-            console.log('Resetting goals...');
-            await resetGoals();
-            
-            console.log('Clearing scenarios...');
-            await clearAllScenarios();
+const handleLogout = async () => {
+  try {
+    console.log('Starting logout process...');
+    
+    // Clear all app data
+    console.log('Resetting user data...');
+    await resetUserData();
+    
+    console.log('Resetting goals...');
+    await resetGoals();
+    
+    console.log('Clearing scenarios...');
+    await clearAllScenarios();
 
-            console.log('Navigating to welcome screen...');
-            // Navigate to welcome screen immediately
-            router.replace('/welcome');
-            
-            console.log('Logout completed successfully');
-          } catch (error) {
-            console.error('Error during logout:', error);
-            Alert.alert(
-              'Error',
-              `There was an error logging out: ${error}. Please try again.`
-              );
-            }
-          }
-        }
-      ]
+    console.log('Navigating to welcome screen...');
+    // Navigate to welcome screen immediately
+    router.replace('/welcome');
+    
+    console.log('Logout completed successfully');
+  } catch (error) {
+    console.error('Error during logout:', error);
+    Alert.alert(
+      'Error',
+      `There was an error logging out: ${error}. Please try again.`
     );
-  };
+  }
+};
 
 
   // Helper functions for display
@@ -219,7 +203,10 @@ const handleLogout = () => {
             <TouchableOpacity
               className="flex-row justify-between items-center py-4 px-6"
               activeOpacity={0.7}
-              onPress={handleLogout}
+              onPress={() => {
+                console.log('🔥 TouchableOpacity pressed!');
+                handleLogout();
+              }}
             >
               <View className="flex-row items-center">
                 <Text className="mr-3 text-lg">🚪</Text>

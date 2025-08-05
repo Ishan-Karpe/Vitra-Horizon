@@ -1,6 +1,6 @@
 import Slider from '@react-native-community/slider';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 interface RangeSliderProps {
   label: string;
@@ -59,6 +59,15 @@ export const RangeSlider: React.FC<RangeSliderProps> = ({
             minimumTrackTintColor="#2563eb"
             maximumTrackTintColor="#e5e7eb"
             thumbTintColor="#2563eb"
+            // Web-specific props to prevent DOM errors
+            {...(Platform.OS === 'web' && {
+              onStartShouldSetResponder: undefined,
+              onResponderTerminationRequest: undefined,
+              onResponderGrant: undefined,
+              onResponderMove: undefined,
+              onResponderRelease: undefined,
+              onResponderTerminate: undefined,
+            })}
           />
         </View>
         

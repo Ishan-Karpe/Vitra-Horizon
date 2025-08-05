@@ -1,10 +1,11 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
 import * as Haptics from 'expo-haptics';
-import { useScenarios, ViewMode } from '../../contexts/ScenariosContext';
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
+import { ViewMode } from '../../contexts/ScenariosContext';
 
 export const ViewModeToggle: React.FC = () => {
-  const { viewMode, setViewMode } = useScenarios();
+  const { viewMode, setViewMode } = useAIEnhancedScenarios();
 
   const handleModeChange = async (mode: ViewMode) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

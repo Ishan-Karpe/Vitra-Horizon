@@ -1,6 +1,6 @@
-import React from 'react';
-import { View, Text } from 'react-native';
 import Slider from '@react-native-community/slider';
+import React from 'react';
+import { Platform, Text, View } from 'react-native';
 
 interface WeightSliderProps {
   value: number;
@@ -42,6 +42,15 @@ export const WeightSlider: React.FC<WeightSliderProps> = ({
           minimumTrackTintColor="#2563eb"
           maximumTrackTintColor="#e5e7eb"
           thumbTintColor="#2563eb"
+          // Web-specific props to prevent DOM errors
+          {...(Platform.OS === 'web' && {
+            onStartShouldSetResponder: undefined,
+            onResponderTerminationRequest: undefined,
+            onResponderGrant: undefined,
+            onResponderMove: undefined,
+            onResponderRelease: undefined,
+            onResponderTerminate: undefined,
+          })}
         />
         
         {/* Min/Max Labels */}

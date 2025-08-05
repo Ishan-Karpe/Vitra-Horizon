@@ -3,7 +3,28 @@ import { useRouter } from 'expo-router';
 import React from 'react';
 import { Alert, Dimensions, Text, TouchableOpacity, View } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
-import { Scenario, useScenarios } from '../../contexts/ScenariosContext';
+import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
+
+interface Scenario {
+  id: string;
+  name: string;
+  parameters: {
+    exerciseFrequency: number;
+    calorieDeficit: number;
+    proteinIntake: 'Low' | 'Medium' | 'High';
+  };
+  prediction: {
+    currentBodyFat: number;
+    targetBodyFat: number;
+    fatLoss: number;
+    muscleGain: number;
+    timeline: number;
+    confidence: number;
+  };
+  createdDate: string;
+  isFromOnboarding: boolean;
+  isFavorite: boolean;
+}
 
 interface ScenarioCardProps {
   scenario: Scenario;
@@ -12,7 +33,7 @@ interface ScenarioCardProps {
 const screenWidth = Dimensions.get('window').width;
 
 export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
-  const { setActivePlan, activePlanId, deleteScenario, scenarios } = useScenarios();
+  const { setActivePlan, activePlanId, deleteScenario, scenarios } = useAIEnhancedScenarios();
   const router = useRouter();
 
   const handleEditScenario = async () => {
@@ -30,6 +51,15 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
 
   const handleDeleteScenario = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+
+    if (activePlanId === scenario.id) {
+      Alert.alert(
+        'Cannot Delete Active Scenario',
+        'You cannot delete the scenario that is currently set as your active plan.',
+        [{ text: 'OK', style: 'cancel' }]
+      );
+      return;
+    }
 
     Alert.alert(
       'Delete Scenario',
@@ -55,16 +85,16 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
   // Generate chart data for 12-week progression
   const generateChartData = () => {
     const weeks = 12;
-    const startBodyFat = scenario.prediction.currentBodyFat;
-    const endBodyFat = scenario.prediction.targetBodyFat;
+    const startBodyFat = scenario.prediction?.currentBodyFat || 25;
+    const endBodyFat = scenario.prediction?.targetBodyFat || 21;
     const data = [];
-    
+
     for (let i = 0; i <= weeks; i++) {
       const progress = i / weeks;
       const bodyFat = startBodyFat - (startBodyFat - endBodyFat) * progress;
       data.push(bodyFat);
     }
-    
+
     return data;
   };
 
@@ -108,7 +138,7 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
           <Text className="text-sm text-gray-500 mr-3">Created {scenario.createdDate}</Text>
           <View className="bg-blue-100 px-3 py-1 rounded-full">
             <Text className="text-blue-700 text-sm font-medium">
-              {Number(scenario.prediction.confidence).toFixed(1)}% confident
+              {Number(scenario.prediction?.confidence || 75).toFixed(1)}% confident
             </Text>
           </View>
         </View>
@@ -138,14 +168,14 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
         <View className="flex-1 text-center">
           <Text className="text-sm text-gray-500 mb-1">Current</Text>
           <Text className="text-3xl font-bold text-gray-600">
-            {Number(scenario.prediction.currentBodyFat).toFixed(1)}%
+            {Number(scenario.prediction?.currentBodyFat || 25).toFixed(1)}%
           </Text>
           <Text className="text-sm text-gray-500">body fat</Text>
         </View>
         <View className="flex-1 text-center">
-          <Text className="text-sm text-gray-500 mb-1">After {scenario.prediction.timeline} weeks</Text>
+          <Text className="text-sm text-gray-500 mb-1">After {scenario.prediction?.timeline || 12} weeks</Text>
           <Text className="text-3xl font-bold text-blue-600">
-            {Number(scenario.prediction.targetBodyFat).toFixed(1)}%
+            {Number(scenario.prediction?.targetBodyFat || 21).toFixed(1)}%
           </Text>
           <Text className="text-sm text-gray-500">body fat</Text>
         </View>
@@ -176,19 +206,19 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
       <View className="flex-row justify-between mb-4">
         <View className="flex-row items-center">
           <Text className="text-gray-600 text-sm">
-            📉 Fat loss: {Number(scenario.prediction.fatLoss).toFixed(2)} lbs
+            📉 Fat loss: {Number(scenario.prediction?.fatLoss || 10).toFixed(2)} lbs
           </Text>
         </View>
         <View className="flex-row items-center">
           <Text className="text-gray-600 text-sm">
-            💪 Muscle gain: {Number(scenario.prediction.muscleGain).toFixed(2)} lbs
+            💪 Muscle gain: {Number(scenario.prediction?.muscleGain || 3.2).toFixed(2)} lbs
           </Text>
         </View>
       </View>
-      
+
       <View className="mb-6">
         <Text className="text-sm text-gray-600">
-          ⏱️ Timeline: {scenario.prediction.timeline} weeks
+          ⏱️ Timeline: {scenario.prediction?.timeline || 12} weeks
         </Text>
       </View>
 

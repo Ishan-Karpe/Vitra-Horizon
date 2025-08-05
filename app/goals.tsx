@@ -109,10 +109,6 @@ export default function GoalsScreen() {
     }, 500);
   };
 
-  const handleBack = () => {
-    router.back();
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView className="flex-1 px-6 py-4">

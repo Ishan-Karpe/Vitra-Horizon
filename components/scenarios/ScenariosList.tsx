@@ -1,11 +1,11 @@
 import React from 'react';
 import { View } from 'react-native';
-import { useScenarios } from '../../contexts/ScenariosContext';
+import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
 import { ComparisonView } from './ComparisonView';
 import { ScenarioCard } from './ScenarioCard';
 
 export const ScenariosList: React.FC = () => {
-  const { scenarios, viewMode } = useScenarios();
+  const { scenarios, viewMode } = useAIEnhancedScenarios();
 
   if (viewMode === 'compare') {
     return <ComparisonView />;

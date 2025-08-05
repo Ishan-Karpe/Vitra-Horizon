@@ -5,6 +5,7 @@ import { DailyActions } from '@/components/dashboard/DailyActions';
 import { PredictionCard } from '@/components/dashboard/PredictionCard';
 import { ProgressCircle } from '@/components/dashboard/ProgressCircle';
 import { StatusCard } from '@/components/dashboard/StatusCard';
+import { AIQuickAccess } from '@/components/demo/AIQuickAccess';
 import { DashboardProvider, useDashboardContext } from '@/contexts/DashboardContext';
 
 const DashboardContent: React.FC = () => {
@@ -49,6 +50,9 @@ const DashboardContent: React.FC = () => {
 
         {/* Prediction Card */}
         <PredictionCard className="mx-6 mb-6" />
+
+        {/* AI Backend Demo Access */}
+        <AIQuickAccess />
 
         {/* Bottom Spacing for Tab Bar */}
         <View className="h-20" />

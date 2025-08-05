@@ -1,9 +1,9 @@
 import React from 'react';
 import { Alert, Text, TouchableOpacity, View } from 'react-native';
-import { useScenarios } from '../../contexts/ScenariosContext';
+import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
 
 export const ScenariosHeader: React.FC = () => {
-  const { clearAllScenarios, scenarios } = useScenarios();
+  const { clearAllScenarios, scenarios } = useAIEnhancedScenarios();
 
   const handleClearAll = () => {
     Alert.alert(

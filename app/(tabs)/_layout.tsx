@@ -44,7 +44,7 @@ export default function TabLayout() {
         name="scenarios"
         options={{
           title: 'Scenarios',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="list.bullet" color={color} />,
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="lightbulb.fill" color={color} />,
         }}
       />
       <Tabs.Screen

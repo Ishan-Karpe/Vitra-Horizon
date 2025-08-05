@@ -1,6 +1,6 @@
 import Slider from '@react-native-community/slider';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 interface CalorieDeficitSliderProps {
   value: number;
@@ -60,6 +60,15 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
           minimumTrackTintColor="#3B82F6"
           maximumTrackTintColor="#E5E7EB"
           thumbTintColor="#2563eb"
+          // Web-specific props to prevent DOM errors
+          {...(Platform.OS === 'web' && {
+            onStartShouldSetResponder: undefined,
+            onResponderTerminationRequest: undefined,
+            onResponderGrant: undefined,
+            onResponderMove: undefined,
+            onResponderRelease: undefined,
+            onResponderTerminate: undefined,
+          })}
         />
 
         {/* Value Labels */}
@@ -93,7 +102,7 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
 
       {/* Progress Indicators */}
       <View className="flex-row space-x-1">
-        {[0, 75, 150, 225, 300].map((threshold, index) => (
+        {[0, 75, 150, 225, 300].map((threshold) => (
           <View
             key={threshold}
             className={`flex-1 h-1 rounded-full ${

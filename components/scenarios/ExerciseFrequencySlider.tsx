@@ -1,6 +1,6 @@
 import Slider from '@react-native-community/slider';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Platform, Text, View } from 'react-native';
 
 interface ExerciseFrequencySliderProps {
   value: number;
@@ -44,6 +44,15 @@ export const ExerciseFrequencySlider: React.FC<ExerciseFrequencySliderProps> = (
           minimumTrackTintColor="#3B82F6"
           maximumTrackTintColor="#E5E7EB"
           thumbTintColor="#2563eb"
+          // Web-specific props to prevent DOM errors
+          {...(Platform.OS === 'web' && {
+            onStartShouldSetResponder: undefined,
+            onResponderTerminationRequest: undefined,
+            onResponderGrant: undefined,
+            onResponderMove: undefined,
+            onResponderRelease: undefined,
+            onResponderTerminate: undefined,
+          })}
         />
 
         {/* Value Labels */}

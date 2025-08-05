@@ -21,6 +21,8 @@ const MAPPING = {
   'chart.bar.fill': 'bar-chart',
   'target': 'track-changes',
   'person.fill': 'person',
+  'lightbulb.fill': 'lightbulb',
+  'list.bullet': 'list',
 } as IconMapping;
 
 /**

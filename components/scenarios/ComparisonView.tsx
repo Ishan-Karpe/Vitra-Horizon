@@ -1,15 +1,15 @@
 import * as Haptics from 'expo-haptics';
 import React from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { useScenarios } from '../../contexts/ScenariosContext';
+import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
 
 export const ComparisonView: React.FC = () => {
-  const { 
-    scenarios, 
+  const {
+    scenarios,
     selectedScenariosForComparison, 
     toggleScenarioForComparison,
     clearComparison 
-  } = useScenarios();
+  } = useAIEnhancedScenarios();
 
   const handleScenarioToggle = async (scenarioId: string) => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

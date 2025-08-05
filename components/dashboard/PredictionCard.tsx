@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
+import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
 import { useDashboardContext } from '../../contexts/DashboardContext';
-import { useScenarios } from '../../contexts/ScenariosContext';
 
 interface PredictionCardProps {
   className?: string;
@@ -10,7 +10,7 @@ interface PredictionCardProps {
 
 export const PredictionCard: React.FC<PredictionCardProps> = ({ className = '' }) => {
   const { predictionMessage, status } = useDashboardContext();
-  const { activePlanId, getScenarioById } = useScenarios();
+  const { activePlanId, getScenarioById } = useAIEnhancedScenarios();
   const router = useRouter();
 
   const activeScenario = activePlanId ? getScenarioById(activePlanId) : null;

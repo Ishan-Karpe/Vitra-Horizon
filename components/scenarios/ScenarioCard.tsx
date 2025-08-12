@@ -61,25 +61,8 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
       return;
     }
 
-    Alert.alert(
-      'Delete Scenario',
-      `Are you sure you want to delete "${scenario.name}"? This action cannot be undone.${
-        scenarios.length <= 1 ? '\n\nNote: A new default scenario will be created automatically.' : ''
-      }`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            deleteScenario(scenario.id);
-          },
-        },
-      ]
-    );
+    // Direct deletion without confirmation
+    deleteScenario(scenario.id);
   };
 
   // Generate chart data for 12-week progression

@@ -3,8 +3,53 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { useGoals } from './GoalsContext';
-import { useUserData } from './UserDataContext';
+import { useGoals } from './contexts/GoalsContext';
+import { useUserData } from './contexts/UserDataContext';
+import { ScenarioParameters, ScenarioPrediction, Scenario, ViewMode } from './contexts/ScenariosContext';
+
+// Additional type definitions
+export interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  timestamp: Date;
+}
+
+export interface ProgressInsights {
+  currentTrend: 'improving' | 'stable' | 'declining';
+  predictedOutcome: number;
+  recommendations: string[];
+  confidenceScore: number;
+}
+
+export interface PlateauPrediction {
+  likelyWeek: number;
+  severity: 'low' | 'moderate' | 'high';
+  duration: number;
+  breakingStrategies: string[];
+}
+
+// Define the base context interface
+interface ScenariosContextType {
+  scenarios: Scenario[];
+  addScenario: (scenario: Omit<Scenario, 'id' | 'createdDate'>) => Scenario;
+  updateScenario: (id: string, updates: Partial<Scenario>) => void;
+  deleteScenario: (id: string) => void;
+  duplicateScenario: (id: string) => void;
+  createOnboardingScenario: () => Scenario;
+  clearAllScenarios: () => void;
+  viewMode: ViewMode;
+  setViewMode: (mode: ViewMode) => void;
+  selectedScenariosForComparison: string[];
+  toggleScenarioForComparison: (id: string) => void;
+  clearComparison: () => void;
+  activePlanId: string | null;
+  setActivePlan: (id: string) => void;
+  getScenarioById: (id: string) => Scenario | undefined;
+  calculatePrediction: (parameters: ScenarioParameters) => Promise<ScenarioPrediction>;
+  generateScenarioName: () => string;
+  generateDescriptiveName: (parameters: ScenarioParameters) => string;
+}
 
 // Enhanced interfaces for AI integration
 export interface AIScenarioParameters extends ScenarioParameters {
@@ -86,11 +131,14 @@ interface AIEnhancedScenariosContextType extends ScenariosContextType {
   lastSyncTime: Date | null;
 }
 
+// Create the context
+const AIEnhancedScenariosContext = createContext<AIEnhancedScenariosContextType | undefined>(undefined);
+
 // AI Service class for API interactions
 class AIService {
   private baseUrl = process.env.EXPO_PUBLIC_AI_API_URL || 'http://localhost:8087';
   private claudeApiKey = process.env.EXPO_PUBLIC_CLAUDE_API_KEY;
-  private geminiApiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY;
+  private openrouterApiKey = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY;
 
   async getPrediction(parameters: AIScenarioParameters, userData: any, goalsData: any): Promise<AIPrediction> {
     try {
@@ -149,12 +197,12 @@ class AIService {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.geminiApiKey}`,
+          'Authorization': `Bearer ${this.openrouterApiKey}`,
         },
         body: JSON.stringify({
           message,
           context,
-          model: 'gemini-pro'
+          model: 'glm-4.5'
         }),
       });
 
@@ -185,6 +233,42 @@ export const AIEnhancedScenariosProvider: React.FC<{ children: React.ReactNode }
   const [predictionCache, setPredictionCache] = useState<Map<string, AIPrediction>>(new Map());
 
   const aiService = new AIService();
+
+  // Simple prediction calculation fallback
+  const calculateSimplePrediction = useCallback((parameters: ScenarioParameters): ScenarioPrediction => {
+    const currentBodyFat = userData.bodyFatPercentage || 25;
+    const targetBodyFat = goalsData.targetBodyFat || 21;
+    const timelineWeeks = goalsData.timelineWeeks || 12;
+
+    const exerciseMultiplier = parameters.exerciseFrequency / 4;
+    const calorieMultiplier = parameters.calorieDeficit / 300;
+    const proteinMultiplier = parameters.proteinIntake === 'High' ? 1.2 :
+                             parameters.proteinIntake === 'Medium' ? 1.0 : 0.8;
+
+    const effectivenessScore = (exerciseMultiplier + calorieMultiplier + proteinMultiplier) / 3;
+    const bodyFatReduction = (currentBodyFat - targetBodyFat) * effectivenessScore;
+    const finalBodyFat = Math.max(10, currentBodyFat - bodyFatReduction);
+    const fatLoss = bodyFatReduction * 2.5;
+
+    const estimatedWeight = userData.weight || 165;
+    const baseMonthlyRate = 0.008;
+    const baseWeeklyRate = baseMonthlyRate / 4.33;
+    const trainingEffectiveness = Math.min(exerciseMultiplier, 1.5);
+    const nutritionEffectiveness = proteinMultiplier;
+    const weeklyMuscleGain = estimatedWeight * baseWeeklyRate * trainingEffectiveness * nutritionEffectiveness;
+    const muscleGain = weeklyMuscleGain * timelineWeeks;
+
+    const confidence = Math.min(95, Math.max(50, 70 + (effectivenessScore * 20)));
+
+    return {
+      currentBodyFat: Math.round(currentBodyFat * 10) / 10,
+      targetBodyFat: Math.round(finalBodyFat * 10) / 10,
+      fatLoss: Math.round(fatLoss * 100) / 100,
+      muscleGain: Math.round(muscleGain * 100) / 100,
+      timeline: timelineWeeks,
+      confidence: Math.round(confidence * 10) / 10,
+    };
+  }, [userData, goalsData]);
 
   // Enhanced prediction function with AI integration
   const getAIPrediction = useCallback(async (parameters: AIScenarioParameters): Promise<AIPrediction> => {
@@ -365,8 +449,8 @@ export const AIEnhancedScenariosProvider: React.FC<{ children: React.ReactNode }
   };
 
   return (
-    <ScenariosContext.Provider value={value}>
+    <AIEnhancedScenariosContext.Provider value={value}>
       {children}
-    </ScenariosContext.Provider>
+    </AIEnhancedScenariosContext.Provider>
   );
 };

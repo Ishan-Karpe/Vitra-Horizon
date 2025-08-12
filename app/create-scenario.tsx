@@ -82,7 +82,7 @@ export default function CreateScenarioScreen() {
           }
         ]
       );
-    } catch (error) {
+    } catch {
       Alert.alert('Error', 'Failed to create scenario. Please try again.');
     } finally {
       setIsCreating(false);
@@ -133,7 +133,7 @@ export default function CreateScenarioScreen() {
             </TouchableOpacity>
           </View>
           <Text className="text-sm text-gray-500 mt-1">
-            Tip: Use descriptive names like "High Intensity Plan" or "Beginner Routine"
+            Tip: Use descriptive names like &quot;High Intensity Plan&quot; or &quot;Beginner Routine&quot;
           </Text>
         </View>
 
@@ -141,23 +141,26 @@ export default function CreateScenarioScreen() {
         <View className="mb-8">
           <Text className="text-lg font-semibold text-gray-900 mb-6">Plan Parameters</Text>
           
-          <ExerciseFrequencySlider
-            value={parameters.exerciseFrequency}
-            onValueChange={(value) => setParameters(prev => ({ ...prev, exerciseFrequency: value }))}
-            className="mb-6"
-          />
+          <View className="mb-6">
+            <ExerciseFrequencySlider
+              value={parameters.exerciseFrequency}
+              onValueChange={(value) => setParameters(prev => ({ ...prev, exerciseFrequency: value }))}
+            />
+          </View>
           
-          <CalorieDeficitSlider
-            value={parameters.calorieDeficit}
-            onValueChange={(value) => setParameters(prev => ({ ...prev, calorieDeficit: value }))}
-            className="mb-6"
-          />
+          <View className="mb-6">
+            <CalorieDeficitSlider
+              value={parameters.calorieDeficit}
+              onValueChange={(value) => setParameters(prev => ({ ...prev, calorieDeficit: value }))}
+            />
+          </View>
           
-          <ProteinIntakeSelector
-            value={parameters.proteinIntake}
-            onValueChange={(value) => setParameters(prev => ({ ...prev, proteinIntake: value }))}
-            className="mb-6"
-          />
+          <View className="mb-6">
+            <ProteinIntakeSelector
+              value={parameters.proteinIntake}
+              onValueChange={(value) => setParameters(prev => ({ ...prev, proteinIntake: value }))}
+            />
+          </View>
         </View>
 
         {/* Prediction Preview */}

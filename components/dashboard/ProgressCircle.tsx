@@ -68,7 +68,6 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
         <Svg width={size} height={size} className="absolute">
           {Array.from({ length: totalWeeks }, (_, index) => {
             const weekNumber = index + 1;
-            const isCompleted = weekNumber < currentWeek;
             const isCurrent = weekNumber === currentWeek;
             const isFuture = weekNumber > currentWeek;
 

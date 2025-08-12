@@ -1,5 +1,5 @@
 // Demo component showing AI Backend integration
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, TextInput, ScrollView, Alert } from 'react-native';
 import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
 
@@ -41,7 +41,7 @@ export const AIBackendDemo: React.FC = () => {
         `${prediction.cached ? '(Cached)' : '(Fresh from AI)'}`
       );
     } catch (error) {
-      Alert.alert('Prediction Error', error.message);
+      Alert.alert('Prediction Error', error instanceof Error ? error.message : 'Unknown error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +56,7 @@ export const AIBackendDemo: React.FC = () => {
       await sendChatMessage(testMessage);
       setTestMessage('');
     } catch (error) {
-      Alert.alert('Chat Error', error.message);
+      Alert.alert('Chat Error', error instanceof Error ? error.message : 'Unknown error occurred');
     } finally {
       setIsLoading(false);
     }

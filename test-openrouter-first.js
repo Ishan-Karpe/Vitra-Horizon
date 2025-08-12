@@ -1,8 +1,8 @@
-// Test script to verify Gemini-first AI configuration
+// Test script to verify OpenRouter GLM-4.5 first AI configuration
 const fetch = require('node-fetch');
 
-async function testGeminiFirstConfiguration() {
-  console.log('🧪 Testing Gemini-First AI Configuration...\n');
+async function testOpenRouterFirstConfiguration() {
+  console.log('🧪 Testing OpenRouter GLM-4.5 First AI Configuration...\n');
   
   try {
     // Test 1: Health Check
@@ -16,8 +16,8 @@ async function testGeminiFirstConfiguration() {
     console.log('🔧 Services:', healthData.services);
     console.log('');
     
-    // Test 2: AI Prediction with Gemini
-    console.log('2️⃣ Testing AI Prediction (Gemini Primary)...');
+    // Test 2: AI Prediction with OpenRouter GLM-4.5
+    console.log('2️⃣ Testing AI Prediction (OpenRouter GLM-4.5 Primary)...');
     const predictionResponse = await fetch('http://localhost:8087/api/predictions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -48,8 +48,8 @@ async function testGeminiFirstConfiguration() {
     console.log(`   Cached: ${predictionData.cached}`);
     console.log('');
     
-    // Test 3: AI Chat with Gemini
-    console.log('3️⃣ Testing AI Chat (Gemini Primary)...');
+    // Test 3: AI Chat with OpenRouter GLM-4.5
+    console.log('3️⃣ Testing AI Chat (OpenRouter GLM-4.5 Primary)...');
     const chatResponse = await fetch('http://localhost:8087/api/chat', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -75,7 +75,7 @@ async function testGeminiFirstConfiguration() {
     console.log('🎉 All Tests Completed Successfully!');
     console.log('');
     console.log('📊 Configuration Summary:');
-    console.log('   🥇 Primary AI: Gemini Pro');
+    console.log('   🥇 Primary AI: OpenRouter GLM-4.5');
     console.log('   🥈 Backup AI: Claude 3.5 Sonnet');
     console.log('   🥉 Fallback: Mock AI');
     console.log('   🔄 Backend: http://localhost:8087');
@@ -94,4 +94,4 @@ async function testGeminiFirstConfiguration() {
 }
 
 // Run the test
-testGeminiFirstConfiguration();
+testOpenRouterFirstConfiguration();

@@ -16,7 +16,7 @@ import {
 import { useUserData } from '../contexts/UserDataContext';
 
 export default function EditProfileScreen() {
-  const { userData, updateUserData, validateField, validateAllFields } = useUserData();
+  const { userData, updateUserData, validateAllFields } = useUserData();
   
   // Local state for form data
   const [formData, setFormData] = useState({
@@ -71,7 +71,7 @@ export default function EditProfileScreen() {
           'Please check your inputs and try again.'
         );
       }
-    } catch (error) {
+    } catch {
       Alert.alert(
         'Error',
         'Failed to update profile. Please try again.'

@@ -28,7 +28,7 @@ app.use('/api/', limiter);
 
 // Mock AI Services (replace with actual API calls)
 class MockAIService {
-  // Simulate Gemini API for advanced predictions (Primary)
+  // Simulate OpenRouter GLM-4.5 API for advanced predictions (Primary)
   async getAdvancedPrediction(parameters, userData, goalsData) {
     // Simulate API delay
     await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
@@ -193,45 +193,69 @@ class MockAIService {
   }
 }
 
-// Real AI Service with Gemini Primary + Claude Backup
+// Real AI Service with OpenRouter GLM-4.5 Primary + Claude Backup
 class RealAIService extends MockAIService {
   constructor() {
     super();
     // Try multiple environment variable names
-    this.geminiApiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+    this.openrouterApiKey = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY;
     this.claudeApiKey = process.env.EXPO_PUBLIC_CLAUDE_API_KEY || process.env.CLAUDE_API_KEY;
-    this.geminiApiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+    this.openrouterApiUrl = 'https://openrouter.ai/api/v1/chat/completions';
     this.claudeApiUrl = 'https://api.anthropic.com/v1/messages';
 
     console.log('🔑 API Keys Status:');
-    console.log(`   Gemini: ${this.geminiApiKey ? 'Configured ✅' : 'Not configured ❌'}`);
+    console.log(`   OpenRouter GLM-4.5: ${this.openrouterApiKey ? 'Configured ✅' : 'Not configured ❌'}`);
     console.log(`   Claude: ${this.claudeApiKey ? 'Configured ✅' : 'Not configured ❌'}`);
   }
 
-  async callGeminiAPI(prompt) {
+  async callOpenRouterAPI(prompt) {
+    console.log('🔮 Attempting OpenRouter API call with model: z-ai/glm-4.5');
+    const startTime = Date.now();
     try {
-      const response = await fetch(`${this.geminiApiUrl}?key=${this.geminiApiKey}`, {
+      // Add timeout to prevent hanging requests
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 65000); // 65 second timeout
+      
+      const response = await fetch(this.openrouterApiUrl, {
+        signal: controller.signal,
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.openrouterApiKey}`,
+          'HTTP-Referer': 'https://vitra-morph.com',
+          'X-Title': 'Vitra Morph AI'
         },
         body: JSON.stringify({
-          contents: [{
-            parts: [{
-              text: prompt
-            }]
-          }]
+          model: 'z-ai/glm-4.5',
+          messages: [{
+            role: 'user',
+            content: prompt
+          }],
+          temperature: 0.5,
+          max_tokens: 1000
         })
       });
 
+      clearTimeout(timeoutId);
+      const responseTime = Date.now() - startTime;
+      console.log(`⏱️ OpenRouter API response time: ${responseTime}ms`);
+
       if (!response.ok) {
-        throw new Error(`Gemini API error: ${response.status}`);
+        const errorData = await response.json();
+        console.error('OpenRouter API error response:', JSON.stringify(errorData, null, 2));
+        throw new Error(`OpenRouter API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
       }
 
       const data = await response.json();
-      return data.candidates[0].content.parts[0].text;
+      console.log('✅ OpenRouter API call successful');
+      return data.choices[0].message.content;
     } catch (error) {
-      console.error('Gemini API call failed:', error);
+      const responseTime = Date.now() - startTime;
+      if (error.name === 'AbortError') {
+        console.error(`🕐 OpenRouter API call timed out after ${responseTime}ms`);
+        throw new Error(`OpenRouter API timeout after ${responseTime}ms`);
+      }
+      console.error('OpenRouter API call failed:', error);
       throw error;
     }
   }
@@ -268,12 +292,13 @@ class RealAIService extends MockAIService {
   }
 
   async getAdvancedPrediction(parameters, userData, goalsData) {
-    console.log('🔮 Attempting prediction with Gemini (Primary)...');
+    console.log('🔮 Attempting prediction with OpenRouter GLM-4.5 (Primary)...');
+    console.log('🔑 OpenRouter API Key status:', this.openrouterApiKey ? `Available (${this.openrouterApiKey.length} chars)` : 'Not available');
 
     try {
-      // Try Gemini first for predictions
-      if (this.geminiApiKey && this.geminiApiKey !== 'your_gemini_key_here') {
-        console.log('📊 Using Gemini Pro for advanced prediction');
+      // Try OpenRouter GLM-4.5 first for predictions
+      if (this.openrouterApiKey && this.openrouterApiKey !== 'your_openrouter_key_here') {
+        console.log('📊 Using OpenRouter GLM-4.5 for advanced prediction');
 
         const prompt = `You are a fitness AI expert. Calculate body composition predictions based on this data:
 
@@ -321,27 +346,27 @@ Provide a JSON response with these exact fields:
 
 Use realistic fitness science principles and provide accurate predictions.`;
 
-        const aiResponse = await this.callGeminiAPI(prompt);
+        const aiResponse = await this.callOpenRouterAPI(prompt);
 
         try {
           // Try to parse JSON response
           const jsonMatch = aiResponse.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             const prediction = JSON.parse(jsonMatch[0]);
-            return { ...prediction, aiModel: 'gemini-pro', source: 'primary' };
+            return { ...prediction, aiModel: 'glm-4.5', source: 'primary' };
           }
         } catch (parseError) {
-          console.warn('Failed to parse Gemini JSON response, using enhanced mock');
+          console.warn('Failed to parse OpenRouter JSON response, using enhanced mock');
         }
 
-        // Fallback to enhanced mock with Gemini branding
+        // Fallback to enhanced mock with OpenRouter branding
         const prediction = await super.getAdvancedPrediction(parameters, userData, goalsData);
-        return { ...prediction, aiModel: 'gemini-pro', source: 'primary' };
+        return { ...prediction, aiModel: 'glm-4.5', source: 'primary' };
       }
 
-      throw new Error('Gemini API key not configured');
+      throw new Error('OpenRouter API key not configured');
     } catch (error) {
-      console.warn('⚠️ Gemini prediction failed, trying Claude backup:', error.message);
+      console.warn('⚠️ OpenRouter prediction failed, trying Claude backup:', error.message);
 
       try {
         // Fallback to Claude
@@ -396,12 +421,12 @@ Provide a JSON response with realistic fitness predictions including confidence 
   }
 
   async getChatResponse(message, context) {
-    console.log('💬 Attempting chat with Gemini (Primary)...');
+    console.log('💬 Attempting chat with OpenRouter GLM-4.5 (Primary)...');
 
     try {
-      // Try Gemini first for chat
-      if (this.geminiApiKey && this.geminiApiKey !== 'your_gemini_key_here') {
-        console.log('🤖 Using Gemini Pro for chat response');
+      // Try OpenRouter GLM-4.5 first for chat
+      if (this.openrouterApiKey && this.openrouterApiKey !== 'your_openrouter_key_here') {
+        console.log('🤖 Using OpenRouter GLM-4.5 for chat response');
 
         const prompt = `You are a knowledgeable fitness AI assistant. Answer this fitness question: "${message}"
 
@@ -410,18 +435,18 @@ Context: ${JSON.stringify(context)}
 Provide a helpful, accurate, and personalized response based on fitness science. Keep it conversational and practical.`;
 
         try {
-          const response = await this.callGeminiAPI(prompt);
+          const response = await this.callOpenRouterAPI(prompt);
           return response;
         } catch (apiError) {
-          console.warn('Gemini API call failed, using mock response');
+          console.warn('OpenRouter API call failed, using mock response');
           const response = await super.getChatResponse(message, context);
-          return `[Gemini Fallback] ${response}`;
+          return `[OpenRouter Fallback] ${response}`;
         }
       }
 
-      throw new Error('Gemini API key not configured');
+      throw new Error('OpenRouter API key not configured');
     } catch (error) {
-      console.warn('⚠️ Gemini chat failed, trying Claude backup:', error.message);
+      console.warn('⚠️ OpenRouter chat failed, trying Claude backup:', error.message);
 
       try {
         // Fallback to Claude
@@ -462,27 +487,27 @@ const aiService = new RealAIService();
 
 // Health check
 app.get('/api/health', (req, res) => {
-  const geminiKey = process.env.EXPO_PUBLIC_GEMINI_API_KEY || process.env.GEMINI_API_KEY;
+  const openrouterKey = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY || process.env.OPENROUTER_API_KEY;
   const claudeKey = process.env.EXPO_PUBLIC_CLAUDE_API_KEY || process.env.CLAUDE_API_KEY;
 
-  const geminiConfigured = geminiKey && geminiKey !== 'your_gemini_key_here';
+  const openrouterConfigured = openrouterKey && openrouterKey !== 'your_openrouter_key_here';
   const claudeConfigured = claudeKey && claudeKey !== 'your_claude_key_here';
 
   res.json({
     status: 'healthy',
     timestamp: new Date().toISOString(),
-    aiStrategy: 'gemini-primary-claude-backup',
+    aiStrategy: 'openrouter-glm4.5-primary-claude-backup',
     services: {
-      'gemini-pro': geminiConfigured ? 'configured' : 'not-configured',
+      'openrouter-glm-4.5': openrouterConfigured ? 'configured' : 'not-configured',
       'claude-3.5-sonnet': claudeConfigured ? 'configured' : 'not-configured',
       'mock-ai': 'available',
       cache: 'active'
     },
-    priority: ['gemini-pro', 'claude-3.5-sonnet', 'mock-ai'],
+    priority: ['openrouter-glm-4.5', 'claude-3.5-sonnet', 'mock-ai'],
     debug: {
-      geminiKeyPresent: !!geminiKey,
+      openrouterKeyPresent: !!openrouterKey,
       claudeKeyPresent: !!claudeKey,
-      geminiKeyLength: geminiKey ? geminiKey.length : 0,
+      openrouterKeyLength: openrouterKey ? openrouterKey.length : 0,
       claudeKeyLength: claudeKey ? claudeKey.length : 0
     }
   });
@@ -490,6 +515,7 @@ app.get('/api/health', (req, res) => {
 
 // Advanced predictions endpoint
 app.post('/api/predictions', async (req, res) => {
+  console.log('🚀 Received prediction request');
   try {
     const { parameters, userData, goalsData } = req.body;
     
@@ -502,9 +528,11 @@ app.post('/api/predictions', async (req, res) => {
     const cached = predictionCache.get(cacheKey);
     
     if (cached) {
+      console.log('📋 Returning cached result');
       return res.json({ ...cached, cached: true });
     }
     
+    console.log('🧠 Cache miss, generating new prediction');
     // Generate prediction
     const prediction = await aiService.getAdvancedPrediction(parameters, userData, goalsData);
     
@@ -575,7 +603,7 @@ const server = app.listen(PORT, () => {
   console.log(`💬 AI Chat: POST http://localhost:${PORT}/api/chat`);
   console.log(`🎯 Scenario Generation: POST http://localhost:${PORT}/api/scenarios/generate`);
   console.log(`🔄 Server is running and waiting for connections...`);
-  console.log(`🧠 AI Strategy: Gemini Pro (Primary) → Claude 3.5 Sonnet (Backup) → Mock AI (Fallback)`);
+  console.log(`🧠 AI Strategy: OpenRouter GLM-4.5 (Primary) → Claude 3.5 Sonnet (Backup) → Mock AI (Fallback)`);
 
   // Keep alive heartbeat
   setInterval(() => {

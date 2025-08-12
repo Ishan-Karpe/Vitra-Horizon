@@ -47,7 +47,7 @@ const ProgressBar: React.FC<ProgressBarProps> = ({
 };
 
 export const GoalProgressSection: React.FC = () => {
-  const { goalProgress, getProgressInsights, getCurrentBodyFat, getCurrentWeight, measurements } = useProgress();
+  const { getProgressInsights, getCurrentBodyFat, getCurrentWeight, measurements } = useProgress();
   const { userData } = useUserData();
   const { goalsData } = useGoals();
   const insights = getProgressInsights();

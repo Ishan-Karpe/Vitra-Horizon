@@ -3,27 +3,18 @@
  * Run this to clear all user data and reset the app to a fresh state
  */
 
-import { clearAllAppData, verifyDataCleared, logAllStorageContents } from '../utils/clearAllData';
+// TODO: Create clearAllData utility 
+// import { clearAllAppData, verifyDataCleared, logAllStorageContents } from '../utils/clearAllData';
 
 const runDataClear = async () => {
   try {
-    console.log('🔄 BEFORE CLEARING:');
-    await logAllStorageContents();
+    console.log('🔄 Data clearing script - utility functions not yet implemented');
+    console.log('📝 TODO: Implement clearAllAppData, verifyDataCleared, and logAllStorageContents functions');
     
-    console.log('\n🧹 CLEARING ALL DATA...');
-    await clearAllAppData();
-    
-    console.log('\n✅ VERIFYING DATA CLEARED...');
-    const isCleared = await verifyDataCleared();
-    
-    if (isCleared) {
-      console.log('🎉 SUCCESS: All data has been cleared!');
-    } else {
-      console.log('⚠️ WARNING: Some data may still remain');
-    }
-    
-    console.log('\n🔄 AFTER CLEARING:');
-    await logAllStorageContents();
+    // TODO: Implement actual clearing logic
+    // await logAllStorageContents();
+    // await clearAllAppData();
+    // const isCleared = await verifyDataCleared();
     
   } catch (error) {
     console.error('💥 FAILED to clear data:', error);

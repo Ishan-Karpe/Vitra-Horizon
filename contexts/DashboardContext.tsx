@@ -1,12 +1,12 @@
-import React, { createContext, useCallback, useContext, useState } from 'react';
-import { useAIEnhancedScenarios } from './AIEnhancedScenariosContext';
-import { useGoals } from './GoalsContext';
-import { useUserData } from './UserDataContext';
+import React, { createContext, useCallback, useContext, useState } from "react";
+import { useAIEnhancedScenarios } from "./AIEnhancedScenariosContext";
+import { useGoals } from "./GoalsContext";
+import { useUserData } from "./UserDataContext";
 
 interface DailyAction {
   id: string;
   title: string;
-  type: 'weight' | 'workout' | 'calories' | 'custom';
+  type: "weight" | "workout" | "calories" | "custom";
   completed: boolean;
   value?: string | number;
   target?: string | number;
@@ -26,40 +26,46 @@ interface DashboardContextType {
   totalWeeks: number;
   completionPercentage: number;
   todayDate: string;
-  
+
   // Daily actions
   dailyActions: DailyAction[];
   toggleAction: (actionId: string) => void;
   updateActionValue: (actionId: string, value: string | number) => void;
-  
+
   // Status tracking
-  status: 'on-track' | 'behind' | 'ahead';
+  status: "on-track" | "behind" | "ahead";
   statusMessage: string;
-  
+
   // Weekly progress
   weeklyProgress: WeeklyProgress[];
   getWeekProgress: (week: number) => WeeklyProgress | undefined;
-  
+
   // Prediction
   predictionMessage: string;
   predictionDate: string;
-  
+
   // Analytics
   streakCount: number;
   totalCompletedActions: number;
 }
 
-const DashboardContext = createContext<DashboardContextType | undefined>(undefined);
+const DashboardContext = createContext<DashboardContextType | undefined>(
+  undefined,
+);
 
 export const useDashboardContext = () => {
   const context = useContext(DashboardContext);
   if (!context) {
-    throw new Error('useDashboardContext must be used within a DashboardProvider');
+    throw new Error(
+      "useDashboardContext must be used within a DashboardProvider",
+    );
   }
   return context;
 };
 
-export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
   const { userData } = useUserData();
   const { goalsData } = useGoals();
   const { scenarios, activePlanId, getScenarioById } = useAIEnhancedScenarios();
@@ -67,56 +73,84 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   // Get active scenario for timeline calculation
   const activeScenario = activePlanId ? getScenarioById(activePlanId) : null;
 
-  // Calculate current week and total weeks from active plan or default goals
-  const currentWeek = 3; // Mock data - would be calculated from start date
-  const totalWeeks = activeScenario?.prediction.timeline || goalsData.timelineWeeks || 12;
-  
+  // Calculate current week based on calendar weeks (Sunday to Sunday)
+  const calculateCurrentWeek = () => {
+    const today = new Date();
+    const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+
+    // Find the start of the current week (Sunday)
+    const startOfCurrentWeek = new Date(today);
+    startOfCurrentWeek.setDate(today.getDate() - currentDay);
+    startOfCurrentWeek.setHours(0, 0, 0, 0);
+
+    // For demo purposes, let's say the program started on the Sunday of this week
+    // In a real app, this would be stored when the user accepts their plan
+    const programStartDate = new Date(startOfCurrentWeek);
+
+    // Calculate weeks elapsed since program start
+    const msPerWeek = 7 * 24 * 60 * 60 * 1000;
+    const weeksElapsed = Math.floor(
+      (startOfCurrentWeek.getTime() - programStartDate.getTime()) / msPerWeek,
+    );
+
+    // Current week is always at least 1, and increments each Sunday
+    return Math.max(1, weeksElapsed + 1);
+  };
+
+  const currentWeek = calculateCurrentWeek();
+  const totalWeeks =
+    activeScenario?.prediction.timeline || goalsData.timelineWeeks || 12;
+
   // Today's date formatting
   const today = new Date();
-  const todayDate = today.toLocaleDateString('en-US', {
-    weekday: 'long',
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
+  const todayDate = today.toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "long",
+    day: "numeric",
+    year: "numeric",
   });
 
   // Daily actions state
   const [dailyActions, setDailyActions] = useState<DailyAction[]>([
     {
-      id: '1',
-      title: 'Log weight: 167 lbs',
-      type: 'weight',
+      id: "1",
+      title: "Log weight: 167 lbs",
+      type: "weight",
       completed: true,
       value: 167,
       target: 167,
-      icon: '⚖️'
+      icon: "⚖️",
     },
     {
-      id: '2',
-      title: 'Complete workout: Strength training',
-      type: 'workout',
+      id: "2",
+      title: "Complete workout: Strength training",
+      type: "workout",
       completed: false,
-      icon: '💪'
+      icon: "💪",
     },
     {
-      id: '3',
-      title: 'Stay within calorie target: 1,850 cals',
-      type: 'calories',
+      id: "3",
+      title: "Stay within calorie target: 1,850 cals",
+      type: "calories",
       completed: false,
       target: 1850,
-      icon: '🍎'
-    }
+      icon: "🍎",
+    },
   ]);
 
   // Calculate completion percentage
-  const completedCount = dailyActions.filter(action => action.completed).length;
-  const completionPercentage = Math.round((completedCount / dailyActions.length) * 100);
+  const completedCount = dailyActions.filter(
+    (action) => action.completed,
+  ).length;
+  const completionPercentage = Math.round(
+    (completedCount / dailyActions.length) * 100,
+  );
 
   // Determine status
   const getStatus = useCallback(() => {
-    if (completionPercentage >= 80) return 'on-track';
-    if (completionPercentage >= 60) return 'behind';
-    return 'ahead';
+    if (completionPercentage >= 80) return "on-track";
+    if (completionPercentage >= 60) return "behind";
+    return "ahead";
   }, [completionPercentage]);
 
   const status = getStatus();
@@ -129,21 +163,23 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     { week: 3, completedActions: 15, totalActions: 21, completionRate: 71 },
   ];
 
-
-
   // Prediction message based on active scenario
-  const targetBodyFat = activeScenario?.prediction.targetBodyFat || goalsData.targetBodyFat || 21;
-  const timelineWeeks = activeScenario?.prediction.timeline || goalsData.timelineWeeks || 12;
+  const targetBodyFat =
+    activeScenario?.prediction.targetBodyFat || goalsData.targetBodyFat || 21;
+  const timelineWeeks =
+    activeScenario?.prediction.timeline || goalsData.timelineWeeks || 12;
   const confidence = activeScenario?.prediction.confidence || 78;
   const fatLoss = activeScenario?.prediction.fatLoss || 8;
   const muscleGain = activeScenario?.prediction.muscleGain || 2;
 
   // Calculate prediction date
   const startDate = new Date();
-  const predictionDate = new Date(startDate.getTime() + (timelineWeeks * 7 * 24 * 60 * 60 * 1000));
-  const formattedPredictionDate = predictionDate.toLocaleDateString('en-US', {
-    month: 'long',
-    day: 'numeric'
+  const predictionDate = new Date(
+    startDate.getTime() + timelineWeeks * 7 * 24 * 60 * 60 * 1000,
+  );
+  const formattedPredictionDate = predictionDate.toLocaleDateString("en-US", {
+    month: "long",
+    day: "numeric",
   });
 
   const predictionMessage = activeScenario
@@ -152,30 +188,34 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Toggle action completion
   const toggleAction = useCallback((actionId: string) => {
-    setDailyActions(prev => 
-      prev.map(action => 
-        action.id === actionId 
+    setDailyActions((prev) =>
+      prev.map((action) =>
+        action.id === actionId
           ? { ...action, completed: !action.completed }
-          : action
-      )
+          : action,
+      ),
     );
   }, []);
 
   // Update action value
-  const updateActionValue = useCallback((actionId: string, value: string | number) => {
-    setDailyActions(prev => 
-      prev.map(action => 
-        action.id === actionId 
-          ? { ...action, value }
-          : action
-      )
-    );
-  }, []);
+  const updateActionValue = useCallback(
+    (actionId: string, value: string | number) => {
+      setDailyActions((prev) =>
+        prev.map((action) =>
+          action.id === actionId ? { ...action, value } : action,
+        ),
+      );
+    },
+    [],
+  );
 
   // Get specific week progress
-  const getWeekProgress = useCallback((week: number) => {
-    return weeklyProgress.find(wp => wp.week === week);
-  }, [weeklyProgress]);
+  const getWeekProgress = useCallback(
+    (week: number) => {
+      return weeklyProgress.find((wp) => wp.week === week);
+    },
+    [weeklyProgress],
+  );
 
   // Calculate analytics
   const streakCount = 0; // Placeholder
@@ -194,10 +234,10 @@ export const DashboardProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     weeklyProgress,
     getWeekProgress,
     predictionMessage,
-    predictionDate: predictionDate.toLocaleDateString('en-US', {
-      month: 'long',
-      day: 'numeric',
-      year: 'numeric',
+    predictionDate: predictionDate.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
     }),
     streakCount,
     totalCompletedActions,

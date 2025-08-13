@@ -1,5 +1,5 @@
-import React, { ReactNode } from 'react';
-import { Text, View } from 'react-native';
+import React, { ReactNode } from "react";
+import { Text, View } from "react-native";
 
 export interface HeroProps {
   title: string;
@@ -8,7 +8,7 @@ export interface HeroProps {
   className?: string;
 }
 
-export function Hero({ title, subtitle, children, className = '' }: HeroProps) {
+export function Hero({ title, subtitle, children, className = "" }: HeroProps) {
   return (
     <View className={`items-center text-center px-2 sm:px-4 ${className}`}>
       {/* Main Title */}
@@ -24,11 +24,7 @@ export function Hero({ title, subtitle, children, className = '' }: HeroProps) {
       )}
 
       {/* Additional Content */}
-      {children && (
-        <View className="mt-4 sm:mt-6 md:mt-8">
-          {children}
-        </View>
-      )}
+      {children && <View className="mt-4 sm:mt-6 md:mt-8">{children}</View>}
     </View>
   );
 }

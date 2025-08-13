@@ -1,27 +1,27 @@
 // Quick access button for AI Demo
-import React from 'react';
-import { TouchableOpacity, Text, View } from 'react-native';
-import { useRouter } from 'expo-router';
-import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
+import React from "react";
+import { TouchableOpacity, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useAIEnhancedScenarios } from "../../contexts/AIEnhancedScenariosContext";
 
 export const AIQuickAccess: React.FC = () => {
   const router = useRouter();
   const { isConnectedToBackend, isAIAvailable } = useAIEnhancedScenarios();
 
   const handlePress = () => {
-    router.push('/ai-demo');
+    router.push("/ai-demo");
   };
 
   const getStatusColor = () => {
-    if (isConnectedToBackend) return '#10B981'; // Green
-    if (isAIAvailable) return '#F59E0B'; // Yellow  
-    return '#EF4444'; // Red
+    if (isConnectedToBackend) return "#10B981"; // Green
+    if (isAIAvailable) return "#F59E0B"; // Yellow
+    return "#EF4444"; // Red
   };
 
   const getStatusText = () => {
-    if (isConnectedToBackend) return 'AI Connected';
-    if (isAIAvailable) return 'AI Cached';
-    return 'AI Offline';
+    if (isConnectedToBackend) return "AI Connected";
+    if (isAIAvailable) return "AI Cached";
+    return "AI Offline";
   };
 
   return (
@@ -38,10 +38,10 @@ export const AIQuickAccess: React.FC = () => {
             Test AI predictions and chat features
           </Text>
         </View>
-        
+
         <View className="items-end">
           <View className="flex-row items-center mb-1">
-            <View 
+            <View
               className="w-2 h-2 rounded-full mr-2"
               style={{ backgroundColor: getStatusColor() }}
             />
@@ -49,9 +49,7 @@ export const AIQuickAccess: React.FC = () => {
               {getStatusText()}
             </Text>
           </View>
-          <Text className="text-xs text-gray-500">
-            Port 8087 → 8088
-          </Text>
+          <Text className="text-xs text-gray-500">Port 8087 → 8088</Text>
         </View>
       </View>
     </TouchableOpacity>

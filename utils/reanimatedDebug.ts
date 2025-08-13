@@ -1,5 +1,8 @@
 // Debug utility to track Reanimated value access during render
-export const trackReanimatedAccess = (componentName: string, action: string) => {
+export const trackReanimatedAccess = (
+  componentName: string,
+  action: string,
+) => {
   console.log(`[Reanimated Debug] ${componentName} - ${action}`);
   console.trace();
 };
@@ -11,12 +14,12 @@ export const debugSharedValue = <T>(initialValue: T, componentName: string) => {
     value: initialValue,
     // Track access
     get() {
-      trackReanimatedAccess(componentName, 'Reading value during render');
+      trackReanimatedAccess(componentName, "Reading value during render");
       return this.value;
     },
     set(newValue: T) {
-      trackReanimatedAccess(componentName, 'Writing value during render');
+      trackReanimatedAccess(componentName, "Writing value during render");
       this.value = newValue;
-    }
+    },
   };
 };

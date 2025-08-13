@@ -1,13 +1,19 @@
-import { router } from 'expo-router';
-import React from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { router } from "expo-router";
+import React from "react";
+import {
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { GoalCard } from '../components/ui/GoalCard';
-import { LoadingOverlay } from '../components/ui/LoadingOverlay';
-import { ProgressIndicator } from '../components/ui/ProgressIndicator';
-import { RangeSlider } from '../components/ui/RangeSlider';
-import { useGoals } from '../contexts/GoalsContext';
-import { useUserData } from '../contexts/UserDataContext';
+import { GoalCard } from "../components/ui/GoalCard";
+import { LoadingOverlay } from "../components/ui/LoadingOverlay";
+import { ProgressIndicator } from "../components/ui/ProgressIndicator";
+import { RangeSlider } from "../components/ui/RangeSlider";
+import { useGoals } from "../contexts/GoalsContext";
+import { useUserData } from "../contexts/UserDataContext";
 
 export default function GoalsScreen() {
   const { userData, updateUserData } = useUserData();
@@ -20,7 +26,7 @@ export default function GoalsScreen() {
     setGenerating,
     validateGoals,
     getRecommendedTimeline,
-    getRecommendedBodyFat
+    getRecommendedBodyFat,
   } = useGoals();
 
   const [loadingProgress, setLoadingProgress] = React.useState(0);
@@ -36,7 +42,7 @@ export default function GoalsScreen() {
     // Ensure target body fat is within the valid range for the selected goal
     const newTargetBodyFat = Math.max(
       Math.min(recommendations.recommended, recommendations.max),
-      recommendations.min
+      recommendations.min,
     );
     // Pass the goal explicitly to avoid stale state issues
     updateTargetBodyFat(newTargetBodyFat, currentBodyFat, goal);
@@ -57,7 +63,10 @@ export default function GoalsScreen() {
     if (!goalsData.selectedGoal) return 30; // Default maximum
 
     const currentBodyFat = userData.bodyFatPercentage || 20;
-    const recommendations = getRecommendedBodyFat(goalsData.selectedGoal, currentBodyFat);
+    const recommendations = getRecommendedBodyFat(
+      goalsData.selectedGoal,
+      currentBodyFat,
+    );
     return recommendations.max;
   };
 
@@ -66,7 +75,10 @@ export default function GoalsScreen() {
     if (!goalsData.selectedGoal) return 5; // Default minimum
 
     const currentBodyFat = userData.bodyFatPercentage || 20;
-    const recommendations = getRecommendedBodyFat(goalsData.selectedGoal, currentBodyFat);
+    const recommendations = getRecommendedBodyFat(
+      goalsData.selectedGoal,
+      currentBodyFat,
+    );
     return recommendations.min;
   };
 
@@ -88,15 +100,19 @@ export default function GoalsScreen() {
 
     // Simulate API call with progress
     const progressSteps = [
-      { progress: 20, message: 'Analyzing your profile...', delay: 500 },
-      { progress: 40, message: 'Calculating body composition...', delay: 800 },
-      { progress: 60, message: 'Generating workout plan...', delay: 700 },
-      { progress: 80, message: 'Creating nutrition recommendations...', delay: 600 },
-      { progress: 100, message: 'Finalizing your prediction...', delay: 400 },
+      { progress: 20, message: "Analyzing your profile...", delay: 500 },
+      { progress: 40, message: "Calculating body composition...", delay: 800 },
+      { progress: 60, message: "Generating workout plan...", delay: 700 },
+      {
+        progress: 80,
+        message: "Creating nutrition recommendations...",
+        delay: 600,
+      },
+      { progress: 100, message: "Finalizing your prediction...", delay: 400 },
     ];
 
     for (const step of progressSteps) {
-      await new Promise(resolve => setTimeout(resolve, step.delay));
+      await new Promise((resolve) => setTimeout(resolve, step.delay));
       setLoadingProgress(step.progress);
     }
 
@@ -105,7 +121,7 @@ export default function GoalsScreen() {
       setGenerating(false);
       setLoadingProgress(0);
       // Navigate to prediction screen
-      router.push('/prediction');
+      router.push("/prediction");
     }, 500);
   };
 
@@ -115,11 +131,7 @@ export default function GoalsScreen() {
         {/* Header Section */}
         <View className="mb-8">
           {/* Progress Indicator */}
-          <ProgressIndicator
-            currentStep={2}
-            totalSteps={4}
-            className="mb-6"
-          />
+          <ProgressIndicator currentStep={2} totalSteps={4} className="mb-6" />
 
           {/* Title */}
           <Text className="text-3xl font-bold text-gray-900 mb-2">
@@ -135,7 +147,7 @@ export default function GoalsScreen() {
               title="Lose Fat"
               icon="🔥"
               color="orange"
-              isSelected={goalsData.selectedGoal === 'lose-fat'}
+              isSelected={goalsData.selectedGoal === "lose-fat"}
               onPress={handleGoalSelect}
             />
 
@@ -144,7 +156,7 @@ export default function GoalsScreen() {
               title="Build Muscle"
               icon="💪"
               color="green"
-              isSelected={goalsData.selectedGoal === 'build-muscle'}
+              isSelected={goalsData.selectedGoal === "build-muscle"}
               onPress={handleGoalSelect}
             />
 
@@ -153,7 +165,7 @@ export default function GoalsScreen() {
               title="Body Recomposition"
               icon="⚖️"
               color="blue"
-              isSelected={goalsData.selectedGoal === 'body-recomposition'}
+              isSelected={goalsData.selectedGoal === "body-recomposition"}
               onPress={handleGoalSelect}
             />
           </View>
@@ -191,14 +203,16 @@ export default function GoalsScreen() {
         <TouchableOpacity
           className={`py-4 px-8 rounded-xl ${
             validation.isFormValid && !goalsData.isGenerating
-              ? 'bg-green-500'
-              : 'bg-gray-300'
+              ? "bg-green-500"
+              : "bg-gray-300"
           }`}
           onPress={handleGeneratePrediction}
           disabled={!validation.isFormValid || goalsData.isGenerating}
         >
           <Text className="text-white text-lg font-semibold text-center">
-            {goalsData.isGenerating ? 'Generating Prediction...' : 'Generate Prediction'}
+            {goalsData.isGenerating
+              ? "Generating Prediction..."
+              : "Generate Prediction"}
           </Text>
         </TouchableOpacity>
 

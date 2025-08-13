@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Text, TouchableOpacity, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
+import React, { useEffect, useRef } from "react";
+import { Animated, Text, TouchableOpacity, View } from "react-native";
+import Svg, { Path } from "react-native-svg";
 
 interface ProgressCircleProps {
   currentWeek: number;
@@ -12,7 +12,7 @@ interface ProgressCircleProps {
 export const ProgressCircle: React.FC<ProgressCircleProps> = ({
   currentWeek,
   totalWeeks,
-  className = '',
+  className = "",
   onPress,
 }) => {
   const animatedValue = useRef(new Animated.Value(0)).current;
@@ -34,7 +34,7 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
           duration: 800,
           useNativeDriver: false,
         }),
-      ])
+      ]),
     );
     pulse.start();
     return () => pulse.stop();
@@ -47,7 +47,8 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
   // Generate path for each week segment
   const createSegmentPath = (weekIndex: number) => {
     const startAngle = (weekIndex * segmentAngle - 90) * (Math.PI / 180); // Start from top
-    const endAngle = ((weekIndex + 1) * segmentAngle - gapAngle - 90) * (Math.PI / 180);
+    const endAngle =
+      ((weekIndex + 1) * segmentAngle - gapAngle - 90) * (Math.PI / 180);
 
     const x1 = size / 2 + radius * Math.cos(startAngle);
     const y1 = size / 2 + radius * Math.sin(startAngle);
@@ -59,15 +60,17 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
     return `M ${x1} ${y1} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${x2} ${y2}`;
   };
 
-
-
   const CircleContent = () => (
     <View className={`items-center justify-center ${className}`}>
-      <View className="relative items-center justify-center" style={{ width: size, height: size }}>
+      <View
+        className="relative items-center justify-center"
+        style={{ width: size, height: size }}
+      >
         {/* SVG Progress Circle with Blue Weekly Segments */}
         <Svg width={size} height={size} className="absolute">
           {Array.from({ length: totalWeeks }, (_, index) => {
             const weekNumber = index + 1;
+            const isCompleted = weekNumber < currentWeek;
             const isCurrent = weekNumber === currentWeek;
             const isFuture = weekNumber > currentWeek;
 
@@ -78,18 +81,20 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
                 stroke={
                   isFuture
                     ? "#E5E7EB" // Gray for future weeks
-                    : "#3B82F6" // Blue for completed and current weeks
+                    : isCompleted
+                      ? "#10B981" // Green for completed weeks (solid)
+                      : "#3B82F6" // Blue for current week (will be animated)
                 }
                 strokeWidth={strokeWidth}
                 fill="transparent"
                 strokeLinecap="round"
-                opacity={isCurrent ? 0.7 : 1} // Slightly transparent for current week (will be animated)
+                opacity={isCurrent ? 0.3 : 1} // Lower opacity for current week base (will have animated overlay)
               />
             );
           })}
         </Svg>
 
-        {/* Animated Current Week Overlay */}
+        {/* Animated Current Week Overlay - Flashing Effect */}
         {currentWeek <= totalWeeks && (
           <Animated.View
             className="absolute"
@@ -101,7 +106,7 @@ export const ProgressCircle: React.FC<ProgressCircleProps> = ({
               <Path
                 d={createSegmentPath(currentWeek - 1)}
                 stroke="#3B82F6"
-                strokeWidth={strokeWidth}
+                strokeWidth={strokeWidth + 2} // Slightly thicker for emphasis
                 fill="transparent"
                 strokeLinecap="round"
               />

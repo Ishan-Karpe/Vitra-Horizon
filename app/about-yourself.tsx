@@ -1,14 +1,14 @@
-import { router } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { SafeAreaView, ScrollView, Text, View } from 'react-native';
-import { ActivityLevelSelector } from '../components/ui/ActivityLevelSelector';
-import { BodyFatCalculatorModal } from '../components/ui/BodyFatCalculatorModal';
-import { BodyFatSlider } from '../components/ui/BodyFatSlider';
-import { Button } from '../components/ui/Button';
-import { HeightInput } from '../components/ui/HeightInput';
-import { ProgressIndicator } from '../components/ui/ProgressIndicator';
-import { WeightSlider } from '../components/ui/WeightSlider';
-import { useUserData } from '../contexts/UserDataContext';
+import { router } from "expo-router";
+import React, { useMemo, useState } from "react";
+import { SafeAreaView, ScrollView, Text, View } from "react-native";
+import { ActivityLevelSelector } from "../components/ui/ActivityLevelSelector";
+import { BodyFatCalculatorModal } from "../components/ui/BodyFatCalculatorModal";
+import { BodyFatSlider } from "../components/ui/BodyFatSlider";
+import { Button } from "../components/ui/Button";
+import { HeightInput } from "../components/ui/HeightInput";
+import { ProgressIndicator } from "../components/ui/ProgressIndicator";
+import { WeightSlider } from "../components/ui/WeightSlider";
+import { useUserData } from "../contexts/UserDataContext";
 
 export default function AboutYourselfScreen() {
   const { userData, updateUserData, validateField } = useUserData();
@@ -17,24 +17,28 @@ export default function AboutYourselfScreen() {
   // Check if form is complete and valid (without updating state)
   const isFormValid = useMemo(() => {
     const fieldsToValidate: (keyof typeof userData)[] = [
-      'weight', 'heightFeet', 'heightInches', 'bodyFatPercentage', 'activityLevel'
+      "weight",
+      "heightFeet",
+      "heightInches",
+      "bodyFatPercentage",
+      "activityLevel",
     ];
 
-    return fieldsToValidate.every(field => {
+    return fieldsToValidate.every((field) => {
       const error = validateField(field, userData[field] as number | string);
-      return !error && userData[field] !== undefined && userData[field] !== '';
+      return !error && userData[field] !== undefined && userData[field] !== "";
     });
   }, [userData, validateField]);
 
   const handleNext = () => {
     if (isFormValid) {
       // Navigate to Goals screen
-      router.push('/goals');
+      router.push("/goals");
     }
   };
 
   const handleUseCalculatedBodyFat = (bodyFatPercentage: number) => {
-    updateUserData('bodyFatPercentage', bodyFatPercentage);
+    updateUserData("bodyFatPercentage", bodyFatPercentage);
   };
 
   return (
@@ -53,7 +57,7 @@ export default function AboutYourselfScreen() {
           {/* Current Weight */}
           <WeightSlider
             value={userData.weight}
-            onValueChange={(value) => updateUserData('weight', value)}
+            onValueChange={(value) => updateUserData("weight", value)}
             min={80}
             max={200}
           />
@@ -62,14 +66,16 @@ export default function AboutYourselfScreen() {
           <HeightInput
             feet={userData.heightFeet}
             inches={userData.heightInches}
-            onFeetChange={(value) => updateUserData('heightFeet', value)}
-            onInchesChange={(value) => updateUserData('heightInches', value)}
+            onFeetChange={(value) => updateUserData("heightFeet", value)}
+            onInchesChange={(value) => updateUserData("heightInches", value)}
           />
 
           {/* Body Fat Percentage */}
           <BodyFatSlider
             value={userData.bodyFatPercentage}
-            onValueChange={(value) => updateUserData('bodyFatPercentage', value)}
+            onValueChange={(value) =>
+              updateUserData("bodyFatPercentage", value)
+            }
             onNotSurePress={() => setShowBodyFatModal(true)}
             min={5}
             max={50}
@@ -78,7 +84,7 @@ export default function AboutYourselfScreen() {
           {/* Activity Level */}
           <ActivityLevelSelector
             selectedLevel={userData.activityLevel}
-            onLevelChange={(level) => updateUserData('activityLevel', level)}
+            onLevelChange={(level) => updateUserData("activityLevel", level)}
           />
         </View>
 
@@ -94,7 +100,7 @@ export default function AboutYourselfScreen() {
           size="lg"
           onPress={handleNext}
           disabled={!isFormValid}
-          className={`w-full ${!isFormValid ? 'opacity-50' : ''}`}
+          className={`w-full ${!isFormValid ? "opacity-50" : ""}`}
         />
       </View>
 

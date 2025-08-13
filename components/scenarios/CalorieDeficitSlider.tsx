@@ -1,6 +1,6 @@
-import Slider from '@react-native-community/slider';
-import React from 'react';
-import { Platform, Text, View } from 'react-native';
+import Slider from "@react-native-community/slider";
+import React from "react";
+import { Platform, Text, View } from "react-native";
 
 interface CalorieDeficitSliderProps {
   value: number;
@@ -19,19 +19,19 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
   };
 
   const getDeficitLevel = (calories: number) => {
-    if (calories === 0) return 'No deficit';
-    if (calories <= 100) return 'Mild';
-    if (calories <= 200) return 'Moderate';
-    if (calories <= 250) return 'Aggressive';
-    return 'Very aggressive';
+    if (calories === 0) return "No deficit";
+    if (calories <= 100) return "Mild";
+    if (calories <= 200) return "Moderate";
+    if (calories <= 250) return "Aggressive";
+    return "Very aggressive";
   };
 
   const getDeficitColor = (calories: number) => {
-    if (calories === 0) return 'text-gray-500';
-    if (calories <= 100) return 'text-green-500';
-    if (calories <= 200) return 'text-blue-500';
-    if (calories <= 250) return 'text-orange-500';
-    return 'text-red-500';
+    if (calories === 0) return "text-gray-500";
+    if (calories <= 100) return "text-green-500";
+    if (calories <= 200) return "text-blue-500";
+    if (calories <= 250) return "text-orange-500";
+    return "text-red-500";
   };
 
   return (
@@ -51,7 +51,7 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
       {/* Slider Container */}
       <View className="relative">
         <Slider
-          style={{ width: '100%', height: 40 }}
+          style={{ width: "100%", height: 40 }}
           minimumValue={0}
           maximumValue={300}
           value={value}
@@ -61,7 +61,7 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
           maximumTrackTintColor="#E5E7EB"
           thumbTintColor="#2563eb"
           // Web-specific props to prevent DOM errors
-          {...(Platform.OS === 'web' && {
+          {...(Platform.OS === "web" && {
             onStartShouldSetResponder: undefined,
             onResponderTerminationRequest: undefined,
             onResponderGrant: undefined,
@@ -106,7 +106,7 @@ export const CalorieDeficitSlider: React.FC<CalorieDeficitSliderProps> = ({
           <View
             key={threshold}
             className={`flex-1 h-1 rounded-full ${
-              value >= threshold ? 'bg-blue-500' : 'bg-gray-200'
+              value >= threshold ? "bg-blue-500" : "bg-gray-200"
             }`}
           />
         ))}

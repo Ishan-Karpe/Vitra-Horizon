@@ -1,25 +1,38 @@
-import * as Haptics from 'expo-haptics';
-import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
-import { Alert, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
+import React, { useEffect, useState } from "react";
+import {
+  Alert,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
-import { CalorieDeficitSlider, ExerciseFrequencySlider, ProteinIntakeSelector } from '../components/scenarios';
-import { useAIEnhancedScenarios } from '../contexts/AIEnhancedScenariosContext';
+import {
+  CalorieDeficitSlider,
+  ExerciseFrequencySlider,
+  ProteinIntakeSelector,
+} from "../components/scenarios";
+import { useAIEnhancedScenarios } from "../contexts/AIEnhancedScenariosContext";
 
 interface ScenarioParameters {
   exerciseFrequency: number;
   calorieDeficit: number;
-  proteinIntake: 'Low' | 'Medium' | 'High';
+  proteinIntake: "Low" | "Medium" | "High";
 }
 
 export default function CreateScenarioScreen() {
-  const { addScenario, calculatePrediction, generateDescriptiveName } = useAIEnhancedScenarios();
+  const { addScenario, calculatePrediction, generateDescriptiveName } =
+    useAIEnhancedScenarios();
 
-  const [scenarioName, setScenarioName] = useState('');
+  const [scenarioName, setScenarioName] = useState("");
   const [parameters, setParameters] = useState<ScenarioParameters>({
     exerciseFrequency: 3,
     calorieDeficit: 250,
-    proteinIntake: 'Medium',
+    proteinIntake: "Medium",
   });
 
   const [isCreating, setIsCreating] = useState(false);
@@ -29,7 +42,7 @@ export default function CreateScenarioScreen() {
     fatLoss: 10,
     muscleGain: 3.2,
     timeline: 12,
-    confidence: 75
+    confidence: 75,
   });
   const [isCalculating, setIsCalculating] = useState(false);
 
@@ -41,7 +54,7 @@ export default function CreateScenarioScreen() {
         const newPrediction = await calculatePrediction(parameters);
         setPrediction(newPrediction);
       } catch (error) {
-        console.warn('Live prediction failed:', error);
+        console.warn("Live prediction failed:", error);
         // Keep current prediction as fallback
       } finally {
         setIsCalculating(false);
@@ -53,9 +66,9 @@ export default function CreateScenarioScreen() {
 
   const handleCreateScenario = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     if (!scenarioName.trim()) {
-      Alert.alert('Missing Name', 'Please enter a name for your scenario.');
+      Alert.alert("Missing Name", "Please enter a name for your scenario.");
       return;
     }
 
@@ -71,19 +84,19 @@ export default function CreateScenarioScreen() {
       };
 
       addScenario(scenarioData);
-      
+
       Alert.alert(
-        'Success!', 
-        'Your new scenario has been created successfully.',
+        "Success!",
+        "Your new scenario has been created successfully.",
         [
           {
-            text: 'OK',
-            onPress: () => router.back()
-          }
-        ]
+            text: "OK",
+            onPress: () => router.back(),
+          },
+        ],
       );
     } catch {
-      Alert.alert('Error', 'Failed to create scenario. Please try again.');
+      Alert.alert("Error", "Failed to create scenario. Please try again.");
     } finally {
       setIsCreating(false);
     }
@@ -115,7 +128,9 @@ export default function CreateScenarioScreen() {
 
         {/* Scenario Name */}
         <View className="mb-8">
-          <Text className="text-lg font-semibold text-gray-900 mb-3">Scenario Name</Text>
+          <Text className="text-lg font-semibold text-gray-900 mb-3">
+            Scenario Name
+          </Text>
           <View className="flex-row gap-3">
             <TextInput
               className="flex-1 border border-gray-300 rounded-lg px-4 py-3 text-gray-900"
@@ -133,32 +148,41 @@ export default function CreateScenarioScreen() {
             </TouchableOpacity>
           </View>
           <Text className="text-sm text-gray-500 mt-1">
-            Tip: Use descriptive names like &quot;High Intensity Plan&quot; or &quot;Beginner Routine&quot;
+            Tip: Use descriptive names like &quot;High Intensity Plan&quot; or
+            &quot;Beginner Routine&quot;
           </Text>
         </View>
 
         {/* Parameters */}
         <View className="mb-8">
-          <Text className="text-lg font-semibold text-gray-900 mb-6">Plan Parameters</Text>
-          
+          <Text className="text-lg font-semibold text-gray-900 mb-6">
+            Plan Parameters
+          </Text>
+
           <View className="mb-6">
             <ExerciseFrequencySlider
               value={parameters.exerciseFrequency}
-              onValueChange={(value) => setParameters(prev => ({ ...prev, exerciseFrequency: value }))}
+              onValueChange={(value) =>
+                setParameters((prev) => ({ ...prev, exerciseFrequency: value }))
+              }
             />
           </View>
-          
+
           <View className="mb-6">
             <CalorieDeficitSlider
               value={parameters.calorieDeficit}
-              onValueChange={(value) => setParameters(prev => ({ ...prev, calorieDeficit: value }))}
+              onValueChange={(value) =>
+                setParameters((prev) => ({ ...prev, calorieDeficit: value }))
+              }
             />
           </View>
-          
+
           <View className="mb-6">
             <ProteinIntakeSelector
               value={parameters.proteinIntake}
-              onValueChange={(value) => setParameters(prev => ({ ...prev, proteinIntake: value }))}
+              onValueChange={(value) =>
+                setParameters((prev) => ({ ...prev, proteinIntake: value }))
+              }
             />
           </View>
         </View>
@@ -166,7 +190,9 @@ export default function CreateScenarioScreen() {
         {/* Prediction Preview */}
         <View className="bg-blue-50 rounded-lg p-6 mb-8">
           <View className="flex-row items-center justify-between mb-4">
-            <Text className="text-lg font-semibold text-blue-900">Predicted Results</Text>
+            <Text className="text-lg font-semibold text-blue-900">
+              Predicted Results
+            </Text>
             {isCalculating && (
               <Text className="text-blue-600 text-sm">🔄 Updating...</Text>
             )}
@@ -175,30 +201,43 @@ export default function CreateScenarioScreen() {
           <View className="space-y-3">
             <View className="flex-row justify-between">
               <Text className="text-blue-700">Target Body Fat:</Text>
-              <Text className="text-blue-900 font-semibold">{Number(prediction.targetBodyFat).toFixed(1)}%</Text>
+              <Text className="text-blue-900 font-semibold">
+                {Number(prediction.targetBodyFat).toFixed(1)}%
+              </Text>
             </View>
-            
+
             <View className="flex-row justify-between">
               <Text className="text-blue-700">Expected Fat Loss:</Text>
-              <Text className="text-blue-900 font-semibold">{Number(prediction.fatLoss).toFixed(1)} lbs</Text>
+              <Text className="text-blue-900 font-semibold">
+                {Number(prediction.fatLoss).toFixed(1)} lbs
+              </Text>
             </View>
-            
+
             <View className="flex-row justify-between">
               <Text className="text-blue-700">Expected Muscle Gain:</Text>
-              <Text className="text-blue-900 font-semibold">{Number(prediction.muscleGain).toFixed(1)} lbs</Text>
+              <Text className="text-blue-900 font-semibold">
+                {Number(prediction.muscleGain).toFixed(1)} lbs
+              </Text>
             </View>
-            
+
             <View className="flex-row justify-between">
               <Text className="text-blue-700">Timeline:</Text>
-              <Text className="text-blue-900 font-semibold">{prediction.timeline} weeks</Text>
+              <Text className="text-blue-900 font-semibold">
+                {prediction.timeline} weeks
+              </Text>
             </View>
-            
+
             <View className="flex-row justify-between">
               <Text className="text-blue-700">Confidence Score:</Text>
-              <Text className={`font-semibold ${
-                prediction.confidence >= 80 ? 'text-green-600' : 
-                prediction.confidence >= 60 ? 'text-yellow-600' : 'text-red-600'
-              }`}>
+              <Text
+                className={`font-semibold ${
+                  prediction.confidence >= 80
+                    ? "text-green-600"
+                    : prediction.confidence >= 60
+                      ? "text-yellow-600"
+                      : "text-red-600"
+                }`}
+              >
                 {Number(prediction.confidence).toFixed(1)}%
               </Text>
             </View>
@@ -212,19 +251,21 @@ export default function CreateScenarioScreen() {
             onPress={handleCancel}
             activeOpacity={0.7}
           >
-            <Text className="text-gray-700 text-center font-semibold text-lg">Cancel</Text>
+            <Text className="text-gray-700 text-center font-semibold text-lg">
+              Cancel
+            </Text>
           </TouchableOpacity>
-          
+
           <TouchableOpacity
             className={`flex-1 rounded-lg py-4 ${
-              isCreating ? 'bg-gray-400' : 'bg-blue-600'
+              isCreating ? "bg-gray-400" : "bg-blue-600"
             }`}
             onPress={handleCreateScenario}
             activeOpacity={0.7}
             disabled={isCreating || !scenarioName.trim()}
           >
             <Text className="text-white text-center font-semibold text-lg">
-              {isCreating ? 'Creating...' : 'Create Scenario'}
+              {isCreating ? "Creating..." : "Create Scenario"}
             </Text>
           </TouchableOpacity>
         </View>

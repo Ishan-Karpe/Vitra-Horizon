@@ -1,22 +1,31 @@
-import React from 'react';
-import { Alert, SafeAreaView, ScrollView, Text, View } from 'react-native';
+import React from "react";
+import { Alert, SafeAreaView, ScrollView, Text, View } from "react-native";
 
-import { DailyActions } from '@/components/dashboard/DailyActions';
-import { PredictionCard } from '@/components/dashboard/PredictionCard';
-import { ProgressCircle } from '@/components/dashboard/ProgressCircle';
-import { StatusCard } from '@/components/dashboard/StatusCard';
-import { AIQuickAccess } from '@/components/demo/AIQuickAccess';
-import { DashboardProvider, useDashboardContext } from '@/contexts/DashboardContext';
+import { DailyActions } from "@/components/dashboard/DailyActions";
+import { PredictionCard } from "@/components/dashboard/PredictionCard";
+import { ProgressCircle } from "@/components/dashboard/ProgressCircle";
+import { StatusCard } from "@/components/dashboard/StatusCard";
+import { AIQuickAccess } from "@/components/demo/AIQuickAccess";
+import {
+  DashboardProvider,
+  useDashboardContext,
+} from "@/contexts/DashboardContext";
 
 const DashboardContent: React.FC = () => {
-  const { currentWeek, totalWeeks, completionPercentage, todayDate, weeklyProgress } = useDashboardContext();
+  const {
+    currentWeek,
+    totalWeeks,
+    completionPercentage,
+    todayDate,
+    weeklyProgress,
+  } = useDashboardContext();
 
   const handleProgressCirclePress = () => {
-    const currentWeekData = weeklyProgress.find(w => w.week === currentWeek);
+    const currentWeekData = weeklyProgress.find((w) => w.week === currentWeek);
     Alert.alert(
       `Week ${currentWeek} Progress`,
       `Completed: ${currentWeekData?.completedActions || 0}/${currentWeekData?.totalActions || 21} actions\nCompletion Rate: ${currentWeekData?.completionRate || 0}%`,
-      [{ text: 'OK' }]
+      [{ text: "OK" }],
     );
   };
 
@@ -26,7 +35,9 @@ const DashboardContent: React.FC = () => {
         {/* Header Section */}
         <View className="flex-row justify-between items-center px-6 py-4 mb-6">
           <View>
-            <Text className="text-2xl font-bold text-gray-900">Today&apos;s Plan</Text>
+            <Text className="text-2xl font-bold text-gray-900">
+              Today&apos;s Plan
+            </Text>
             <Text className="text-gray-500 text-sm mt-1">{todayDate}</Text>
           </View>
         </View>
@@ -39,7 +50,7 @@ const DashboardContent: React.FC = () => {
             className="mr-6"
             onPress={handleProgressCirclePress}
           />
-          <StatusCard 
+          <StatusCard
             completionPercentage={completionPercentage}
             className="flex-1"
           />

@@ -1,9 +1,9 @@
-import * as Haptics from 'expo-haptics';
-import { useRouter } from 'expo-router';
-import React from 'react';
-import { Alert, Dimensions, Text, TouchableOpacity, View } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
-import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
+import * as Haptics from "expo-haptics";
+import { useRouter } from "expo-router";
+import React from "react";
+import { Alert, Dimensions, Text, TouchableOpacity, View } from "react-native";
+import { LineChart } from "react-native-chart-kit";
+import { useAIEnhancedScenarios } from "../../contexts/AIEnhancedScenariosContext";
 
 interface Scenario {
   id: string;
@@ -11,7 +11,7 @@ interface Scenario {
   parameters: {
     exerciseFrequency: number;
     calorieDeficit: number;
-    proteinIntake: 'Low' | 'Medium' | 'High';
+    proteinIntake: "Low" | "Medium" | "High";
   };
   prediction: {
     currentBodyFat: number;
@@ -30,17 +30,18 @@ interface ScenarioCardProps {
   scenario: Scenario;
 }
 
-const screenWidth = Dimensions.get('window').width;
+const screenWidth = Dimensions.get("window").width;
 
 export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
-  const { setActivePlan, activePlanId, deleteScenario, scenarios } = useAIEnhancedScenarios();
+  const { setActivePlan, activePlanId, deleteScenario, scenarios } =
+    useAIEnhancedScenarios();
   const router = useRouter();
 
   const handleEditScenario = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     router.push({
-      pathname: '/edit-scenario',
-      params: { scenarioId: scenario.id }
+      pathname: "/edit-scenario",
+      params: { scenarioId: scenario.id },
     });
   };
 
@@ -54,9 +55,9 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
 
     if (activePlanId === scenario.id) {
       Alert.alert(
-        'Cannot Delete Active Scenario',
-        'You cannot delete the scenario that is currently set as your active plan.',
-        [{ text: 'OK', style: 'cancel' }]
+        "Cannot Delete Active Scenario",
+        "You cannot delete the scenario that is currently set as your active plan.",
+        [{ text: "OK", style: "cancel" }],
       );
       return;
     }
@@ -82,7 +83,7 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
   };
 
   const chartData = {
-    labels: ['', '', '', '', '', '', ''], // Empty labels for cleaner look
+    labels: ["", "", "", "", "", "", ""], // Empty labels for cleaner look
     datasets: [
       {
         data: generateChartData().slice(0, 7), // Show 7 data points
@@ -93,9 +94,9 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
   };
 
   const chartConfig = {
-    backgroundColor: '#F9FAFB',
-    backgroundGradientFrom: '#F9FAFB',
-    backgroundGradientTo: '#F9FAFB',
+    backgroundColor: "#F9FAFB",
+    backgroundGradientFrom: "#F9FAFB",
+    backgroundGradientTo: "#F9FAFB",
     decimalPlaces: 1,
     color: (opacity = 1) => `rgba(59, 130, 246, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
@@ -103,12 +104,12 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
       borderRadius: 8,
     },
     propsForDots: {
-      r: '3',
-      strokeWidth: '1',
-      stroke: '#3B82F6',
-      fill: '#3B82F6',
+      r: "3",
+      strokeWidth: "1",
+      stroke: "#3B82F6",
+      fill: "#3B82F6",
     },
-    fillShadowGradient: '#3B82F6',
+    fillShadowGradient: "#3B82F6",
     fillShadowGradientOpacity: 0.3,
   };
 
@@ -116,12 +117,17 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
     <View className="bg-white rounded-xl shadow-sm mb-4 p-6 border border-gray-200">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-4">
-        <Text className="text-lg font-semibold text-gray-900">{scenario.name}</Text>
+        <Text className="text-lg font-semibold text-gray-900">
+          {scenario.name}
+        </Text>
         <View className="flex-row items-center">
-          <Text className="text-sm text-gray-500 mr-3">Created {scenario.createdDate}</Text>
+          <Text className="text-sm text-gray-500 mr-3">
+            Created {scenario.createdDate}
+          </Text>
           <View className="bg-blue-100 px-3 py-1 rounded-full">
             <Text className="text-blue-700 text-sm font-medium">
-              {Number(scenario.prediction?.confidence || 75).toFixed(1)}% confident
+              {Number(scenario.prediction?.confidence || 75).toFixed(1)}%
+              confident
             </Text>
           </View>
         </View>
@@ -156,7 +162,9 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
           <Text className="text-sm text-gray-500">body fat</Text>
         </View>
         <View className="flex-1 text-center">
-          <Text className="text-sm text-gray-500 mb-1">After {scenario.prediction?.timeline || 12} weeks</Text>
+          <Text className="text-sm text-gray-500 mb-1">
+            After {scenario.prediction?.timeline || 12} weeks
+          </Text>
           <Text className="text-3xl font-bold text-blue-600">
             {Number(scenario.prediction?.targetBodyFat || 21).toFixed(1)}%
           </Text>
@@ -189,12 +197,14 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
       <View className="flex-row justify-between mb-4">
         <View className="flex-row items-center">
           <Text className="text-gray-600 text-sm">
-            📉 Fat loss: {Number(scenario.prediction?.fatLoss || 10).toFixed(2)} lbs
+            📉 Fat loss: {Number(scenario.prediction?.fatLoss || 10).toFixed(2)}{" "}
+            lbs
           </Text>
         </View>
         <View className="flex-row items-center">
           <Text className="text-gray-600 text-sm">
-            💪 Muscle gain: {Number(scenario.prediction?.muscleGain || 3.2).toFixed(2)} lbs
+            💪 Muscle gain:{" "}
+            {Number(scenario.prediction?.muscleGain || 3.2).toFixed(2)} lbs
           </Text>
         </View>
       </View>
@@ -217,14 +227,14 @@ export const ScenarioCard: React.FC<ScenarioCardProps> = ({ scenario }) => {
 
         <TouchableOpacity
           className={`flex-1 rounded-lg py-3 ${
-            activePlanId === scenario.id ? 'bg-gray-400' : 'bg-green-500'
+            activePlanId === scenario.id ? "bg-gray-400" : "bg-green-500"
           }`}
           onPress={handleSetAsPlan}
           activeOpacity={0.7}
           disabled={activePlanId === scenario.id}
         >
           <Text className="text-white text-center font-medium">
-            {activePlanId === scenario.id ? 'Active' : 'Set as Plan'}
+            {activePlanId === scenario.id ? "Active" : "Set as Plan"}
           </Text>
         </TouchableOpacity>
 

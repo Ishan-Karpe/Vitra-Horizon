@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, TextInput } from 'react-native';
+import React from "react";
+import { View, Text, TextInput } from "react-native";
 
 interface HeightInputProps {
   feet: number;
@@ -14,7 +14,7 @@ export const HeightInput: React.FC<HeightInputProps> = ({
   inches,
   onFeetChange,
   onInchesChange,
-  className = ''
+  className = "",
 }) => {
   const handleFeetChange = (text: string) => {
     const value = parseInt(text) || 0;
@@ -33,10 +33,8 @@ export const HeightInput: React.FC<HeightInputProps> = ({
   return (
     <View className={`w-full ${className}`}>
       {/* Label */}
-      <Text className="text-lg font-semibold text-gray-900 mb-4">
-        Height
-      </Text>
-      
+      <Text className="text-lg font-semibold text-gray-900 mb-4">Height</Text>
+
       {/* Input Fields */}
       <View className="flex-row items-center justify-center space-x-4">
         {/* Feet Input */}
@@ -52,10 +50,10 @@ export const HeightInput: React.FC<HeightInputProps> = ({
           />
           <Text className="text-sm text-gray-500 text-center mt-1">ft</Text>
         </View>
-        
+
         {/* Separator */}
         <Text className="text-lg text-gray-400 font-semibold">:</Text>
-        
+
         {/* Inches Input */}
         <View className="flex-1 max-w-20">
           <TextInput
@@ -70,11 +68,12 @@ export const HeightInput: React.FC<HeightInputProps> = ({
           <Text className="text-sm text-gray-500 text-center mt-1">in</Text>
         </View>
       </View>
-      
+
       {/* Height Display */}
       <View className="items-center mt-4">
         <Text className="text-sm text-gray-600">
-          {feet}&apos;{inches}&quot; ({Math.round((feet * 12 + inches) * 2.54)} cm)
+          {feet}&apos;{inches}&quot; ({Math.round((feet * 12 + inches) * 2.54)}{" "}
+          cm)
         </Text>
       </View>
     </View>

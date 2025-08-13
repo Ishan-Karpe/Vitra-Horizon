@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   Modal,
   ScrollView,
@@ -6,8 +6,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View
-} from 'react-native';
+  View,
+} from "react-native";
 
 interface BodyFatCalculatorModalProps {
   visible: boolean;
@@ -20,13 +20,13 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
   onClose,
   onUseValue,
 }) => {
-  const [age, setAge] = useState('');
-  const [gender, setGender] = useState<'male' | 'female'>('male');
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
-  const [waist, setWaist] = useState('');
-  const [neck, setNeck] = useState('');
-  const [hips, setHips] = useState('');
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState<"male" | "female">("male");
+  const [height, setHeight] = useState("");
+  const [weight, setWeight] = useState("");
+  const [waist, setWaist] = useState("");
+  const [neck, setNeck] = useState("");
+  const [hips, setHips] = useState("");
 
   // Navy Method Body Fat Calculation
   const calculateBodyFat = (): number | null => {
@@ -36,14 +36,24 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
     const hipsNum = parseFloat(hips);
 
     if (isNaN(heightNum) || isNaN(waistNum) || isNaN(neckNum)) return null;
-    if (gender === 'female' && isNaN(hipsNum)) return null;
+    if (gender === "female" && isNaN(hipsNum)) return null;
 
     let bodyFat: number;
 
-    if (gender === 'male') {
-      bodyFat = 495 / (1.0324 - 0.19077 * Math.log10(waistNum - neckNum) + 0.15456 * Math.log10(heightNum)) - 450;
+    if (gender === "male") {
+      bodyFat =
+        495 /
+          (1.0324 -
+            0.19077 * Math.log10(waistNum - neckNum) +
+            0.15456 * Math.log10(heightNum)) -
+        450;
     } else {
-      bodyFat = 495 / (1.29579 - 0.35004 * Math.log10(waistNum + hipsNum - neckNum) + 0.22100 * Math.log10(heightNum)) - 450;
+      bodyFat =
+        495 /
+          (1.29579 -
+            0.35004 * Math.log10(waistNum + hipsNum - neckNum) +
+            0.221 * Math.log10(heightNum)) -
+        450;
     }
 
     return Math.max(0, Math.min(50, bodyFat));
@@ -74,18 +84,34 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
               <Text style={styles.label}>Gender</Text>
               <View style={styles.genderRow}>
                 <TouchableOpacity
-                  style={[styles.genderButton, gender === 'male' && styles.genderButtonActive]}
-                  onPress={() => setGender('male')}
+                  style={[
+                    styles.genderButton,
+                    gender === "male" && styles.genderButtonActive,
+                  ]}
+                  onPress={() => setGender("male")}
                 >
-                  <Text style={[styles.genderText, gender === 'male' && styles.genderTextActive]}>
+                  <Text
+                    style={[
+                      styles.genderText,
+                      gender === "male" && styles.genderTextActive,
+                    ]}
+                  >
                     👨 Male
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                  style={[styles.genderButton, gender === 'female' && styles.genderButtonActive]}
-                  onPress={() => setGender('female')}
+                  style={[
+                    styles.genderButton,
+                    gender === "female" && styles.genderButtonActive,
+                  ]}
+                  onPress={() => setGender("female")}
                 >
-                  <Text style={[styles.genderText, gender === 'female' && styles.genderTextActive]}>
+                  <Text
+                    style={[
+                      styles.genderText,
+                      gender === "female" && styles.genderTextActive,
+                    ]}
+                  >
                     👩 Female
                   </Text>
                 </TouchableOpacity>
@@ -144,7 +170,7 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
               />
             </View>
 
-            {gender === 'female' && (
+            {gender === "female" && (
               <View style={styles.section}>
                 <Text style={styles.label}>Hips (inches)</Text>
                 <Text style={styles.hint}>Measure at the widest point</Text>
@@ -176,7 +202,9 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
                 onPress={handleUseValue}
                 disabled={!result}
               >
-                <Text style={[styles.useText, !result && styles.useTextDisabled]}>
+                <Text
+                  style={[styles.useText, !result && styles.useTextDisabled]}
+                >
                   Use This Value
                 </Text>
               </TouchableOpacity>
@@ -191,37 +219,37 @@ export const BodyFatCalculatorModal: React.FC<BodyFatCalculatorModalProps> = ({
 const styles = StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "flex-end",
   },
   modal: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
-    maxHeight: '85%',
+    maxHeight: "85%",
   },
   scrollView: {
     flex: 1,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     padding: 20,
     borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    borderBottomColor: "#f0f0f0",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-    color: '#1f2937',
+    fontWeight: "bold",
+    color: "#1f2937",
   },
   closeButton: {
     padding: 5,
   },
   closeText: {
     fontSize: 24,
-    color: '#9ca3af',
+    color: "#9ca3af",
   },
   section: {
     padding: 20,
@@ -230,25 +258,25 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#374151',
+    fontWeight: "600",
+    color: "#374151",
     marginBottom: 8,
   },
   hint: {
     fontSize: 12,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 8,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#d1d5db',
+    borderColor: "#d1d5db",
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-    backgroundColor: '#f9fafb',
+    backgroundColor: "#f9fafb",
   },
   genderRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     gap: 12,
   },
   genderButton: {
@@ -256,79 +284,79 @@ const styles = StyleSheet.create({
     padding: 12,
     borderRadius: 8,
     borderWidth: 2,
-    borderColor: '#d1d5db',
-    alignItems: 'center',
+    borderColor: "#d1d5db",
+    alignItems: "center",
   },
   genderButtonActive: {
-    borderColor: '#3b82f6',
-    backgroundColor: '#eff6ff',
+    borderColor: "#3b82f6",
+    backgroundColor: "#eff6ff",
   },
   genderText: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: "500",
+    color: "#374151",
   },
   genderTextActive: {
-    color: '#2563eb',
+    color: "#2563eb",
   },
   resultSection: {
     margin: 20,
     padding: 20,
-    backgroundColor: '#eff6ff',
+    backgroundColor: "#eff6ff",
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: '#bfdbfe',
-    alignItems: 'center',
+    borderColor: "#bfdbfe",
+    alignItems: "center",
   },
   resultTitle: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#1e40af',
+    fontWeight: "600",
+    color: "#1e40af",
     marginBottom: 8,
   },
   resultValue: {
     fontSize: 32,
-    fontWeight: 'bold',
-    color: '#2563eb',
+    fontWeight: "bold",
+    color: "#2563eb",
     marginBottom: 4,
   },
   resultMethod: {
     fontSize: 12,
-    color: '#1e40af',
+    color: "#1e40af",
   },
   buttonRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     padding: 20,
     gap: 12,
   },
   cancelButton: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#e5e7eb',
+    backgroundColor: "#e5e7eb",
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   cancelText: {
     fontSize: 16,
-    fontWeight: '500',
-    color: '#374151',
+    fontWeight: "500",
+    color: "#374151",
   },
   useButton: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#3b82f6',
+    backgroundColor: "#3b82f6",
     borderRadius: 8,
-    alignItems: 'center',
+    alignItems: "center",
   },
   useButtonDisabled: {
-    backgroundColor: '#d1d5db',
+    backgroundColor: "#d1d5db",
   },
   useText: {
     fontSize: 16,
-    fontWeight: '500',
-    color: 'white',
+    fontWeight: "500",
+    color: "white",
   },
   useTextDisabled: {
-    color: '#6b7280',
+    color: "#6b7280",
   },
 });

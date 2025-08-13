@@ -1,10 +1,10 @@
-import React from 'react';
-import { SafeAreaView, ScrollView, View } from 'react-native';
+import React from "react";
+import { SafeAreaView, ScrollView, View } from "react-native";
 
-import { FloatingActionButton } from '@/components/scenarios/FloatingActionButton';
-import { ScenariosHeader } from '@/components/scenarios/ScenariosHeader';
-import { ScenariosList } from '@/components/scenarios/ScenariosList';
-import { ViewModeToggle } from '@/components/scenarios/ViewModeToggle';
+import { FloatingActionButton } from "@/components/scenarios/FloatingActionButton";
+import { ScenariosHeader } from "@/components/scenarios/ScenariosHeader";
+import { ScenariosList } from "@/components/scenarios/ScenariosList";
+import { ViewModeToggle } from "@/components/scenarios/ViewModeToggle";
 
 export default function ScenariosTabScreen() {
   return (

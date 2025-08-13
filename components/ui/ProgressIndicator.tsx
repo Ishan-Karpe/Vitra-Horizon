@@ -1,5 +1,5 @@
-import React from 'react';
-import { Text, View } from 'react-native';
+import React from "react";
+import { Text, View } from "react-native";
 
 interface ProgressIndicatorProps {
   currentStep: number;
@@ -10,7 +10,7 @@ interface ProgressIndicatorProps {
 export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   currentStep,
   totalSteps,
-  className = ''
+  className = "",
 }) => {
   return (
     <View className={`w-full ${className}`}>
@@ -29,7 +29,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
             <View
               key={stepNumber}
               className={`flex-1 h-2 rounded-full ${
-                isCompleted ? 'bg-blue-600' : 'bg-gray-200'
+                isCompleted ? "bg-blue-600" : "bg-gray-200"
               }`}
             />
           );

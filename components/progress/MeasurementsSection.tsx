@@ -1,8 +1,8 @@
-import * as Haptics from 'expo-haptics';
-import React, { useState } from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { useProgress } from '../../contexts/ProgressContext';
-import { MeasurementUpdateModal } from './MeasurementUpdateModal';
+import * as Haptics from "expo-haptics";
+import React, { useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { useProgress } from "../../contexts/ProgressContext";
+import { MeasurementUpdateModal } from "./MeasurementUpdateModal";
 
 interface MeasurementRowProps {
   label: string;
@@ -11,17 +11,22 @@ interface MeasurementRowProps {
   unit: string;
 }
 
-const MeasurementRow: React.FC<MeasurementRowProps> = ({ label, value, change, unit }) => {
+const MeasurementRow: React.FC<MeasurementRowProps> = ({
+  label,
+  value,
+  change,
+  unit,
+}) => {
   const getChangeColor = (change: number) => {
-    if (change > 0) return 'text-red-600'; // Increase (usually not good for measurements)
-    if (change < 0) return 'text-green-600'; // Decrease (usually good)
-    return 'text-gray-600'; // No change
+    if (change > 0) return "text-red-600"; // Increase (usually not good for measurements)
+    if (change < 0) return "text-green-600"; // Decrease (usually good)
+    return "text-gray-600"; // No change
   };
 
   const getChangePrefix = (change: number) => {
-    if (change > 0) return '+';
-    if (change < 0) return '';
-    return '';
+    if (change > 0) return "+";
+    if (change < 0) return "";
+    return "";
   };
 
   return (
@@ -33,7 +38,8 @@ const MeasurementRow: React.FC<MeasurementRowProps> = ({ label, value, change, u
         </Text>
         {change !== 0 && (
           <Text className={`text-sm ${getChangeColor(change)}`}>
-            {getChangePrefix(change)}{Math.abs(change).toFixed(1)}
+            {getChangePrefix(change)}
+            {Math.abs(change).toFixed(1)}
           </Text>
         )}
       </View>
@@ -57,8 +63,10 @@ export const MeasurementsSection: React.FC = () => {
   return (
     <>
       <View className="bg-white rounded-lg shadow-sm mx-6 mb-4 p-6">
-        <Text className="text-lg font-semibold text-gray-900 mb-4">Measurements</Text>
-        
+        <Text className="text-lg font-semibold text-gray-900 mb-4">
+          Measurements
+        </Text>
+
         <View>
           {measurements.weight && (
             <MeasurementRow

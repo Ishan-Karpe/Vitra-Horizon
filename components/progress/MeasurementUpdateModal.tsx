@@ -1,16 +1,16 @@
-import * as Haptics from 'expo-haptics';
-import React, { useState } from 'react';
+import * as Haptics from "expo-haptics";
+import React, { useState } from "react";
 import {
-    Alert,
-    KeyboardAvoidingView,
-    Modal,
-    Platform,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
-import { useProgress } from '../../contexts/ProgressContext';
+  Alert,
+  KeyboardAvoidingView,
+  Modal,
+  Platform,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useProgress } from "../../contexts/ProgressContext";
 
 interface MeasurementUpdateModalProps {
   visible: boolean;
@@ -24,7 +24,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
   const { measurements, updateMeasurements } = useProgress();
 
   const [weight, setWeight] = useState((measurements.weight || 0).toString());
-  const [bodyFat, setBodyFat] = useState((measurements.bodyFatPercentage || 0).toString());
+  const [bodyFat, setBodyFat] = useState(
+    (measurements.bodyFatPercentage || 0).toString(),
+  );
   const [chest, setChest] = useState(measurements.chest.toString());
   const [waist, setWaist] = useState(measurements.waist.toString());
   const [hips, setHips] = useState(measurements.hips.toString());
@@ -41,19 +43,35 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
     const hipsNum = parseFloat(hips);
     const armsNum = parseFloat(arms);
 
-    if (isNaN(weightNum) || isNaN(bodyFatNum) || isNaN(chestNum) || isNaN(waistNum) || isNaN(hipsNum) || isNaN(armsNum)) {
-      Alert.alert('Invalid Input', 'Please enter valid numbers for all measurements.');
+    if (
+      isNaN(weightNum) ||
+      isNaN(bodyFatNum) ||
+      isNaN(chestNum) ||
+      isNaN(waistNum) ||
+      isNaN(hipsNum) ||
+      isNaN(armsNum)
+    ) {
+      Alert.alert(
+        "Invalid Input",
+        "Please enter valid numbers for all measurements.",
+      );
       return;
     }
 
     // Additional validation for reasonable ranges
     if (weightNum < 50 || weightNum > 500) {
-      Alert.alert('Invalid Weight', 'Please enter a weight between 50 and 500 lbs.');
+      Alert.alert(
+        "Invalid Weight",
+        "Please enter a weight between 50 and 500 lbs.",
+      );
       return;
     }
 
     if (bodyFatNum < 5 || bodyFatNum > 50) {
-      Alert.alert('Invalid Body Fat', 'Please enter a body fat percentage between 5% and 50%.');
+      Alert.alert(
+        "Invalid Body Fat",
+        "Please enter a body fat percentage between 5% and 50%.",
+      );
       return;
     }
 
@@ -81,7 +99,10 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
       armsChange,
     });
 
-    Alert.alert('Success', 'All measurements updated successfully! Your goals and progress have been automatically updated.');
+    Alert.alert(
+      "Success",
+      "All measurements updated successfully! Your goals and progress have been automatically updated.",
+    );
     onClose();
   };
 
@@ -98,7 +119,7 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
       onRequestClose={onClose}
     >
       <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1"
       >
         <View className="flex-1 bg-black bg-opacity-50 justify-end">
@@ -109,7 +130,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
 
             <View className="space-y-4">
               <View>
-                <Text className="text-gray-700 font-medium mb-2">Weight (lbs)</Text>
+                <Text className="text-gray-700 font-medium mb-2">
+                  Weight (lbs)
+                </Text>
                 <TextInput
                   className="border border-gray-300 rounded-lg px-4 py-3"
                   value={weight}
@@ -120,7 +143,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
               </View>
 
               <View>
-                <Text className="text-gray-700 font-medium mb-2">Body Fat (%)</Text>
+                <Text className="text-gray-700 font-medium mb-2">
+                  Body Fat (%)
+                </Text>
                 <TextInput
                   className="border border-gray-300 rounded-lg px-4 py-3"
                   value={bodyFat}
@@ -131,7 +156,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
               </View>
 
               <View>
-                <Text className="text-gray-700 font-medium mb-2">Chest (inches)</Text>
+                <Text className="text-gray-700 font-medium mb-2">
+                  Chest (inches)
+                </Text>
                 <TextInput
                   className="border border-gray-300 rounded-lg px-4 py-3"
                   value={chest}
@@ -142,7 +169,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
               </View>
 
               <View>
-                <Text className="text-gray-700 font-medium mb-2">Waist (inches)</Text>
+                <Text className="text-gray-700 font-medium mb-2">
+                  Waist (inches)
+                </Text>
                 <TextInput
                   className="border border-gray-300 rounded-lg px-4 py-3"
                   value={waist}
@@ -153,7 +182,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
               </View>
 
               <View>
-                <Text className="text-gray-700 font-medium mb-2">Hips (inches)</Text>
+                <Text className="text-gray-700 font-medium mb-2">
+                  Hips (inches)
+                </Text>
                 <TextInput
                   className="border border-gray-300 rounded-lg px-4 py-3"
                   value={hips}
@@ -164,7 +195,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
               </View>
 
               <View>
-                <Text className="text-gray-700 font-medium mb-2">Arms (inches)</Text>
+                <Text className="text-gray-700 font-medium mb-2">
+                  Arms (inches)
+                </Text>
                 <TextInput
                   className="border border-gray-300 rounded-lg px-4 py-3"
                   value={arms}
@@ -181,7 +214,9 @@ export const MeasurementUpdateModal: React.FC<MeasurementUpdateModalProps> = ({
                 onPress={handleCancel}
                 activeOpacity={0.7}
               >
-                <Text className="text-gray-700 text-center font-medium">Cancel</Text>
+                <Text className="text-gray-700 text-center font-medium">
+                  Cancel
+                </Text>
               </TouchableOpacity>
 
               <TouchableOpacity

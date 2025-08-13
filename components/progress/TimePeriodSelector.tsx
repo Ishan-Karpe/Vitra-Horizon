@@ -1,9 +1,9 @@
-import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-import * as Haptics from 'expo-haptics';
-import { useProgress, TimePeriod } from '../../contexts/ProgressContext';
+import React from "react";
+import { View, Text, TouchableOpacity } from "react-native";
+import * as Haptics from "expo-haptics";
+import { useProgress, TimePeriod } from "../../contexts/ProgressContext";
 
-const periods: TimePeriod[] = ['Week', 'Month', '3M', '6M'];
+const periods: TimePeriod[] = ["Week", "Month", "3M", "6M"];
 
 export const TimePeriodSelector: React.FC = () => {
   const { selectedPeriod, setSelectedPeriod } = useProgress();
@@ -20,18 +20,14 @@ export const TimePeriodSelector: React.FC = () => {
           <TouchableOpacity
             key={period}
             className={`flex-1 py-2 px-4 rounded-md ${
-              selectedPeriod === period
-                ? 'bg-blue-500'
-                : 'bg-transparent'
+              selectedPeriod === period ? "bg-blue-500" : "bg-transparent"
             }`}
             onPress={() => handlePeriodSelect(period)}
             activeOpacity={0.7}
           >
             <Text
               className={`text-center font-medium ${
-                selectedPeriod === period
-                  ? 'text-white'
-                  : 'text-gray-600'
+                selectedPeriod === period ? "text-white" : "text-gray-600"
               }`}
             >
               {period}

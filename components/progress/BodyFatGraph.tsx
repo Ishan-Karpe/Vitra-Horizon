@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { Dimensions, Text, View } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
-import { useProgress } from '../../contexts/ProgressContext';
+import React, { useEffect, useState } from "react";
+import { Dimensions, Text, View } from "react-native";
+import { LineChart } from "react-native-chart-kit";
+import { useProgress } from "../../contexts/ProgressContext";
 
 export const BodyFatGraph: React.FC = () => {
-  const { getFilteredBodyFatData, getCurrentBodyFat, getBodyFatTrend } = useProgress();
+  const { getFilteredBodyFatData, getCurrentBodyFat, getBodyFatTrend } =
+    useProgress();
 
   // Responsive dimensions
-  const [screenData, setScreenData] = useState(Dimensions.get('window'));
+  const [screenData, setScreenData] = useState(Dimensions.get("window"));
 
   useEffect(() => {
     const onChange = (result: any) => {
       setScreenData(result.window);
     };
 
-    const subscription = Dimensions.addEventListener('change', onChange);
+    const subscription = Dimensions.addEventListener("change", onChange);
     return () => subscription?.remove();
   }, []);
 
@@ -34,20 +35,20 @@ export const BodyFatGraph: React.FC = () => {
     if (screenData.width < 414) return 200; // Medium phones
     return 220; // Large phones and tablets
   };
-  
+
   const bodyFatData = getFilteredBodyFatData();
   const currentBodyFat = getCurrentBodyFat();
   const trend = getBodyFatTrend();
-  
+
   // Prepare data for chart
   const chartData = {
     labels: bodyFatData.slice(-7).map((_, index) => {
-      const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-      return days[index] || '';
+      const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+      return days[index] || "";
     }),
     datasets: [
       {
-        data: bodyFatData.slice(-7).map(point => point.value),
+        data: bodyFatData.slice(-7).map((point) => point.value),
         color: (opacity = 1) => `rgba(34, 197, 94, ${opacity})`, // Green color
         strokeWidth: 3,
       },
@@ -55,9 +56,9 @@ export const BodyFatGraph: React.FC = () => {
   };
 
   const chartConfig = {
-    backgroundColor: '#ffffff',
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientTo: '#ffffff',
+    backgroundColor: "#ffffff",
+    backgroundGradientFrom: "#ffffff",
+    backgroundGradientTo: "#ffffff",
     decimalPlaces: 1,
     color: (opacity = 1) => `rgba(34, 197, 94, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
@@ -65,37 +66,37 @@ export const BodyFatGraph: React.FC = () => {
       borderRadius: 16,
     },
     propsForDots: {
-      r: '4',
-      strokeWidth: '2',
-      stroke: '#22C55E',
-      fill: '#ffffff',
+      r: "4",
+      strokeWidth: "2",
+      stroke: "#22C55E",
+      fill: "#ffffff",
     },
     propsForBackgroundLines: {
-      strokeDasharray: '',
-      stroke: '#E5E7EB',
+      strokeDasharray: "",
+      stroke: "#E5E7EB",
       strokeWidth: 1,
     },
   };
 
   const getTrendIcon = () => {
     switch (trend) {
-      case 'down':
-        return '📉';
-      case 'up':
-        return '📈';
+      case "down":
+        return "📉";
+      case "up":
+        return "📈";
       default:
-        return '➡️';
+        return "➡️";
     }
   };
 
   const getTrendColor = () => {
     switch (trend) {
-      case 'down':
-        return 'text-green-600'; // Good for body fat reduction
-      case 'up':
-        return 'text-red-600';
+      case "down":
+        return "text-green-600"; // Good for body fat reduction
+      case "up":
+        return "text-red-600";
       default:
-        return 'text-gray-600';
+        return "text-gray-600";
     }
   };
 
@@ -134,7 +135,10 @@ export const BodyFatGraph: React.FC = () => {
           />
         </View>
       ) : (
-        <View className="items-center justify-center" style={{ height: getChartHeight() }}>
+        <View
+          className="items-center justify-center"
+          style={{ height: getChartHeight() }}
+        >
           <Text className="text-gray-500">No body fat data available</Text>
         </View>
       )}

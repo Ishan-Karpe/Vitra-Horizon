@@ -1,7 +1,7 @@
-import * as Haptics from 'expo-haptics';
-import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
-import { useDashboardContext } from '../../contexts/DashboardContext';
+import * as Haptics from "expo-haptics";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import { useDashboardContext } from "../../contexts/DashboardContext";
 
 interface ActionItemProps {
   id: string;
@@ -11,7 +11,13 @@ interface ActionItemProps {
   onToggle: (id: string) => void;
 }
 
-const ActionItem: React.FC<ActionItemProps> = ({ id, title, completed, icon, onToggle }) => {
+const ActionItem: React.FC<ActionItemProps> = ({
+  id,
+  title,
+  completed,
+  icon,
+  onToggle,
+}) => {
   const handlePress = async () => {
     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     onToggle(id);
@@ -24,14 +30,14 @@ const ActionItem: React.FC<ActionItemProps> = ({ id, title, completed, icon, onT
       activeOpacity={0.7}
     >
       {/* Custom Checkbox */}
-      <View className={`w-6 h-6 rounded border-2 mr-4 items-center justify-center ${
-        completed 
-          ? 'bg-green-500 border-green-500' 
-          : 'border-gray-300 bg-white'
-      }`}>
-        {completed && (
-          <Text className="text-white text-xs font-bold">✓</Text>
-        )}
+      <View
+        className={`w-6 h-6 rounded border-2 mr-4 items-center justify-center ${
+          completed
+            ? "bg-green-500 border-green-500"
+            : "border-gray-300 bg-white"
+        }`}
+      >
+        {completed && <Text className="text-white text-xs font-bold">✓</Text>}
       </View>
 
       {/* Action Icon */}
@@ -39,9 +45,11 @@ const ActionItem: React.FC<ActionItemProps> = ({ id, title, completed, icon, onT
 
       {/* Action Text */}
       <View className="flex-1">
-        <Text className={`text-gray-700 ${
-          completed ? 'line-through opacity-60' : ''
-        }`}>
+        <Text
+          className={`text-gray-700 ${
+            completed ? "line-through opacity-60" : ""
+          }`}
+        >
           {title}
         </Text>
         {completed && (
@@ -69,7 +77,9 @@ interface DailyActionsProps {
   className?: string;
 }
 
-export const DailyActions: React.FC<DailyActionsProps> = ({ className = '' }) => {
+export const DailyActions: React.FC<DailyActionsProps> = ({
+  className = "",
+}) => {
   const { dailyActions, toggleAction } = useDashboardContext();
 
   return (

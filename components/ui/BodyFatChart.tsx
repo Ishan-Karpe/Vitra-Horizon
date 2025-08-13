@@ -1,6 +1,6 @@
-import React from 'react';
-import { Dimensions, Text, View } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import React from "react";
+import { Dimensions, Text, View } from "react-native";
+import { LineChart } from "react-native-chart-kit";
 
 interface BodyFatChartProps {
   currentBodyFat: number;
@@ -13,9 +13,9 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
   currentBodyFat,
   targetBodyFat,
   timelineWeeks,
-  className = '',
+  className = "",
 }) => {
-  const screenWidth = Dimensions.get('window').width;
+  const screenWidth = Dimensions.get("window").width;
 
   // Generate data points for react-native-chart-kit
   const generateChartData = () => {
@@ -28,7 +28,7 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
     for (let i = 0; i <= numberOfPoints; i++) {
       const week = i * weeksInterval;
       const progress = week / timelineWeeks;
-      
+
       // For muscle building (positive change), use slower start, gradual progression
       // For fat loss (negative change), keep original faster-start approach
       let adjustedProgress;
@@ -39,8 +39,8 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
         // Non-linear progress for fat loss (faster at start, slower at end)
         adjustedProgress = 1 - Math.pow(1 - progress, 1.5);
       }
-      
-      const bodyFat = currentBodyFat + (totalChange * adjustedProgress);
+
+      const bodyFat = currentBodyFat + totalChange * adjustedProgress;
 
       // Ensure we don't go below reasonable minimums or exceed the target
       let finalBodyFat;
@@ -51,11 +51,11 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
         // For downward trend, don't go below target
         finalBodyFat = Math.max(targetBodyFat, Math.round(bodyFat * 10) / 10);
       }
-      
+
       dataPoints.push(finalBodyFat);
 
       if (i === 0) {
-        labels.push('Start');
+        labels.push("Start");
       } else if (i === numberOfPoints) {
         labels.push(`${timelineWeeks}w`);
       } else {
@@ -78,9 +78,9 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
   const chartData = generateChartData();
 
   const chartConfig = {
-    backgroundColor: '#ffffff',
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientTo: '#ffffff',
+    backgroundColor: "#ffffff",
+    backgroundGradientFrom: "#ffffff",
+    backgroundGradientTo: "#ffffff",
     decimalPlaces: 1,
     color: (opacity = 1) => `rgba(37, 99, 235, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
@@ -88,20 +88,22 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
       borderRadius: 16,
     },
     propsForDots: {
-      r: '4',
-      strokeWidth: '2',
-      stroke: '#2563eb',
+      r: "4",
+      strokeWidth: "2",
+      stroke: "#2563eb",
     },
     propsForBackgroundLines: {
-      strokeDasharray: '',
-      stroke: '#e5e7eb',
+      strokeDasharray: "",
+      stroke: "#e5e7eb",
       strokeWidth: 1,
     },
   };
 
   return (
     <View className={`bg-gray-50 p-6 rounded-xl ${className}`}>
-      <Text className="text-center text-gray-600 text-sm mb-4">Body Fat Percentage over Time</Text>
+      <Text className="text-center text-gray-600 text-sm mb-4">
+        Body Fat Percentage over Time
+      </Text>
 
       {/* Enhanced Chart Container */}
       <View className="bg-white rounded-lg p-4 mb-4">
@@ -137,7 +139,9 @@ export const BodyFatChart: React.FC<BodyFatChartProps> = ({
         </View>
       </View>
 
-      <Text className="text-center text-gray-400 text-xs mt-2">Timeline (weeks)</Text>
+      <Text className="text-center text-gray-400 text-xs mt-2">
+        Timeline (weeks)
+      </Text>
     </View>
   );
 };

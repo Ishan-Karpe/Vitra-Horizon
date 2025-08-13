@@ -1,6 +1,6 @@
-import React from 'react';
-import { SafeAreaView } from 'react-native';
-import { AIBackendDemo } from '../components/demo/AIBackendDemo';
+import React from "react";
+import { SafeAreaView } from "react-native";
+import { AIBackendDemo } from "../components/demo/AIBackendDemo";
 
 export default function AIDemoScreen() {
   return (

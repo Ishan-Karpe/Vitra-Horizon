@@ -1,12 +1,12 @@
 import { router } from "expo-router";
 import React, { useEffect, useState } from "react";
 import {
-    ActivityIndicator,
-    SafeAreaView,
-    ScrollView,
-    Text,
-    TouchableOpacity,
-    View
+  ActivityIndicator,
+  SafeAreaView,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
 } from "react-native";
 
 import { BodyFatChart } from "../components/ui/BodyFatChart";
@@ -23,7 +23,7 @@ export default function PredictionScreen() {
   // State for 2-step AI enhancement
   const [isAIEnhancing, setIsAIEnhancing] = useState(false);
   const [aiEnhanced, setAIEnhanced] = useState(false);
-  const [enhancementStep, setEnhancementStep] = useState('');
+  const [enhancementStep, setEnhancementStep] = useState("");
 
   // Step 1: Basic math calculations (immediate)
   const currentBodyFat = userData.bodyFatPercentage || 25;
@@ -31,10 +31,12 @@ export default function PredictionScreen() {
   const timelineWeeks = goalsData.timelineWeeks || 12;
 
   // Basic confidence calculation
-  const [basicConfidence] = useState(() => Math.min(
-    95,
-    Math.max(65, 100 - Math.abs(currentBodyFat - targetBodyFat) * 3)
-  ));
+  const [basicConfidence] = useState(() =>
+    Math.min(
+      95,
+      Math.max(65, 100 - Math.abs(currentBodyFat - targetBodyFat) * 3),
+    ),
+  );
 
   // Basic fat loss and muscle gain estimates
   const bodyFatReduction = currentBodyFat - targetBodyFat;
@@ -44,10 +46,16 @@ export default function PredictionScreen() {
   const estimatedWeight = userData.weight || 165;
   const baseMonthlyRate = 0.008;
   const baseWeeklyRate = baseMonthlyRate / 4.33;
-  const goalMultiplier = goalsData.selectedGoal === "build-muscle" ? 1.2 :
-                        goalsData.selectedGoal === "body-recomposition" ? 0.8 : 0.6;
+  const goalMultiplier =
+    goalsData.selectedGoal === "build-muscle"
+      ? 1.2
+      : goalsData.selectedGoal === "body-recomposition"
+        ? 0.8
+        : 0.6;
   const weeklyMuscleGain = estimatedWeight * baseWeeklyRate * goalMultiplier;
-  const [basicMuscleGain] = useState(() => Math.round((weeklyMuscleGain * timelineWeeks) * 10) / 10);
+  const [basicMuscleGain] = useState(
+    () => Math.round(weeklyMuscleGain * timelineWeeks * 10) / 10,
+  );
 
   // State for AI-enhanced values
   const [enhancedConfidence, setEnhancedConfidence] = useState(basicConfidence);
@@ -66,25 +74,25 @@ export default function PredictionScreen() {
       if (!isAIAvailable) return;
 
       setIsAIEnhancing(true);
-      setEnhancementStep('Gathering user data...');
+      setEnhancementStep("Gathering user data...");
 
       try {
         // Simulate gathering all user data
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setEnhancementStep('Analyzing with AI...');
+        await new Promise((resolve) => setTimeout(resolve, 800));
+        setEnhancementStep("Analyzing with AI...");
 
         // Create scenario parameters from goals data
         const scenarioParams = {
           exerciseFrequency: 4, // Default from goals
-          calorieDeficit: 300,  // Default moderate deficit
-          proteinIntake: 'High' as const
+          calorieDeficit: 300, // Default moderate deficit
+          proteinIntake: "High" as const,
         };
 
         // Get AI prediction with all user data
         const aiPrediction = await getAIPrediction(scenarioParams);
 
-        setEnhancementStep('Verifying and enhancing...');
-        await new Promise(resolve => setTimeout(resolve, 500));
+        setEnhancementStep("Verifying and enhancing...");
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
         // Update with AI-enhanced values
         setEnhancedConfidence(aiPrediction.confidence);
@@ -94,18 +102,17 @@ export default function PredictionScreen() {
           riskFactors: aiPrediction.riskFactors,
           plateauPrediction: aiPrediction.plateauPrediction,
           successProbability: aiPrediction.successProbability,
-          confidenceInterval: aiPrediction.confidenceInterval
+          confidenceInterval: aiPrediction.confidenceInterval,
         });
 
         setAIEnhanced(true);
-        setEnhancementStep('Enhancement complete!');
+        setEnhancementStep("Enhancement complete!");
 
         // Clear enhancement message after delay
         setTimeout(() => setIsAIEnhancing(false), 1000);
-
       } catch (error) {
-        console.warn('AI enhancement failed:', error);
-        setEnhancementStep('Using basic calculations');
+        console.warn("AI enhancement failed:", error);
+        setEnhancementStep("Using basic calculations");
         setTimeout(() => setIsAIEnhancing(false), 1000);
       }
     };
@@ -147,7 +154,9 @@ export default function PredictionScreen() {
             <Text className="text-3xl font-bold text-gray-900">
               Your Prediction
             </Text>
-            <View className={`px-3 py-1 rounded-full ${aiEnhanced ? 'bg-green-500' : 'bg-blue-500'}`}>
+            <View
+              className={`px-3 py-1 rounded-full ${aiEnhanced ? "bg-green-500" : "bg-blue-500"}`}
+            >
               <Text className="text-white text-sm font-medium">
                 {Number(displayConfidence).toFixed(1)}% confident
               </Text>
@@ -157,7 +166,11 @@ export default function PredictionScreen() {
           {/* AI Enhancement Status */}
           {isAIEnhancing && (
             <View className="bg-blue-50 p-4 rounded-lg mb-4 flex-row items-center">
-              <ActivityIndicator size="small" color="#3B82F6" className="mr-3" />
+              <ActivityIndicator
+                size="small"
+                color="#3B82F6"
+                className="mr-3"
+              />
               <Text className="text-blue-700 text-sm">{enhancementStep}</Text>
             </View>
           )}
@@ -165,7 +178,8 @@ export default function PredictionScreen() {
           {aiEnhanced && (
             <View className="bg-green-50 p-4 rounded-lg mb-4">
               <Text className="text-green-700 text-sm font-medium">
-                ✨ AI Enhanced - Predictions verified and optimized with your complete profile
+                ✨ AI Enhanced - Predictions verified and optimized with your
+                complete profile
               </Text>
             </View>
           )}
@@ -217,7 +231,8 @@ export default function PredictionScreen() {
               </Text>
               {aiInsights.confidenceInterval && (
                 <Text className="text-gray-500 text-xs">
-                  Range: {(displayFatLoss * 0.8).toFixed(1)} - {(displayFatLoss * 1.2).toFixed(1)} lbs
+                  Range: {(displayFatLoss * 0.8).toFixed(1)} -{" "}
+                  {(displayFatLoss * 1.2).toFixed(1)} lbs
                 </Text>
               )}
             </View>
@@ -234,7 +249,10 @@ export default function PredictionScreen() {
               </Text>
               {aiInsights.confidenceInterval && (
                 <Text className="text-gray-500 text-xs">
-                  Range: {aiInsights.confidenceInterval.muscleGainLower?.toFixed(1)} - {aiInsights.confidenceInterval.muscleGainUpper?.toFixed(1)} lbs
+                  Range:{" "}
+                  {aiInsights.confidenceInterval.muscleGainLower?.toFixed(1)} -{" "}
+                  {aiInsights.confidenceInterval.muscleGainUpper?.toFixed(1)}{" "}
+                  lbs
                 </Text>
               )}
             </View>
@@ -269,9 +287,13 @@ export default function PredictionScreen() {
                 <Text className="text-yellow-600 text-sm">⚠️</Text>
               </View>
               <View className="flex-1">
-                <Text className="text-gray-700 font-medium mb-1">Risk factors:</Text>
+                <Text className="text-gray-700 font-medium mb-1">
+                  Risk factors:
+                </Text>
                 {aiInsights.riskFactors.map((risk, index) => (
-                  <Text key={index} className="text-gray-600 text-sm">• {risk}</Text>
+                  <Text key={index} className="text-gray-600 text-sm">
+                    • {risk}
+                  </Text>
                 ))}
               </View>
             </View>
@@ -284,9 +306,12 @@ export default function PredictionScreen() {
                 <Text className="text-purple-600 text-sm">📊</Text>
               </View>
               <View className="flex-1">
-                <Text className="text-gray-700 font-medium mb-1">Plateau prediction:</Text>
+                <Text className="text-gray-700 font-medium mb-1">
+                  Plateau prediction:
+                </Text>
                 <Text className="text-gray-600 text-sm">
-                  Likely around week {aiInsights.plateauPrediction.likelyWeek} ({aiInsights.plateauPrediction.severity} severity)
+                  Likely around week {aiInsights.plateauPrediction.likelyWeek} (
+                  {aiInsights.plateauPrediction.severity} severity)
                 </Text>
                 {aiInsights.plateauPrediction.recommendations && (
                   <Text className="text-gray-600 text-sm mt-1">

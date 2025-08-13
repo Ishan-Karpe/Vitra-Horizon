@@ -1,25 +1,28 @@
-import React from 'react';
-import { Alert, Text, TouchableOpacity, View } from 'react-native';
-import { useAIEnhancedScenarios } from '../../contexts/AIEnhancedScenariosContext';
+import React from "react";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { useAIEnhancedScenarios } from "../../contexts/AIEnhancedScenariosContext";
 
 export const ScenariosHeader: React.FC = () => {
   const { clearAllScenarios, scenarios } = useAIEnhancedScenarios();
 
   const handleClearAll = () => {
     Alert.alert(
-      'Clear All Scenarios',
+      "Clear All Scenarios",
       `This will delete all ${scenarios.length} scenarios and reset to a single default scenario. This action cannot be undone.`,
       [
-        { text: 'Cancel', style: 'cancel' },
+        { text: "Cancel", style: "cancel" },
         {
-          text: 'Clear All',
-          style: 'destructive',
+          text: "Clear All",
+          style: "destructive",
           onPress: () => {
             clearAllScenarios();
-            Alert.alert('Success', 'All scenarios have been cleared and reset.');
-          }
-        }
-      ]
+            Alert.alert(
+              "Success",
+              "All scenarios have been cleared and reset.",
+            );
+          },
+        },
+      ],
     );
   };
 
@@ -30,7 +33,8 @@ export const ScenariosHeader: React.FC = () => {
           <View className="flex-1">
             <Text className="text-2xl font-bold text-gray-900">Scenarios</Text>
             <Text className="text-gray-600 text-sm mt-1">
-              {scenarios.length} scenario{scenarios.length !== 1 ? 's' : ''} available
+              {scenarios.length} scenario{scenarios.length !== 1 ? "s" : ""}{" "}
+              available
             </Text>
           </View>
 
@@ -41,7 +45,9 @@ export const ScenariosHeader: React.FC = () => {
               onPress={handleClearAll}
               activeOpacity={0.7}
             >
-              <Text className="text-red-600 text-xs font-medium">Clear All</Text>
+              <Text className="text-red-600 text-xs font-medium">
+                Clear All
+              </Text>
             </TouchableOpacity>
           )}
         </View>

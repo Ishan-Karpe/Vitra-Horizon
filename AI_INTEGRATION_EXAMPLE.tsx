@@ -1,22 +1,33 @@
 // AI-Enhanced ScenariosContext Integration Example
 // This shows how the existing ScenariosContext.tsx would be enhanced with AI capabilities
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react';
-import { useGoals } from './contexts/GoalsContext';
-import { useUserData } from './contexts/UserDataContext';
-import { ScenarioParameters, ScenarioPrediction, Scenario, ViewMode } from './contexts/ScenariosContext';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useGoals } from "./contexts/GoalsContext";
+import { useUserData } from "./contexts/UserDataContext";
+import {
+  ScenarioParameters,
+  ScenarioPrediction,
+  Scenario,
+  ViewMode,
+} from "./contexts/ScenariosContext";
 
 // Additional type definitions
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
 }
 
 export interface ProgressInsights {
-  currentTrend: 'improving' | 'stable' | 'declining';
+  currentTrend: "improving" | "stable" | "declining";
   predictedOutcome: number;
   recommendations: string[];
   confidenceScore: number;
@@ -24,7 +35,7 @@ export interface ProgressInsights {
 
 export interface PlateauPrediction {
   likelyWeek: number;
-  severity: 'low' | 'moderate' | 'high';
+  severity: "low" | "moderate" | "high";
   duration: number;
   breakingStrategies: string[];
 }
@@ -32,7 +43,7 @@ export interface PlateauPrediction {
 // Define the base context interface
 interface ScenariosContextType {
   scenarios: Scenario[];
-  addScenario: (scenario: Omit<Scenario, 'id' | 'createdDate'>) => Scenario;
+  addScenario: (scenario: Omit<Scenario, "id" | "createdDate">) => Scenario;
   updateScenario: (id: string, updates: Partial<Scenario>) => void;
   deleteScenario: (id: string) => void;
   duplicateScenario: (id: string) => void;
@@ -46,7 +57,9 @@ interface ScenariosContextType {
   activePlanId: string | null;
   setActivePlan: (id: string) => void;
   getScenarioById: (id: string) => Scenario | undefined;
-  calculatePrediction: (parameters: ScenarioParameters) => Promise<ScenarioPrediction>;
+  calculatePrediction: (
+    parameters: ScenarioParameters,
+  ) => Promise<ScenarioPrediction>;
   generateScenarioName: () => string;
   generateDescriptiveName: (parameters: ScenarioParameters) => string;
 }
@@ -62,7 +75,7 @@ export interface AIScenarioParameters extends ScenarioParameters {
   preferences?: {
     workoutTypes: string[];
     mealPreferences: string[];
-    intensityPreference: 'low' | 'moderate' | 'high';
+    intensityPreference: "low" | "moderate" | "high";
   };
 }
 
@@ -77,7 +90,7 @@ export interface AIPrediction extends ScenarioPrediction {
   riskFactors: string[];
   plateauPrediction?: {
     likelyWeek: number;
-    severity: 'low' | 'moderate' | 'high';
+    severity: "low" | "moderate" | "high";
     recommendations: string[];
   };
   metabolicAdaptation: {
@@ -95,7 +108,7 @@ export interface AIGeneratedScenario {
 
 export interface ChatMessage {
   id: string;
-  role: 'user' | 'assistant';
+  role: "user" | "assistant";
   content: string;
   timestamp: Date;
   context?: {
@@ -108,53 +121,67 @@ export interface ChatMessage {
 interface AIEnhancedScenariosContextType extends ScenariosContextType {
   // AI-powered prediction
   getAIPrediction: (parameters: AIScenarioParameters) => Promise<AIPrediction>;
-  predictionMode: 'offline' | 'ai-enhanced' | 'ai-only';
-  setPredictionMode: (mode: 'offline' | 'ai-enhanced' | 'ai-only') => void;
-  
+  predictionMode: "offline" | "ai-enhanced" | "ai-only";
+  setPredictionMode: (mode: "offline" | "ai-enhanced" | "ai-only") => void;
+
   // AI scenario generation
-  generateOptimalScenarios: (userGoals: string, constraints?: any) => Promise<AIGeneratedScenario[]>;
+  generateOptimalScenarios: (
+    userGoals: string,
+    constraints?: any,
+  ) => Promise<AIGeneratedScenario[]>;
   optimizeExistingScenario: (scenarioId: string) => Promise<Scenario>;
-  
+
   // Conversational AI
   chatMessages: ChatMessage[];
   sendChatMessage: (message: string, context?: any) => Promise<ChatMessage>;
   clearChatHistory: () => void;
-  
+
   // Progress analysis
-  analyzeProgress: (timeframe: 'week' | 'month' | 'quarter') => Promise<ProgressInsights>;
+  analyzeProgress: (
+    timeframe: "week" | "month" | "quarter",
+  ) => Promise<ProgressInsights>;
   predictPlateaus: () => Promise<PlateauPrediction[]>;
-  
+
   // Caching and sync
   syncAIPredictions: () => Promise<void>;
-  getCachedPrediction: (parameters: AIScenarioParameters) => AIPrediction | null;
+  getCachedPrediction: (
+    parameters: AIScenarioParameters,
+  ) => AIPrediction | null;
   isAIAvailable: boolean;
   lastSyncTime: Date | null;
 }
 
 // Create the context
-const AIEnhancedScenariosContext = createContext<AIEnhancedScenariosContextType | undefined>(undefined);
+const AIEnhancedScenariosContext = createContext<
+  AIEnhancedScenariosContextType | undefined
+>(undefined);
 
 // AI Service class for API interactions
 class AIService {
-  private baseUrl = process.env.EXPO_PUBLIC_AI_API_URL || 'http://localhost:8087';
+  private baseUrl =
+    process.env.EXPO_PUBLIC_AI_API_URL || "http://localhost:8087";
   private claudeApiKey = process.env.EXPO_PUBLIC_CLAUDE_API_KEY;
   private openrouterApiKey = process.env.EXPO_PUBLIC_OPENROUTER_API_KEY;
 
-  async getPrediction(parameters: AIScenarioParameters, userData: any, goalsData: any): Promise<AIPrediction> {
+  async getPrediction(
+    parameters: AIScenarioParameters,
+    userData: any,
+    goalsData: any,
+  ): Promise<AIPrediction> {
     try {
       const response = await fetch(`${this.baseUrl}/api/predictions`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.claudeApiKey}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.claudeApiKey}`,
         },
         body: JSON.stringify({
           parameters,
           userData,
           goalsData,
-          model: 'claude-3.5-sonnet'
+          model: "claude-3.5-sonnet",
         }),
-        signal: AbortSignal.timeout(5000) // 5 second timeout
+        signal: AbortSignal.timeout(100000), // 100 second timeout
       });
 
       if (!response.ok) {
@@ -163,30 +190,34 @@ class AIService {
 
       return await response.json();
     } catch (error) {
-      console.error('AI prediction error:', error);
+      console.error("AI prediction error:", error);
       throw error;
     }
   }
 
-  async generateScenarios(goals: string, constraints: any, userData: any): Promise<AIGeneratedScenario[]> {
+  async generateScenarios(
+    goals: string,
+    constraints: any,
+    userData: any,
+  ): Promise<AIGeneratedScenario[]> {
     try {
       const response = await fetch(`${this.baseUrl}/api/scenarios/generate`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.claudeApiKey}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.claudeApiKey}`,
         },
         body: JSON.stringify({
           goals,
           constraints,
           userData,
-          count: 3 // Generate 3 optimal scenarios
+          count: 3, // Generate 3 optimal scenarios
         }),
       });
 
       return await response.json();
     } catch (error) {
-      console.error('AI scenario generation error:', error);
+      console.error("AI scenario generation error:", error);
       throw error;
     }
   }
@@ -194,232 +225,299 @@ class AIService {
   async chatWithAI(message: string, context: any): Promise<string> {
     try {
       const response = await fetch(`${this.baseUrl}/api/chat`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.openrouterApiKey}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.openrouterApiKey}`,
         },
         body: JSON.stringify({
           message,
           context,
-          model: 'glm-4.5'
+          model: "glm-4.5",
         }),
       });
 
       const data = await response.json();
       return data.response;
     } catch (error) {
-      console.error('AI chat error:', error);
+      console.error("AI chat error:", error);
       throw error;
     }
   }
 }
 
 // Enhanced ScenariosProvider with AI integration
-export const AIEnhancedScenariosProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const AIEnhancedScenariosProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const { userData } = useUserData();
   const { goalsData } = useGoals();
-  
+
   // Existing state
   const [scenarios, setScenarios] = useState<Scenario[]>([]);
-  const [viewMode, setViewMode] = useState<ViewMode>('single');
-  const [activePlanId, setActivePlanId] = useState<string | null>('onboarding-scenario');
-  
+  const [viewMode, setViewMode] = useState<ViewMode>("single");
+  const [activePlanId, setActivePlanId] = useState<string | null>(
+    "onboarding-scenario",
+  );
+
   // AI-specific state
-  const [predictionMode, setPredictionMode] = useState<'offline' | 'ai-enhanced' | 'ai-only'>('ai-enhanced');
+  const [predictionMode, setPredictionMode] = useState<
+    "offline" | "ai-enhanced" | "ai-only"
+  >("ai-enhanced");
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [isAIAvailable, setIsAIAvailable] = useState(true);
   const [lastSyncTime, setLastSyncTime] = useState<Date | null>(null);
-  const [predictionCache, setPredictionCache] = useState<Map<string, AIPrediction>>(new Map());
+  const [predictionCache, setPredictionCache] = useState<
+    Map<string, AIPrediction>
+  >(new Map());
 
   const aiService = new AIService();
 
   // Simple prediction calculation fallback
-  const calculateSimplePrediction = useCallback((parameters: ScenarioParameters): ScenarioPrediction => {
-    const currentBodyFat = userData.bodyFatPercentage || 25;
-    const targetBodyFat = goalsData.targetBodyFat || 21;
-    const timelineWeeks = goalsData.timelineWeeks || 12;
+  const calculateSimplePrediction = useCallback(
+    (parameters: ScenarioParameters): ScenarioPrediction => {
+      const currentBodyFat = userData.bodyFatPercentage || 25;
+      const targetBodyFat = goalsData.targetBodyFat || 21;
+      const timelineWeeks = goalsData.timelineWeeks || 12;
 
-    const exerciseMultiplier = parameters.exerciseFrequency / 4;
-    const calorieMultiplier = parameters.calorieDeficit / 300;
-    const proteinMultiplier = parameters.proteinIntake === 'High' ? 1.2 :
-                             parameters.proteinIntake === 'Medium' ? 1.0 : 0.8;
+      const exerciseMultiplier = parameters.exerciseFrequency / 4;
+      const calorieMultiplier = parameters.calorieDeficit / 300;
+      const proteinMultiplier =
+        parameters.proteinIntake === "High"
+          ? 1.2
+          : parameters.proteinIntake === "Medium"
+            ? 1.0
+            : 0.8;
 
-    const effectivenessScore = (exerciseMultiplier + calorieMultiplier + proteinMultiplier) / 3;
-    const bodyFatReduction = (currentBodyFat - targetBodyFat) * effectivenessScore;
-    const finalBodyFat = Math.max(10, currentBodyFat - bodyFatReduction);
-    const fatLoss = bodyFatReduction * 2.5;
+      const effectivenessScore =
+        (exerciseMultiplier + calorieMultiplier + proteinMultiplier) / 3;
+      const bodyFatReduction =
+        (currentBodyFat - targetBodyFat) * effectivenessScore;
+      const finalBodyFat = Math.max(10, currentBodyFat - bodyFatReduction);
+      const fatLoss = bodyFatReduction * 2.5;
 
-    const estimatedWeight = userData.weight || 165;
-    const baseMonthlyRate = 0.008;
-    const baseWeeklyRate = baseMonthlyRate / 4.33;
-    const trainingEffectiveness = Math.min(exerciseMultiplier, 1.5);
-    const nutritionEffectiveness = proteinMultiplier;
-    const weeklyMuscleGain = estimatedWeight * baseWeeklyRate * trainingEffectiveness * nutritionEffectiveness;
-    const muscleGain = weeklyMuscleGain * timelineWeeks;
+      const estimatedWeight = userData.weight || 165;
+      const baseMonthlyRate = 0.008;
+      const baseWeeklyRate = baseMonthlyRate / 4.33;
+      const trainingEffectiveness = Math.min(exerciseMultiplier, 1.5);
+      const nutritionEffectiveness = proteinMultiplier;
+      const weeklyMuscleGain =
+        estimatedWeight *
+        baseWeeklyRate *
+        trainingEffectiveness *
+        nutritionEffectiveness;
+      const muscleGain = weeklyMuscleGain * timelineWeeks;
 
-    const confidence = Math.min(95, Math.max(50, 70 + (effectivenessScore * 20)));
+      const confidence = Math.min(
+        95,
+        Math.max(50, 70 + effectivenessScore * 20),
+      );
 
-    return {
-      currentBodyFat: Math.round(currentBodyFat * 10) / 10,
-      targetBodyFat: Math.round(finalBodyFat * 10) / 10,
-      fatLoss: Math.round(fatLoss * 100) / 100,
-      muscleGain: Math.round(muscleGain * 100) / 100,
-      timeline: timelineWeeks,
-      confidence: Math.round(confidence * 10) / 10,
-    };
-  }, [userData, goalsData]);
+      return {
+        currentBodyFat: Math.round(currentBodyFat * 10) / 10,
+        targetBodyFat: Math.round(finalBodyFat * 10) / 10,
+        fatLoss: Math.round(fatLoss * 100) / 100,
+        muscleGain: Math.round(muscleGain * 100) / 100,
+        timeline: timelineWeeks,
+        confidence: Math.round(confidence * 10) / 10,
+      };
+    },
+    [userData, goalsData],
+  );
 
   // Enhanced prediction function with AI integration
-  const getAIPrediction = useCallback(async (parameters: AIScenarioParameters): Promise<AIPrediction> => {
-    const cacheKey = JSON.stringify(parameters);
-    
-    // Check cache first
-    const cached = predictionCache.get(cacheKey);
-    if (cached && predictionMode !== 'ai-only') {
-      return cached;
-    }
+  const getAIPrediction = useCallback(
+    async (parameters: AIScenarioParameters): Promise<AIPrediction> => {
+      const cacheKey = JSON.stringify(parameters);
 
-    try {
-      // Try AI prediction
-      if (isAIAvailable && predictionMode !== 'offline') {
-        const aiPrediction = await aiService.getPrediction(parameters, userData, goalsData);
-        
-        // Cache the result
-        setPredictionCache(prev => new Map(prev.set(cacheKey, aiPrediction)));
-        
-        return aiPrediction;
+      // Check cache first
+      const cached = predictionCache.get(cacheKey);
+      if (cached && predictionMode !== "ai-only") {
+        return cached;
       }
-    } catch (error) {
-      console.warn('AI prediction failed, falling back:', error);
-      setIsAIAvailable(false);
-      
-      if (predictionMode === 'ai-only') {
-        throw error;
-      }
-    }
 
-    // Fallback to enhanced simple prediction
-    return calculateEnhancedPrediction(parameters);
-  }, [userData, goalsData, predictionMode, isAIAvailable, predictionCache]);
+      try {
+        // Try AI prediction
+        if (isAIAvailable && predictionMode !== "offline") {
+          const aiPrediction = await aiService.getPrediction(
+            parameters,
+            userData,
+            goalsData,
+          );
+
+          // Cache the result
+          setPredictionCache(
+            (prev) => new Map(prev.set(cacheKey, aiPrediction)),
+          );
+
+          return aiPrediction;
+        }
+      } catch (error) {
+        console.warn("AI prediction failed, falling back:", error);
+        setIsAIAvailable(false);
+
+        if (predictionMode === "ai-only") {
+          throw error;
+        }
+      }
+
+      // Fallback to enhanced simple prediction
+      return calculateEnhancedPrediction(parameters);
+    },
+    [userData, goalsData, predictionMode, isAIAvailable, predictionCache],
+  );
 
   // Enhanced simple prediction with confidence intervals
-  const calculateEnhancedPrediction = useCallback((parameters: AIScenarioParameters): AIPrediction => {
-    // Use existing simple calculation as base
-    const basePrediction = calculateSimplePrediction(parameters);
-    
-    // Add AI-like enhancements
-    const confidenceInterval = {
-      bodyFatLower: basePrediction.targetBodyFat - 1.5,
-      bodyFatUpper: basePrediction.targetBodyFat + 1.0,
-      muscleGainLower: basePrediction.muscleGain * 0.8,
-      muscleGainUpper: basePrediction.muscleGain * 1.2,
-    };
+  const calculateEnhancedPrediction = useCallback(
+    (parameters: AIScenarioParameters): AIPrediction => {
+      // Use existing simple calculation as base
+      const basePrediction = calculateSimplePrediction(parameters);
 
-    const successProbability = Math.min(95, Math.max(50, basePrediction.confidence + 10));
+      // Add AI-like enhancements
+      const confidenceInterval = {
+        bodyFatLower: basePrediction.targetBodyFat - 1.5,
+        bodyFatUpper: basePrediction.targetBodyFat + 1.0,
+        muscleGainLower: basePrediction.muscleGain * 0.8,
+        muscleGainUpper: basePrediction.muscleGain * 1.2,
+      };
 
-    return {
-      ...basePrediction,
-      confidenceInterval,
-      successProbability,
-      riskFactors: parameters.exerciseFrequency > 6 ? ['Overtraining risk'] : [],
-      metabolicAdaptation: {
-        bmrChange: -5, // Assume 5% BMR reduction
-        adaptationWeek: 8,
-      },
-    };
-  }, []);
+      const successProbability = Math.min(
+        95,
+        Math.max(50, basePrediction.confidence + 10),
+      );
+
+      return {
+        ...basePrediction,
+        confidenceInterval,
+        successProbability,
+        riskFactors:
+          parameters.exerciseFrequency > 6 ? ["Overtraining risk"] : [],
+        metabolicAdaptation: {
+          bmrChange: -5, // Assume 5% BMR reduction
+          adaptationWeek: 8,
+        },
+      };
+    },
+    [],
+  );
 
   // AI scenario generation
-  const generateOptimalScenarios = useCallback(async (userGoals: string, constraints?: any): Promise<AIGeneratedScenario[]> => {
-    try {
-      if (!isAIAvailable) {
-        throw new Error('AI not available');
-      }
-
-      return await aiService.generateScenarios(userGoals, constraints, userData);
-    } catch (error) {
-      console.error('Failed to generate AI scenarios:', error);
-      
-      // Fallback: generate variations of current scenario
-      const currentScenario = scenarios.find(s => s.id === activePlanId) || scenarios[0];
-      if (!currentScenario) return [];
-
-      return [
-        {
-          scenario: currentScenario,
-          rationale: 'Based on your current plan with minor optimizations',
-          adherenceProbability: 75,
-          alternatives: [
-            { ...currentScenario.parameters, exerciseFrequency: currentScenario.parameters.exerciseFrequency + 1 },
-            { ...currentScenario.parameters, calorieDeficit: currentScenario.parameters.calorieDeficit + 50 },
-          ]
+  const generateOptimalScenarios = useCallback(
+    async (
+      userGoals: string,
+      constraints?: any,
+    ): Promise<AIGeneratedScenario[]> => {
+      try {
+        if (!isAIAvailable) {
+          throw new Error("AI not available");
         }
-      ];
-    }
-  }, [isAIAvailable, userData, scenarios, activePlanId]);
+
+        return await aiService.generateScenarios(
+          userGoals,
+          constraints,
+          userData,
+        );
+      } catch (error) {
+        console.error("Failed to generate AI scenarios:", error);
+
+        // Fallback: generate variations of current scenario
+        const currentScenario =
+          scenarios.find((s) => s.id === activePlanId) || scenarios[0];
+        if (!currentScenario) return [];
+
+        return [
+          {
+            scenario: currentScenario,
+            rationale: "Based on your current plan with minor optimizations",
+            adherenceProbability: 75,
+            alternatives: [
+              {
+                ...currentScenario.parameters,
+                exerciseFrequency:
+                  currentScenario.parameters.exerciseFrequency + 1,
+              },
+              {
+                ...currentScenario.parameters,
+                calorieDeficit: currentScenario.parameters.calorieDeficit + 50,
+              },
+            ],
+          },
+        ];
+      }
+    },
+    [isAIAvailable, userData, scenarios, activePlanId],
+  );
 
   // Conversational AI
-  const sendChatMessage = useCallback(async (message: string, context?: any): Promise<ChatMessage> => {
-    const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: message,
-      timestamp: new Date(),
-      context,
-    };
-
-    setChatMessages(prev => [...prev, userMessage]);
-
-    try {
-      const aiResponse = await aiService.chatWithAI(message, {
-        ...context,
-        userData,
-        goalsData,
-        currentScenarios: scenarios,
-      });
-
-      const assistantMessage: ChatMessage = {
-        id: `assistant-${Date.now()}`,
-        role: 'assistant',
-        content: aiResponse,
+  const sendChatMessage = useCallback(
+    async (message: string, context?: any): Promise<ChatMessage> => {
+      const userMessage: ChatMessage = {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: message,
         timestamp: new Date(),
         context,
       };
 
-      setChatMessages(prev => [...prev, assistantMessage]);
-      return assistantMessage;
-    } catch (error) {
-      const errorMessage: ChatMessage = {
-        id: `error-${Date.now()}`,
-        role: 'assistant',
-        content: 'Sorry, I\'m having trouble connecting right now. Please try again later.',
-        timestamp: new Date(),
-      };
+      setChatMessages((prev) => [...prev, userMessage]);
 
-      setChatMessages(prev => [...prev, errorMessage]);
-      return errorMessage;
-    }
-  }, [userData, goalsData, scenarios]);
+      try {
+        const aiResponse = await aiService.chatWithAI(message, {
+          ...context,
+          userData,
+          goalsData,
+          currentScenarios: scenarios,
+        });
+
+        const assistantMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: "assistant",
+          content: aiResponse,
+          timestamp: new Date(),
+          context,
+        };
+
+        setChatMessages((prev) => [...prev, assistantMessage]);
+        return assistantMessage;
+      } catch (error) {
+        const errorMessage: ChatMessage = {
+          id: `error-${Date.now()}`,
+          role: "assistant",
+          content:
+            "Sorry, I'm having trouble connecting right now. Please try again later.",
+          timestamp: new Date(),
+        };
+
+        setChatMessages((prev) => [...prev, errorMessage]);
+        return errorMessage;
+      }
+    },
+    [userData, goalsData, scenarios],
+  );
 
   // Hybrid prediction function that replaces the original calculatePrediction
-  const calculatePrediction = useCallback(async (parameters: ScenarioParameters): Promise<ScenarioPrediction> => {
-    try {
-      const aiPrediction = await getAIPrediction(parameters as AIScenarioParameters);
-      // Convert AI prediction to simple prediction format for backward compatibility
-      return {
-        currentBodyFat: aiPrediction.currentBodyFat,
-        targetBodyFat: aiPrediction.targetBodyFat,
-        fatLoss: aiPrediction.fatLoss,
-        muscleGain: aiPrediction.muscleGain,
-        timeline: aiPrediction.timeline,
-        confidence: aiPrediction.confidence,
-      };
-    } catch (error) {
-      // Fallback to simple calculation
-      return calculateSimplePrediction(parameters);
-    }
-  }, [getAIPrediction]);
+  const calculatePrediction = useCallback(
+    async (parameters: ScenarioParameters): Promise<ScenarioPrediction> => {
+      try {
+        const aiPrediction = await getAIPrediction(
+          parameters as AIScenarioParameters,
+        );
+        // Convert AI prediction to simple prediction format for backward compatibility
+        return {
+          currentBodyFat: aiPrediction.currentBodyFat,
+          targetBodyFat: aiPrediction.targetBodyFat,
+          fatLoss: aiPrediction.fatLoss,
+          muscleGain: aiPrediction.muscleGain,
+          timeline: aiPrediction.timeline,
+          confidence: aiPrediction.confidence,
+        };
+      } catch (error) {
+        // Fallback to simple calculation
+        return calculateSimplePrediction(parameters);
+      }
+    },
+    [getAIPrediction],
+  );
 
   // ... rest of the existing ScenariosProvider logic ...
 
@@ -430,20 +528,22 @@ export const AIEnhancedScenariosProvider: React.FC<{ children: React.ReactNode }
     updateScenario,
     deleteScenario,
     // ... other existing methods ...
-    
+
     // AI enhancements
     getAIPrediction,
     predictionMode,
     setPredictionMode,
     generateOptimalScenarios,
-    optimizeExistingScenario: async (scenarioId: string) => scenarios.find(s => s.id === scenarioId)!, // Placeholder
+    optimizeExistingScenario: async (scenarioId: string) =>
+      scenarios.find((s) => s.id === scenarioId)!, // Placeholder
     chatMessages,
     sendChatMessage,
     clearChatHistory: () => setChatMessages([]),
-    analyzeProgress: async () => ({} as any), // Placeholder
+    analyzeProgress: async () => ({}) as any, // Placeholder
     predictPlateaus: async () => [], // Placeholder
     syncAIPredictions: async () => {}, // Placeholder
-    getCachedPrediction: (parameters: AIScenarioParameters) => predictionCache.get(JSON.stringify(parameters)) || null,
+    getCachedPrediction: (parameters: AIScenarioParameters) =>
+      predictionCache.get(JSON.stringify(parameters)) || null,
     isAIAvailable,
     lastSyncTime,
   };

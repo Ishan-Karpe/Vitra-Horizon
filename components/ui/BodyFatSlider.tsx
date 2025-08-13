@@ -1,6 +1,6 @@
-import Slider from '@react-native-community/slider';
-import React from 'react';
-import { Platform, Text, TouchableOpacity, View } from 'react-native';
+import Slider from "@react-native-community/slider";
+import React from "react";
+import { Platform, Text, TouchableOpacity, View } from "react-native";
 
 interface BodyFatSliderProps {
   value: number;
@@ -17,7 +17,7 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
   onNotSurePress,
   min,
   max,
-  className = ''
+  className = "",
 }) => {
   const handleValueChange = (newValue: number) => {
     // Round to 1 decimal place before passing to parent
@@ -36,18 +36,18 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
           <Text className="text-blue-600 font-medium">Not sure?</Text>
         </TouchableOpacity>
       </View>
-      
+
       {/* Current Value Display */}
       <View className="items-center mb-6">
         <Text className="text-3xl font-bold text-blue-600">
           {Number(value).toFixed(1)}%
         </Text>
       </View>
-      
+
       {/* Slider */}
       <View className="px-4">
         <Slider
-          style={{ width: '100%', height: 40 }}
+          style={{ width: "100%", height: 40 }}
           minimumValue={min}
           maximumValue={max}
           value={value}
@@ -56,7 +56,7 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
           maximumTrackTintColor="#e5e7eb"
           thumbTintColor="#2563eb"
           // Web-specific props to prevent DOM errors
-          {...(Platform.OS === 'web' && {
+          {...(Platform.OS === "web" && {
             onStartShouldSetResponder: undefined,
             onResponderTerminationRequest: undefined,
             onResponderGrant: undefined,
@@ -65,7 +65,7 @@ export const BodyFatSlider: React.FC<BodyFatSliderProps> = ({
             onResponderTerminate: undefined,
           })}
         />
-        
+
         {/* Min/Max Labels */}
         <View className="flex-row justify-between mt-2">
           <Text className="text-sm text-gray-500">{min}%</Text>

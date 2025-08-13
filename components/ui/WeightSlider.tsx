@@ -1,6 +1,6 @@
-import Slider from '@react-native-community/slider';
-import React from 'react';
-import { Platform, Text, View } from 'react-native';
+import Slider from "@react-native-community/slider";
+import React from "react";
+import { Platform, Text, View } from "react-native";
 
 interface WeightSliderProps {
   value: number;
@@ -15,7 +15,7 @@ export const WeightSlider: React.FC<WeightSliderProps> = ({
   onValueChange,
   min,
   max,
-  className = ''
+  className = "",
 }) => {
   return (
     <View className={`w-full ${className}`}>
@@ -23,18 +23,18 @@ export const WeightSlider: React.FC<WeightSliderProps> = ({
       <Text className="text-lg font-semibold text-gray-900 mb-4">
         Current Weight
       </Text>
-      
+
       {/* Current Value Display */}
       <View className="items-center mb-6">
         <Text className="text-3xl font-bold text-blue-600">
           {Math.round(value)} lbs
         </Text>
       </View>
-      
+
       {/* Slider */}
       <View className="px-4">
         <Slider
-          style={{ width: '100%', height: 40 }}
+          style={{ width: "100%", height: 40 }}
           minimumValue={min}
           maximumValue={max}
           value={value}
@@ -43,7 +43,7 @@ export const WeightSlider: React.FC<WeightSliderProps> = ({
           maximumTrackTintColor="#e5e7eb"
           thumbTintColor="#2563eb"
           // Web-specific props to prevent DOM errors
-          {...(Platform.OS === 'web' && {
+          {...(Platform.OS === "web" && {
             onStartShouldSetResponder: undefined,
             onResponderTerminationRequest: undefined,
             onResponderGrant: undefined,
@@ -52,7 +52,7 @@ export const WeightSlider: React.FC<WeightSliderProps> = ({
             onResponderTerminate: undefined,
           })}
         />
-        
+
         {/* Min/Max Labels */}
         <View className="flex-row justify-between mt-2">
           <Text className="text-sm text-gray-500">{min} lbs</Text>

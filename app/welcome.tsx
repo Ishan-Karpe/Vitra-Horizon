@@ -1,23 +1,23 @@
-import { useRouter } from 'expo-router';
-import React from 'react';
-import { SafeAreaView, Text, TouchableOpacity, View } from 'react-native';
+import { useRouter } from "expo-router";
+import React from "react";
+import { SafeAreaView, Text, TouchableOpacity, View } from "react-native";
 
-import { FeatureCard } from '../components/ui/FeatureCard';
-import { Hero } from '../components/ui/Hero';
+import { FeatureCard } from "../components/ui/FeatureCard";
+import { Hero } from "../components/ui/Hero";
 
 export default function WelcomeScreen() {
   const router = useRouter();
 
   const handleConnectHealthApps = () => {
-    console.log('Connect Health Apps button pressed');
+    console.log("Connect Health Apps button pressed");
     // Navigate to about yourself screen
-    router.push('/about-yourself');
+    router.push("/about-yourself");
   };
 
   const handleManualSetup = () => {
-    console.log('Manual Setup button pressed');
+    console.log("Manual Setup button pressed");
     // Navigate to about yourself screen
-    router.push('/about-yourself');
+    router.push("/about-yourself");
   };
 
   return (

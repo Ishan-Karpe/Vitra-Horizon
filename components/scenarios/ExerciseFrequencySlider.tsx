@@ -1,6 +1,6 @@
-import Slider from '@react-native-community/slider';
-import React from 'react';
-import { Platform, Text, View } from 'react-native';
+import Slider from "@react-native-community/slider";
+import React from "react";
+import { Platform, Text, View } from "react-native";
 
 interface ExerciseFrequencySliderProps {
   value: number;
@@ -8,11 +8,9 @@ interface ExerciseFrequencySliderProps {
   isCalculating?: boolean;
 }
 
-export const ExerciseFrequencySlider: React.FC<ExerciseFrequencySliderProps> = ({
-  value,
-  onValueChange,
-  isCalculating = false,
-}) => {
+export const ExerciseFrequencySlider: React.FC<
+  ExerciseFrequencySliderProps
+> = ({ value, onValueChange, isCalculating = false }) => {
   const handleValueChange = (newValue: number) => {
     const roundedValue = Math.round(newValue);
     onValueChange(roundedValue);
@@ -28,14 +26,14 @@ export const ExerciseFrequencySlider: React.FC<ExerciseFrequencySliderProps> = (
       {/* Current Value Display - Bold Blue Text */}
       <View className="items-center mb-2">
         <Text className="text-3xl font-bold text-blue-600">
-          {Number(value).toFixed(0)} {value === 1 ? 'time' : 'times'}/week
+          {Number(value).toFixed(0)} {value === 1 ? "time" : "times"}/week
         </Text>
       </View>
 
       {/* Slider Container */}
       <View className="relative">
         <Slider
-          style={{ width: '100%', height: 40 }}
+          style={{ width: "100%", height: 40 }}
           minimumValue={1}
           maximumValue={7}
           value={value}
@@ -45,7 +43,7 @@ export const ExerciseFrequencySlider: React.FC<ExerciseFrequencySliderProps> = (
           maximumTrackTintColor="#E5E7EB"
           thumbTintColor="#2563eb"
           // Web-specific props to prevent DOM errors
-          {...(Platform.OS === 'web' && {
+          {...(Platform.OS === "web" && {
             onStartShouldSetResponder: undefined,
             onResponderTerminationRequest: undefined,
             onResponderGrant: undefined,
@@ -77,7 +75,7 @@ export const ExerciseFrequencySlider: React.FC<ExerciseFrequencySliderProps> = (
           <View
             key={tick}
             className={`w-1 h-1 rounded-full ${
-              tick <= value ? 'bg-blue-500' : 'bg-gray-300'
+              tick <= value ? "bg-blue-500" : "bg-gray-300"
             }`}
           />
         ))}
